@@ -1,0 +1,14 @@
+Package: EDMAinR
+Type: Package
+Title: Euclidean Distance Matrix Analysis in R
+Version: 0.0-1
+Date: 2019-05-31
+Author: Peter Solymos [aut, cre] (<https://orcid.org/0000-0001-7337-1740>),
+    Subhash R. Lele, Theodore M. Cole, 
+    Liangyuan Hu, Joan Richtsmeier
+Maintainer: Peter Solymos <psolymos@gmail.com>
+Description: A coordinate‐free approach for comparing 
+    biological shapes using landmark data.
+License: GPL-2
+LazyLoad: yes
+LazyData: true
