@@ -36,7 +36,7 @@ for (i in 1:n) {
 
 ## References
 
-Subhash Lele, S. R., and Richtsmeier, J. T., 1991.
+Lele, S. R., and Richtsmeier, J. T., 1991.
 Euclidean distance matrix analysis: A coordinate‐free approach for 
 comparing biological shapes using landmark data.
 American Journal of Physical Anthropology 86(3):415--27.
