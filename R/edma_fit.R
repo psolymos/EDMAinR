@@ -37,18 +37,17 @@ edma_fit <- function(X, n, K, D) {
             }
         }
     }
-    EuM
     ## step 3 calculate B(M)
     I <- diag(1, K)
     ones <- array(rep(1, K), c(1, K))
     H <- I - (1/K) * crossprod(ones, ones)
     BM <- (-1/2) * H %*% EuM %*% H
     ## step 4 calculate eigenvalues and eigenvectors of B(M)
-    eigen(BM)
+    EIG <- eigen(BM)
     ## step 5 estimate centred mean form M
     est.M <- matrix(nrow = K, ncol = D)
     for (i in 1:D) {
-        est.M[, i] <- sqrt(eigen(BM)$values[i]) * eigen(BM)$vectors[, i]
+        est.M[, i] <- sqrt(EIG$values[i]) * EIG$vectors[, i]
     }
     ## step 6 estimate SigmaKstar=H*SigmaK*H
     BX <- matrix(nrow = n * K, ncol = K)
@@ -61,20 +60,11 @@ edma_fit <- function(X, n, K, D) {
         a <- a + BX[((i - 1) * K + 1):(i * K), ]
     }
     est.SigmaKstar <- (a/n - BM)/D
-    ## compare HM with est.M ; HMt(M)H with est.M*t(est.M); H*SigmaK*H with
-    #est.SigmaKstar
-    #H %*% Meanform
-    #est.M
-    #H %*% Meanform %*% t(Meanform) %*% H
-    #est.M %*% t(est.M)
-    #H %*% SigmaK %*% H
-    #est.SigmaKstar
     ## Use maple to solve Y such that YH=L
     fcol <- array(c(rep(-1, K - 2), -2), c(K - 1, 1))
     identity <- diag(1, K - 2, K - 1)
     augment <- array(c(rep(-1, K - 2), 0), c(1, K - 1))
     Y <- cbind(fcol, rbind(identity, augment))
-    Y
     ## from est.SigmaKstar to est.SigmaK~
     est.SigmaKtilde <- Y %*% est.SigmaKstar %*% t(Y)
     est.SigmaKtilde
@@ -159,32 +149,24 @@ edma_fit <- function(X, n, K, D) {
             t <- t + 1
         }
     }
-    C <- matrix(nrow = K * (K - 1)/2, ncol = K * (K + 1)/2)
+    Cmat <- matrix(nrow = K * (K - 1)/2, ncol = K * (K + 1)/2)
     prow.new <- c(prow, 0)
     i <- 1
     RowC <- 1
     for (RowB in 1:(K - 1)^2) {
         if (RowB == prow.new[i])
             i <- i + 1 else {
-            C[RowC, ] <- B[RowB, ]
+            Cmat[RowC, ] <- B[RowB, ]
             RowC <- RowC + 1
         }
     }
     Q <- 0
     for (i in 1:(K * (K + 1)/2)) {
         if (b.dis[i] != 0)
-            Q <- cbind(Q, C[, i])
+            Q <- cbind(Q, Cmat[, i])
     }
     A.aug <- Q[, -1]
-    A.aug
-    ## calculate the rank of a matrix(by using SVD)
-    matrix.rank <- function(A, eps = .Machine$double.eps) {
-        sv. <- abs(svd(A)$d)
-        sum((sv./max(sv.)) > eps)
-    }
-    matrix.rank(A.aug)
     Kstar <- length(b)
-    Kstar
     if (nrow(A.aug) != ncol(A.aug)) {
         est.vect <- solve(A.aug, c.dis)
     } else if (ncol(A.aug) == Kstar) {
@@ -205,9 +187,5 @@ edma_fit <- function(X, n, K, D) {
             }
         }
     }
-    out <- list()
-    out$MMt <- BM
-    out$M <- est.M
-    out$SigmaK <- est.SigmaK
-    out
+    list(M=est.M, SigmaK=est.SigmaK)
 }
