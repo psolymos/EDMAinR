@@ -77,7 +77,7 @@ V.fn = function(parms,K){
 # Function to be minimized
 
 fn.min = function(parms,K,est.SigmaKstar,H){
-	
+
 	out = max((est.SigmaKstar - (H %*% V.fn(parms,K) %*% t(H)))^2)
 	return(10000*out)
 }
@@ -114,11 +114,14 @@ I <- diag(1, K)
     ones <- array(rep(1, K), c(1, K))
     H <- I - (1/K) * crossprod(ones, ones)
 SigmaKstar = H %*% SigmaK %*% H
-fit <- edma_fit.new(X, n, K, D)
+
+#fit <- edma_fit.new(X, n, K, D)
+fit <- .edma_fit_np(X, n, K, D)
 
 # compare the non-parametric estimates
-cbind(dist(M),dist(fit$est.M))
-cbind(SigmaKstar,fit$est.SigmaKstar)
+cbind(true=dist(M), est=dist(fit$M))
+cbind(true=c(diag(SigmaKstar), SigmaKstar[upper.tri(SigmaKstar)]),
+    est=c(diag(fit$SigmaKstar), SigmaKstar[upper.tri(fit$SigmaKstar)]))
 
 # Now do the minimization to get the parameters of the parametric covariance matrix
 
