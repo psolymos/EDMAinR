@@ -1,10 +1,69 @@
-## workhorse function to estimate centered mean form and SigmaKstar
-## X: read.table(x) # data frame input, n tables (each K x D) stacked ???
+## read in xyz landmark data
+## file: file name
+## ...: passed to read.table for things like dec
+## consider: what to do for 2D samples? Have only XY columns, or add Z=0?
+read_xyz <- function(file, ...) {
+    h <- readLines(file, n=4L)
+    NAME <- h[1L]
+    DIMS <- character(nchar(h[2L]))
+    for (i in seq_along(DIMS))
+        DIMS[i] <- substr(h[2L], i, i)
+    tmp <- strsplit(h[3L], " ")[[1L]]
+    K <- as.integer(substr(tmp[1L], 1L, nchar(tmp[1L])-1L))
+    D <- as.integer(tmp[2L])
+    n <- as.integer(tmp[3L])
+    LABELS <- make.names(strsplit(h[4L], " ")[[1L]])
+    X <- read.table(file, header=FALSE, sep=" ", skip=4L, nrows=n*K, ...)
+    NOTES <- read.table(file, header=FALSE, sep="\t", skip=4L+n*K,
+        stringsAsFactors=FALSE)[[1L]]
+    DATA <- list()
+    for (i in seq_len(n)) {
+        DATA[[i]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
+        dimnames(DATA[[i]]) <- list(LABELS, DIMS)
+    }
+    out <- list(
+        name=NAME,
+        K=K, D=D,
+        data=DATA,
+        notes=NOTES
+    )
+    class(out) <- c("edma_data")
+    out
+}
+## this turns the data into X expected by fitting functions
+## is centering useful here?
+stack.edma_data <- function(x, center=FALSE, ...) {
+    d <- x$data
+    if (center) {
+        for (i in seq_along(d))
+            d[[i]] <- t(t(d[[i]] - colMeans(d[[i]])))
+    }
+    out <- do.call(rbind, d)
+    rownames(out) <- paste0("rep", rep(seq_len(x$n), each=x$K), "_",
+        rownames(x$data[[1L]]))
+    out
+}
+## print function
+print.edma_data <- function(x, ...) {
+    cat("EDMA data: ", x$name, "\n",
+        x$D, " dimensions, ",
+        x$K, " landmarks, ",
+        length(x$data), " replicates", sep="")
+    invisible(x)
+}
+## subset the data list
+subset.edma_data <- function(x, subset, ...) {
+    x$data <- x$data[subset]
+    x$notes <- x$notes[subset]
+    x
+}
+## nonparametric estimate of centered mean form and SigmaKstar
+## X: data frame input, n tables (each K x D) stacked
 ## n: number of individuals (replicates)
 ## K: number of landmarks
-## D: dimensions
-edma_fit <- function(X, n, K, D) {
-    ## step1: calculate Euclidean distance for X
+## D: number of dimensions (2-3)
+.edma_fit_np <- function(X, n, K, D) {
+    ## calculate Euclidean distance for X
     d <- function(x, y) {
         sum((x - y)^2)
     }
@@ -16,7 +75,7 @@ edma_fit <- function(X, n, K, D) {
             }
         }
     }
-    ## EuX step 2 calculate Eu(M)
+    ## calculate Eu(M)
     EuM <- matrix(nrow = K, ncol = K)
     for (i in 1:K) {
         for (j in 1:K) {
@@ -37,19 +96,19 @@ edma_fit <- function(X, n, K, D) {
             }
         }
     }
-    ## step 3 calculate B(M)
+    ## calculate B(M)
     I <- diag(1, K)
     ones <- array(rep(1, K), c(1, K))
     H <- I - (1/K) * crossprod(ones, ones)
     BM <- (-1/2) * H %*% EuM %*% H
-    ## step 4 calculate eigenvalues and eigenvectors of B(M)
+    ## calculate eigenvalues and eigenvectors of B(M)
     EIG <- eigen(BM)
-    ## step 5 estimate centred mean form M
+    ## estimate centred mean form M
     est.M <- matrix(nrow = K, ncol = D)
     for (i in 1:D) {
         est.M[, i] <- sqrt(EIG$values[i]) * EIG$vectors[, i]
     }
-    ## step 6 estimate SigmaKstar=H*SigmaK*H
+    ## estimate SigmaKstar=H*SigmaK*H
     BX <- matrix(nrow = n * K, ncol = K)
     for (i in 1:n) {
         BX[((i - 1) * K + 1):(i * K), ] <- (-1/2) * H %*% EuX[((i - 1) *
@@ -60,6 +119,55 @@ edma_fit <- function(X, n, K, D) {
         a <- a + BX[((i - 1) * K + 1):(i * K), ]
     }
     est.SigmaKstar <- (a/n - BM)/D
+    out <- list(
+        M=est.M,
+        SigmaKstar=est.SigmaKstar,
+        H=H)
+    out
+}
+
+## x is edma_data object
+## use same pbapply setup as in opticut with cl arg etc
+edma_fit <- function(x, B=0) {
+    if (!inherits(x, "edma_data"))
+        stop("x must be of class edma_data")
+    if (B < 0)
+        stop("B must be non-negative")
+    B <- as.integer(B)
+    fit <- .edma_fit_np(stack(x), length(x$data), x$K, x$D)
+    if (B > 0) {
+        boot <- pbapply::pblapply(seq_len(B), function(i) {
+            j <- sample(length(x$data), replace=TRUE)
+            z <- subset(x, j)
+            .edma_fit_np(stack(z), length(z$data), z$K, z$D)
+        })
+    } else {
+        boot <- NULL
+    }
+    out <- c(x, fit)
+    out$call <- match.call()
+    out$boot <- boot
+    class(out) <- c("edma_fit", "edma_fit_np")
+    out
+}
+
+if (FALSE) {
+file <- "inst/extdata/crouzon/Crouzon_P0_Global_MUT.xyz"
+x <- read_xyz(file)
+x
+str(d)
+X <- stack(x, TRUE)
+## plot function in 2D not very hepful
+plot(X[,1:2])
+plot(X[,2:3])
+plot(X[,1:3])
+
+fit <- edma_fit(x)
+fit <- edma_fit(x, B=10)
+}
+
+
+other_fun <- function(z) {
     ## Use maple to solve Y such that YH=L
     fcol <- array(c(rep(-1, K - 2), -2), c(K - 1, 1))
     identity <- diag(1, K - 2, K - 1)
