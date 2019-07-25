@@ -1,4 +1,8 @@
-other_fun <- function(z) {
+.full_p_fun <- function(object) {
+    est.M <- Meanform(object)
+    est.SigmaKstar <- SigmaKstar(object)
+    K <- nrow(est.M)
+    D <- ncol(est.M)
     ## Use maple to solve Y such that YH=L
     fcol <- array(c(rep(-1, K - 2), -2), c(K - 1, 1))
     identity <- diag(1, K - 2, K - 1)
@@ -105,7 +109,7 @@ other_fun <- function(z) {
     A.aug <- Q[, -1]
     Kstar <- length(b)
     if (nrow(A.aug) != ncol(A.aug)) {
-        est.vect <- solve(A.aug, c.dis) # this is where rho has issues
+        est.vect <- solve(A.aug, c.dis)
     } else if (ncol(A.aug) == Kstar) {
         est.vect <- (solve(t(A.aug) %*% A.aug)) %*% t(A.aug) %*% c.dis
     } else stop(" SigmaK is not identifiable\n")
@@ -124,43 +128,36 @@ other_fun <- function(z) {
             }
         }
     }
-    list(M=est.M, SigmaK=est.SigmaK, H=H, D=D, K=K)
+    dimnames(est.SigmaK) <- dimnames(est.SigmaKstar)
+    est.SigmaK
 }
 
-SigmaK_fit <- function(fit,
-type=c("sig", "sig_rho"),
-method = "Nelder-Mead", control = list(), hessian = FALSE)
-{
-    type <- match.arg(type)
-    v <- diag(1, fit$K, fit$K)
-    if (type == "sig") {
-        init <- log(sqrt(mean(diag(fit$SigmaK))))
-        fun <- function(par) {
-            sig <- exp(par[1L])
-            V <- sig^2 * v
-            sum((fit$SigmaK - (fit$H %*% V %*% t(fit$H)))^2)
-        }
-        o <- suppressWarnings({
-            optim(init, fun, method=method, control=control, hessian=hessian)
-        })
-        o$coefficients <- c(sigma=exp(o$par))
-        o$SigmaKhat <- exp(o$par)^2 * v
+## type can also be a structure matrix: TBD
+## object is the nonparametric fit
+## need to add bootstrap version here too???
+.SigmaK_fit <- function(SigmaKstar, H,
+method = "Nelder-Mead", control = list(), hessian = FALSE) {
+    K <- nrow(SigmaKstar)
+    v <- diag(1, K, K)
+    # function to be minimized
+    fun <- function(parms){
+        10^4 * max((SigmaKstar - (H %*% V_fun(parms, K) %*% t(H)))^2)
     }
-    if (type == "sig_rho") {
-        init <- c(log(sqrt(mean(diag(fit$SigmaK)))),
-                  atanh(mean(fit$SigmaK[lower.tri(fit$SigmaK)])))
-        fun <- function(par) {
-            sig <- exp(par[1L])
-            rho <- tanh(par[2L])
-            V <- sig^2 * v + sig^2 * rho * (1-v)
-            sum((fit$SigmaK - (fit$H %*% V %*% t(fit$H)))^2)
-        }
-        o <- optim(init, fun, method=method, control=control, hessian=hessian)
-        o$coefficients <- c(sigma=exp(o$par[1L]),
-                            rho=tanh(o$par[2L]))
-        o$SigmaKhat <- exp(o$par[1L])^2 * v +
-            exp(o$par[1L])^2 * tanh(o$par[2L]) * (1-v)
-    }
-    fit$optim <- o
-    fit
+    init <- 0
+    V_fun <- function(parms, K) diag(exp(parms[1L])^2, K, K)
+    o <- suppressWarnings({
+        optim(init, fun, method=method, control=control, hessian=hessian)
+    })
+    o$coefficients <- c(sigma=exp(o$par))
+    o$SigmaK <- exp(o$par)^2 * v
+    o
+}
+SigmaK_fit <- function(object,
+method = "Nelder-Mead", control = list(), hessian = FALSE) {
+    SigmaKstar <- SigmaKstar(object)
+    H <- object$H
+    o <- .SigmaK_fit(SigmaKstar, H,
+        method=method, control=control, hessian=hessian)
+    object$optim <- o
+    object
 }
