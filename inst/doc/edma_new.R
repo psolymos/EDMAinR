@@ -5,160 +5,102 @@ file1 <- "inst/extdata/crouzon/Crouzon_P0_Global_MUT.xyz"
 file2 <- "inst/extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz"
 x1 <- read_xyz(file1)
 x2 <- read_xyz(file2)
+x1
+x2
 dim(x1)
 dimnames(x1)
+landmark_names(x1)
 subset(x1, 1:10)
 x1[1:10, 2:3, 1:5]
 str(as.matrix(x1))
 str(as.data.frame(x1))
 str(as.array(x1))
-str(stack(x1, TRUE))
-
+str(stack(x1))
 
 fit <- edma_fit(x1)
-object <- edma_fit(x1, B=10)
 Meanform(fit)
 SigmaKstar(fit)
-
-print.edma_fit_np <- function(x, ...) {
-    cat("EDMA nonparametric fit: ", x$name, "\n",
-        ncol(x$data[[1L]]), " dimensions, ",
-        nrow(x$data[[1L]]), " landmarks, ",
-        length(x$data), " replicates, ",
-        if (length(x$boot))
-            paste(length(x$boot) + 1L, "bootstrap runs") else "no bootstrap",
-        sep="")
-    invisible(x)
-}
-
-Meanform <- function (object, ...) UseMethod("Meanform")
-Meanform.edma_fit <- function (object, ...) object$M
-
-SigmaKstar <- function (object, ...) UseMethod("SigmaKstar")
-SigmaKstar.edma_fit_np <- function (object, ...) object$SigmaKstar
-
-as.dist.edma_fit <- function(m, diag = FALSE, upper = FALSE) {
-    out <- dist(Meanform(m), diag=diag, upper=upper)
-    class(out) <- c(class(out), "edma_dist")
-    out
-}
-
-stack.dist <- function(x) {
-    id <- as.matrix(x)
-    id[] <- 0
-    id[lower.tri(id)] <- 1
-    rm <- row(id)
-    cm <- col(id)
-    rm <- array(rm)[array(id) == 1]
-    cm <- array(cm)[array(id) == 1]
-    d <- as.vector(x)
-    out <- data.frame(row=rm, col=cm, dist=d)
-    out$row <- as.factor(out$row)
-    out$col <- as.factor(out$col)
-    levels(out$row) <- rownames(id)[-1]
-    levels(out$col) <- colnames(id)[-ncol(id)]
-    out
-}
-
-stacked_dist <- function (object, ...) UseMethod("stacked_dist")
-stacked_dist.edma_fit <- function (object, sort=FALSE, ...) {
-    d <- as.dist(object, diag = FALSE, upper = FALSE)
-    out <- stack(d)
-    attr(out, "method") <- attr(d, "method")
-    attr(out, "Tval") <- attr(d, "Tval")
-    if (sort)
-        out <- out[order(out$dist, ...),]
-    out
-}
 head(stacked_dist(fit))
 head(stacked_dist(fit, sort=TRUE, decreasing=TRUE))
 head(stacked_dist(fit, sort=TRUE, decreasing=FALSE))
 
-## a and b are edma_fit objects
-.compare_objects <- function (a, b, ...) {
-    if (nrow(a$data[[1L]]) != nrow(b$data[[1L]]))
-        stop("number of landmarks must be identical")
-    if (ncol(a$data[[1L]]) != ncol(b$data[[1L]]))
-        stop("number of dimensions must be identical")
-    if (length(a$boot) != length(b$boot))
-        stop("number of bootstrap runs  must be identical")
-    if (!all(rownames(a$data[[1L]]) == rownames(b$data[[1L]])))
-        stop("landmark names and ordering must be identical")
-    if (!all(colnames(a$data[[1L]]) == colnames(b$data[[1L]])))
-        stop("dimension names and ordering must be identical")
-    invisible(NULL)
-}
-
-## inputs are meanform matrices
-.formdiff <- function(M1, M2) {
-    r <- dist(M1) / dist(M2)
-    attr(r, "method") <- "euclidean_distance_ratio"
-    attr(r, "call") <- NULL
-    attr(r, "Tval") <- max(r) / min(r)
-    r
-}
-form_difference <- function (numerator, denominator, ...)
-    UseMethod("form_difference")
-form_difference.edma_fit <- function (numerator, denominator, ...) {
-    .compare_objects(numerator, denominator)
-    .formdiff(Meanform(numerator), Meanform(denominator))
-}
-
 numerator <- edma_fit(x1, B=10)
 denominator <- edma_fit(x2, B=10)
+fd <- form_difference(numerator, denominator)
+str(fd)
+edma_test(numerator, denominator)
+sfd <- stacked_form_difference(numerator, denominator, sort=TRUE)
+str(sfd)
 
-edma_test <- function (numerator, denominator) {
-    .compare_objects(numerator, denominator)
-    DNAME <- paste(numerator$name, denominator$name, sep = ", ")
-    METHOD <- "Bootstrap based EDMA T-test"
-    B <- length(numerator$boot)
-    Tval <- attr(form_difference(numerator, denominator), "Tval")
-    Tvals <- c(Tval, sapply(seq_len(B), function(i) {
-        attr(.formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M), "Tval")
-    }))
-    PVAL = sum(Tvals > Tval) / (B + 1)
-    PARAMETER <- B + 1L
-    names(Tval) <- "T-value"
-    names(PARAMETER) <- "B"
-    structure(list(statistic = Tval, parameter = PARAMETER,
-        p.value = PVAL, method = METHOD, data.name = DNAME,
-        Tvals=Tvals),
-        class = "htest")
-}
-stacked_form_difference <- function (numerator, denominator,
-sort=FALSE, level=0.95) {
-    .compare_objects(numerator, denominator)
-    d <- form_difference(numerator, denominator)
-    out <- stack(d)
-    B <- length(numerator$boot)
-    fd <- sapply(seq_len(B), function(i) {
-        stack(.formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M))$dist
-    })
-    a <- c((1-level)/2, 1-(1-level)/2)
-    q <- t(apply(cbind(out$dist, fd), 1, quantile, a))
-    attr(out, "method") <- attr(d, "method")
-    attr(out, "Tval") <- attr(d, "Tval")
-    attr(out, "level") <- level
-    out$lower <- q[,1L]
-    out$upper <- q[,2L]
-    out$inside <- out$dist <= out$upper & out$dist >= out$lower
-    if (sort)
-        out <- out[order(out$dist, ...),]
-    out
-}
+fit2 <- SigmaK_fit(fit)
+str(fit2$optim)
+
 ## TODO:
 
 ## OK - edma_test: B+1 T values & P-value (value > Tobs / (B+1))
 ## OK - assess bootpstrat: !NULL, B1=B2
 ## OK - make stacked form diff with marginal CI
 
-## - parametric fit for sig2*I
+## OK - parametric fit for sig2*I
 ## - structural assessment
 ## - input structure
 
 ## - xlsx as output
 ## - 2D/3D plotting
 ## - Growth assessment (2x + 2x combo)
+
+
+## parametric testing
+
+# Generate the data and test the method
+
+K <- 3 # number of landmarks
+D <- 2 # dimension, 2 or 3
+
+sig <- 0.75
+rho <- 0
+SigmaK <- sig^2*diag(1, K, K) + sig^2*rho*(1-diag(1, K, K))
+
+M <- matrix(c(0,1,0,0,0,1), 3, 2)
+M[,1] <- M[,1] - mean(M[,1])
+M[,2] <- M[,2] - mean(M[,2])
+M <- 10*M
+
+n <- 100
+Z <- matrix(nrow = n * K, ncol = D)
+for (i in 1:n) {
+    Z[((i - 1) * K + 1):(i * K), ] <- matrix(rnorm(K * D), nrow = K,
+        ncol = D)
+}
+C <- chol(SigmaK)
+X <- matrix(nrow = n * K, ncol = D)
+for (i in 1:n) {
+    X[((i - 1) * K + 1):(i * K), ] <- crossprod(C, Z[((i - 1) * K + 1):(i *
+        K), ]) + M
+}
+
+I <- diag(1, K)
+ones <- array(rep(1, K), c(1, K))
+H <- I - (1/K) * crossprod(ones, ones)
+SigmaKstar = H %*% SigmaK %*% H
+
+#fit <- edma_fit.new(X, n, K, D)
+fit <- .edma_fit_np(X, n, K, D)
+o <- .SigmaK_fit(fit$SigmaKstar, fit$H)
+o
+
+# compare the non-parametric estimates
+## sigma
+c(true=sig, est=o$coefficients)
+## M
+cbind(true=dist(M), est=dist(fit$M))
+## SigmaKstar
+cbind(true=c(diag(SigmaKstar), SigmaKstar[upper.tri(SigmaKstar)]),
+    nonpar=c(diag(fit$SigmaKstar), fit$SigmaKstar[upper.tri(fit$SigmaKstar)]))
+## SigmaK
+cbind(true=c(diag(SigmaK), SigmaK[upper.tri(SigmaK)]),
+    param=c(diag(o$SigmaK), o$SigmaK[upper.tri(o$SigmaK)]))
+
 
 
 ## stuff from Subhash--------------------
