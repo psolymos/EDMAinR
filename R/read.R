@@ -75,6 +75,9 @@ subset.edma_data <- function(x, subset, ...) {
 `dimnames.edma_data` <- function(x) {
     c(dimnames(x$data[[1L]]), NULL)
 }
+landmark_names <- function (x, ...) UseMethod("landmark_names")
+landmark_names.edma_data <- function(x, ...) dimnames(x)[[1L]]
+
 
 ## coercion methods
 as.matrix.edma_data <- function(x, ...) stack(x, ...)
