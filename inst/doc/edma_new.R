@@ -1,21 +1,22 @@
 
 source("R/read.R")
 source("R/nonparametric.R")
-file <- "inst/extdata/crouzon/Crouzon_P0_Global_MUT.xyz"
-x <- read_xyz(file)
-x
-dim(x)
-dimnames(x)
-subset(x, 1:10)
-x[1:10, 2:3, 1:5]
-str(as.matrix(x))
-str(as.data.frame(x))
-str(as.array(x))
-str(X <- stack(x, TRUE))
+file1 <- "inst/extdata/crouzon/Crouzon_P0_Global_MUT.xyz"
+file2 <- "inst/extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz"
+x1 <- read_xyz(file1)
+x2 <- read_xyz(file2)
+dim(x1)
+dimnames(x1)
+subset(x1, 1:10)
+x1[1:10, 2:3, 1:5]
+str(as.matrix(x1))
+str(as.data.frame(x1))
+str(as.array(x1))
+str(stack(x1, TRUE))
 
 
-fit <- edma_fit(x)
-object <- edma_fit(x, B=10)
+fit <- edma_fit(x1)
+object <- edma_fit(x1, B=10)
 Meanform(fit)
 SigmaKstar(fit)
 
@@ -61,7 +62,10 @@ stack.dist <- function(x) {
 
 stacked_dist <- function (object, ...) UseMethod("stacked_dist")
 stacked_dist.edma_fit <- function (object, sort=FALSE, ...) {
-    out <- stack(as.dist(object, diag = FALSE, upper = FALSE))
+    d <- as.dist(object, diag = FALSE, upper = FALSE)
+    out <- stack(d)
+    attr(out, "method") <- attr(d, "method")
+    attr(out, "Tval") <- attr(d, "Tval")
     if (sort)
         out <- out[order(out$dist, ...),]
     out
@@ -70,30 +74,83 @@ head(stacked_dist(fit))
 head(stacked_dist(fit, sort=TRUE, decreasing=TRUE))
 head(stacked_dist(fit, sort=TRUE, decreasing=FALSE))
 
-form_difference <- function (numerator, denominator, ...)
-    UseMethod("form_difference")
-
-file1 <- "inst/extdata/crouzon/Crouzon_P0_Global_MUT.xyz"
-file2 <- "inst/extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz"
-x1 <- read_xyz(file1)
-x2 <- read_xyz(file2)
-numerator <- edma_fit(x1)
-denominator <- edma_fit(x2)
-
-form_difference.edma_fit <- function (numerator, denominator, ...) {
-    f <- function(a, b) as.dist(a) / as.dist(b)
-    r <- f(numerator, denominator)
-    attr(r, "method") <- "euclidean_distance_ratio"
-    attr(r, "call") <- NULL
-    attr(r, "T") <- max(r) / min(r)
-    r
+## a and b are edma_fit objects
+.compare_objects <- function (a, b, ...) {
+    if (nrow(a$data[[1L]]) != nrow(b$data[[1L]]))
+        stop("number of landmarks must be identical")
+    if (ncol(a$data[[1L]]) != ncol(b$data[[1L]]))
+        stop("number of dimensions must be identical")
+    if (length(a$boot) != length(b$boot))
+        stop("number of bootstrap runs  must be identical")
+    if (!all(rownames(a$data[[1L]]) == rownames(b$data[[1L]])))
+        stop("landmark names and ordering must be identical")
+    if (!all(colnames(a$data[[1L]]) == colnames(b$data[[1L]])))
+        stop("dimension names and ordering must be identical")
+    invisible(NULL)
 }
 
+## inputs are meanform matrices
+.formdiff <- function(M1, M2) {
+    r <- dist(M1) / dist(M2)
+    attr(r, "method") <- "euclidean_distance_ratio"
+    attr(r, "call") <- NULL
+    attr(r, "Tval") <- max(r) / min(r)
+    r
+}
+form_difference <- function (numerator, denominator, ...)
+    UseMethod("form_difference")
+form_difference.edma_fit <- function (numerator, denominator, ...) {
+    .compare_objects(numerator, denominator)
+    .formdiff(Meanform(numerator), Meanform(denominator))
+}
+
+numerator <- edma_fit(x1, B=10)
+denominator <- edma_fit(x2, B=10)
+
+edma_test <- function (numerator, denominator) {
+    .compare_objects(numerator, denominator)
+    DNAME <- paste(numerator$name, denominator$name, sep = ", ")
+    METHOD <- "Bootstrap based EDMA T-test"
+    B <- length(numerator$boot)
+    Tval <- attr(form_difference(numerator, denominator), "Tval")
+    Tvals <- c(Tval, sapply(seq_len(B), function(i) {
+        attr(.formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M), "Tval")
+    }))
+    PVAL = sum(Tvals > Tval) / (B + 1)
+    PARAMETER <- B + 1L
+    names(Tval) <- "T-value"
+    names(PARAMETER) <- "B"
+    structure(list(statistic = Tval, parameter = PARAMETER,
+        p.value = PVAL, method = METHOD, data.name = DNAME,
+        Tvals=Tvals),
+        class = "htest")
+}
+stacked_form_difference <- function (numerator, denominator,
+sort=FALSE, level=0.95) {
+    .compare_objects(numerator, denominator)
+    d <- form_difference(numerator, denominator)
+    out <- stack(d)
+    B <- length(numerator$boot)
+    fd <- sapply(seq_len(B), function(i) {
+        stack(.formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M))$dist
+    })
+    a <- c((1-level)/2, 1-(1-level)/2)
+    q <- t(apply(cbind(out$dist, fd), 1, quantile, a))
+    attr(out, "method") <- attr(d, "method")
+    attr(out, "Tval") <- attr(d, "Tval")
+    attr(out, "level") <- level
+    out$lower <- q[,1L]
+    out$upper <- q[,2L]
+    out$inside <- out$dist <= out$upper & out$dist >= out$lower
+    if (sort)
+        out <- out[order(out$dist, ...),]
+    out
+}
 ## TODO:
 
-## - edma_test: B+1 T values & P-value (value > Tobs / (B+1))
-## - assess bootpstrat: !NULL, B1=B2
-## - make stacked form diff with marginal CI
+## OK - edma_test: B+1 T values & P-value (value > Tobs / (B+1))
+## OK - assess bootpstrat: !NULL, B1=B2
+## OK - make stacked form diff with marginal CI
 
 ## - parametric fit for sig2*I
 ## - structural assessment
