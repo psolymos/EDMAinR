@@ -1,3 +1,108 @@
+
+source("R/read.R")
+source("R/nonparametric.R")
+file <- "inst/extdata/crouzon/Crouzon_P0_Global_MUT.xyz"
+x <- read_xyz(file)
+x
+dim(x)
+dimnames(x)
+subset(x, 1:10)
+x[1:10, 2:3, 1:5]
+str(as.matrix(x))
+str(as.data.frame(x))
+str(as.array(x))
+str(X <- stack(x, TRUE))
+
+
+fit <- edma_fit(x)
+object <- edma_fit(x, B=10)
+Meanform(fit)
+SigmaKstar(fit)
+
+print.edma_fit_np <- function(x, ...) {
+    cat("EDMA nonparametric fit: ", x$name, "\n",
+        ncol(x$data[[1L]]), " dimensions, ",
+        nrow(x$data[[1L]]), " landmarks, ",
+        length(x$data), " replicates, ",
+        if (length(x$boot))
+            paste(length(x$boot) + 1L, "bootstrap runs") else "no bootstrap",
+        sep="")
+    invisible(x)
+}
+
+Meanform <- function (object, ...) UseMethod("Meanform")
+Meanform.edma_fit <- function (object, ...) object$M
+
+SigmaKstar <- function (object, ...) UseMethod("SigmaKstar")
+SigmaKstar.edma_fit_np <- function (object, ...) object$SigmaKstar
+
+as.dist.edma_fit <- function(m, diag = FALSE, upper = FALSE) {
+    out <- dist(Meanform(m), diag=diag, upper=upper)
+    class(out) <- c(class(out), "edma_dist")
+    out
+}
+
+stack.dist <- function(x) {
+    id <- as.matrix(x)
+    id[] <- 0
+    id[lower.tri(id)] <- 1
+    rm <- row(id)
+    cm <- col(id)
+    rm <- array(rm)[array(id) == 1]
+    cm <- array(cm)[array(id) == 1]
+    d <- as.vector(x)
+    out <- data.frame(row=rm, col=cm, dist=d)
+    out$row <- as.factor(out$row)
+    out$col <- as.factor(out$col)
+    levels(out$row) <- rownames(id)[-1]
+    levels(out$col) <- colnames(id)[-ncol(id)]
+    out
+}
+
+stacked_dist <- function (object, ...) UseMethod("stacked_dist")
+stacked_dist.edma_fit <- function (object, sort=FALSE, ...) {
+    out <- stack(as.dist(object, diag = FALSE, upper = FALSE))
+    if (sort)
+        out <- out[order(out$dist, ...),]
+    out
+}
+head(stacked_dist(fit))
+head(stacked_dist(fit, sort=TRUE, decreasing=TRUE))
+head(stacked_dist(fit, sort=TRUE, decreasing=FALSE))
+
+form_difference <- function (numerator, denominator, ...)
+    UseMethod("form_difference")
+
+file1 <- "inst/extdata/crouzon/Crouzon_P0_Global_MUT.xyz"
+file2 <- "inst/extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz"
+x1 <- read_xyz(file1)
+x2 <- read_xyz(file2)
+numerator <- edma_fit(x1)
+denominator <- edma_fit(x2)
+
+form_difference.edma_fit <- function (numerator, denominator, ...) {
+    f <- function(a, b) as.dist(a) / as.dist(b)
+    r <- f(numerator, denominator)
+    attr(r, "method") <- "euclidean_distance_ratio"
+    attr(r, "call") <- NULL
+    attr(r, "T") <- max(r) / min(r)
+    r
+}
+
+## TODO:
+
+## - edma_test: B+1 T values & P-value (value > Tobs / (B+1))
+## - assess bootpstrat: !NULL, B1=B2
+## - make stacked form diff with marginal CI
+
+## - parametric fit for sig2*I
+## - structural assessment
+## - input structure
+
+## - xlsx as output
+
+## stuff from Subhash--------------------
+
 ## workhorse function to estimate centered mean form and SigmaKstar
 ## X: read.table(x) # data frame input, n tables (each K x D) stacked ???
 ## n: number of individuals (replicates)
