@@ -100,6 +100,9 @@ form_difference.edma_fit <- function (numerator, denominator, ...) {
 ## - input structure
 
 ## - xlsx as output
+## - 2D/3D plotting
+## - Growth assessment (2x + 2x combo)
+
 
 ## stuff from Subhash--------------------
 
