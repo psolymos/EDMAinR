@@ -118,7 +118,7 @@ as.dist.edma_fit <- function(m, diag = FALSE, upper = FALSE) {
     out
 }
 
-stack.dist <- function(x) {
+stack.dist <- function(x, ...) {
     id <- as.matrix(x)
     id[] <- 0
     id[lower.tri(id)] <- 1

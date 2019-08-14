@@ -29,6 +29,7 @@ read_xyz <- function(file, ...) {
     class(out) <- c("edma_data")
     out
 }
+
 ## this turns the data into X expected by fitting functions
 ## is centering useful here?
 stack.edma_data <- function(x, ...) {
@@ -39,6 +40,7 @@ stack.edma_data <- function(x, ...) {
         rownames(x$data[[1L]]))
     out
 }
+
 ## print function
 print.edma_data <- function(x, ...) {
     cat("EDMA data: ", x$name, "\n",
@@ -47,6 +49,7 @@ print.edma_data <- function(x, ...) {
         length(x$data), " replicates", sep="")
     invisible(x)
 }
+
 ## subset replicates in the the data list
 subset.edma_data <- function(x, subset, ...) {
     if (missing(subset))
@@ -55,6 +58,7 @@ subset.edma_data <- function(x, subset, ...) {
     x$notes <- x$notes[subset]
     x
 }
+
 ## subset landmarks, dimensions, replicates
 `[.edma_data` <- function (x, i, j, k) {
     if (missing(i))
@@ -68,6 +72,7 @@ subset.edma_data <- function(x, subset, ...) {
         x$data[[h]] <- x$data[[h]][i,j,drop=FALSE]
     x
 }
+
 ## retrieve dimensions and dimnames
 `dim.edma_data` <- function(x) {
     c(nrow(x$data[[1L]]), ncol(x$data[[1L]]), length(x$data))
@@ -86,6 +91,45 @@ as.array.edma_data <- function (x, ...) {
     out <- array(0, dim(x), dimnames(x))
     for (i in seq_along(x$data))
         out[,,i] <- x$data[[i]]
+    out
+}
+
+simulate_edma_data <- function(n, M, SigmaK) {
+    K <- nrow(M)
+    D <- ncol(M)
+    if (D > 3 || D < 2)
+        stop("Mean form must have 2 or 3 dimensions.")
+    Z <- matrix(nrow = n * K, ncol = D)
+    for (i in 1:n) {
+        Z[((i - 1) * K + 1):(i * K), ] <- matrix(rnorm(K * D), nrow = K,
+            ncol = D)
+    }
+    Cmat <- chol(SigmaK)
+    X <- matrix(nrow = n * K, ncol = D)
+    for (i in 1:n) {
+        X[((i - 1) * K + 1):(i * K), ] <- crossprod(Cmat,
+            Z[((i - 1) * K + 1):(i * K), ]) + M
+    }
+    I <- diag(1, K)
+    ones <- array(rep(1, K), c(1, K))
+    H <- I - (1/K) * crossprod(ones, ones)
+    SigmaKstar = H %*% SigmaK %*% H
+
+    DATA <- list()
+    for (i in seq_len(n)) {
+        DATA[[i]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
+        dimnames(DATA[[i]]) <- list(
+            paste0("Landmark", seq_len(K)),
+            c("X", "Y", "Z")[seq_len(D)])
+    }
+    out <- list(
+        name="Simulated landmark data",
+        data=DATA,
+        notes=NULL
+    )
+    class(out) <- c("edma_data")
+    attr(out, "simulation_settings") <- list(M=M, SigmaK=SigmaK,
+        SigmaKstar=SigmaKstar, H=H)
     out
 }
 

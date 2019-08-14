@@ -1,6 +1,22 @@
-.full_p_fun <- function(object) {
+.estimable_SigmaK <- function(SigmaKstar) {
+    K <- nrow(SigmaKstar)
+    MAX <- K*(K-1)/2
+    SigmaKstar[SigmaKstar != 0] <- 1
+    SigmaKstar[upper.tri(SigmaKstar)] <- 0
+    UNK <- sum(SigmaKstar)
+    UNK <= MAX
+}
+
+## pattern is a 0/1 matrix: 1 indicating unknowns
+.full_p_fun <- function(object, pattern) {
     est.M <- Meanform(object)
     est.SigmaKstar <- SigmaKstar(object)
+    if (!all(dim(est.SigmaKstar) == dim(pattern)))
+        stop("Dimension mismatch for pattern.")
+    if (!.estimable_SigmaK(pattern))
+        stop("pattern implies too many unknowns for parametric estimation.")
+#    if (!.estimable_SigmaK(est.SigmaKstar))
+#        stop("SigmaKstar has too many unknowns for parametric estimation.")
     K <- nrow(est.M)
     D <- ncol(est.M)
     ## Use maple to solve Y such that YH=L
@@ -12,7 +28,7 @@
     est.SigmaKtilde <- Y %*% est.SigmaKstar %*% t(Y)
     L <- cbind(c(rep(-1, K - 1)), diag(1, K - 1))
     ## L%*%SigmaK%*%t(L) # model for diagonal matrix
-    c <- as.vector(est.SigmaKtilde)
+    cvec <- as.vector(est.SigmaKtilde)
     A <- matrix(nrow = (K - 1)^2, ncol = K)
     iden <- diag(1, K - 1)
     for (i in 1:(K - 1)) {
@@ -23,17 +39,17 @@
             K - 1), nrow = K - 1, byrow = T)
     }
     ## A
-    est.vect <- round((solve(t(A) %*% A)) %*% t(A) %*% c, 3)
+    est.vect <- round((solve(t(A) %*% A)) %*% t(A) %*% cvec, 3)
     est.SigmaK <- diag(c(est.vect))
     ## general case
-    c <- as.vector(est.SigmaKtilde)
-    b.ori <- as.vector(SigmaK)
+    #c <- as.vector(est.SigmaKtilde)
+    #b.ori <- as.vector(SigmaK)
     m <- 0
     b.dis <- rep(0, K * (K + 1)/2)
     for (i in 1:K) {
         for (j in i:K) {
             m <- m + 1
-            b.dis[m] <- SigmaK[i, j]
+            b.dis[m] <- pattern[i, j]
         }
     }
     d <- 0
@@ -108,17 +124,19 @@
     }
     A.aug <- Q[, -1]
     Kstar <- length(b)
-    if (nrow(A.aug) != ncol(A.aug)) {
-        est.vect <- solve(A.aug, c.dis)
-    } else if (ncol(A.aug) == Kstar) {
-        est.vect <- (solve(t(A.aug) %*% A.aug)) %*% t(A.aug) %*% c.dis
-    } else stop(" SigmaK is not identifiable\n")
+    ## this part here doesnt make sense: solve expects a to be square matrix
+#    if (nrow(A.aug) != ncol(A.aug)) {
+#        est.vect <- solve(A.aug, c.dis)
+#    } else if (ncol(A.aug) == Kstar) {
+#        est.vect <- (solve(t(A.aug) %*% A.aug)) %*% t(A.aug) %*% c.dis
+#    } else stop("SigmaK is not identifiable\n")
+    est.vect <- (solve(t(A.aug) %*% A.aug)) %*% t(A.aug) %*% c.dis
     ## general case est.SigmaK
     est.SigmaK <- matrix(nrow = K, ncol = K)
     t <- 1
     for (i in 1:K) {
         for (j in i:K) {
-            if (SigmaK[i, j] == 0) {
+            if (pattern[i, j] == 0) {
                 est.SigmaK[i, j] <- 0
                 est.SigmaK[j, i] <- 0
             } else {

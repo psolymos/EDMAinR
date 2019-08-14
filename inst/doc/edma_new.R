@@ -42,7 +42,7 @@ str(fit2$optim)
 ## OK - make stacked form diff with marginal CI
 
 ## OK - parametric fit for sig2*I
-## - structural assessment
+## OK - structural assessment
 ## - input structure
 
 ## - xlsx as output
@@ -67,15 +67,16 @@ M[,2] <- M[,2] - mean(M[,2])
 M <- 10*M
 
 n <- 100
+
 Z <- matrix(nrow = n * K, ncol = D)
 for (i in 1:n) {
     Z[((i - 1) * K + 1):(i * K), ] <- matrix(rnorm(K * D), nrow = K,
         ncol = D)
 }
-C <- chol(SigmaK)
+Cmat <- chol(SigmaK)
 X <- matrix(nrow = n * K, ncol = D)
 for (i in 1:n) {
-    X[((i - 1) * K + 1):(i * K), ] <- crossprod(C, Z[((i - 1) * K + 1):(i *
+    X[((i - 1) * K + 1):(i * K), ] <- crossprod(Cmat, Z[((i - 1) * K + 1):(i *
         K), ]) + M
 }
 
@@ -292,3 +293,39 @@ method = "Nelder-Mead", control = list(), hessian = FALSE)
 }
 
 SigmaK_fit(fit)
+
+## Cheverud et al. 1997
+Mandible_data_meanform <- matrix(c(
+    -2.5642147, 2.9238803,
+    -4.3598175, 2.1062128,
+    -5.0189366, 2.0386707,
+    -5.7237441, 0.6476102,
+    -3.4644795, -1.1693193,
+    -4.5855937, -2.9159961,
+    -3.3321319, -3.2438449,
+    0.1369185, -1.7688938,
+    2.4780984, -2.1174301,
+    4.6209991, -1.6495556,
+    6.0020391, -0.5078821,
+    6.5324078, 1.7178527,
+    4.2879408, 0.3604548,
+    3.0344353, 1.1350108,
+    1.2218793, 1.1121225,
+    0.7341997, 1.3311070
+), ncol=2, byrow=TRUE)
+#1 Coronoid tip
+#2 Anterior condylar facet
+#3 Posterior condylar facet
+#4 Inferior condylar facet
+#5 Deepest point of mandibular notch
+#6 Posterior angular process
+#7 Inferior angular process
+#8 Anterior angular process
+#9 Posterior inferior corpus
+#10 Anterior inferior corpus
+#11 Inferior incisor alveolus
+#12 Superior incisor alveolus
+#13 Deepest point of incisive notch
+#14 Anterior molar alveolus
+#15 Posterior molar alveolus
+#16 Coronoid base
