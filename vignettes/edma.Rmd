@@ -1,0 +1,238 @@
+---
+title: "EDMAinR: basic usage"
+output: rmarkdown::html_vignette
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{EDMAinR: basic usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Introduction
+
+**EDMAinR** is an R package for Euclidean Distance Matrix Analysis (EDMA).
+EDMA is a coordinate‐free approach for comparing biological shapes using landmark data
+as described in Lele and Richtsmeier (1991).
+The implementation follows Hu (2007).
+
+## Install
+
+```{r install,eval=FALSE}
+if (!require(remotes))
+    install.packages("remotes")
+remotes::install_github("psolymos/EDMAinR")
+```
+
+We can now load the package:
+
+```{r load}
+library(EDMAinR)
+```
+
+## Landmark data
+
+Use the `read_xyz` function to read 2 or 3 D landmark data from `*.xyz` files:
+
+```{r readxyz}
+file1 <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz", 
+    package="EDMAinR")
+x1 <- read_xyz(file1)
+x1
+
+file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz", 
+    package="EDMAinR")
+x2 <- read_xyz(file2)
+x2
+```
+
+Here are the methods that we can use to learn more about the data sets.
+
+Access dimensions (landmarks, $K$; dimensions, $D$; replicates, $n$) 
+and dimension names (`landmark_names` returns the landmark labels):
+
+```{r datamethods}
+dim(x1)
+dimnames(x1)
+landmark_names(x1)
+```
+
+Subsetting the data comes handy sometimes. The most general way to subset
+the data sets is via the `[` function, the 3 indices inside the brackets
+refer to the landmarks, dimensions, and replicates (most often individuals).
+The `subset` method subsets the replicates:
+
+```{r datasubset}
+x1[1:10, 2:3, 1:5]
+subset(x1, 1:10)
+```
+
+The data format inside the objects `x1` and `x2` is list of the $K \times D$
+matrices for each individual. Sometimes it is handy to stack these
+matrices and create a rectangular data (either as a matrix, or data frame,
+with $n \times K$ rows and $D$ columns):
+
+```{r dataflat}
+str(as.matrix(x1))
+str(as.data.frame(x1))
+str(stack(x1))
+```
+
+Alternatively, we can store the data as an array
+($K \times D \times n$):
+
+```{r dataarray}
+str(as.array(x1))
+```
+
+## Nonparametric estimation
+
+The nonparametric estimator gives the mean form matrix ($\hat{M}$)
+and $\hat{\Sigma}_{K}^\ast$, that we can extract from the fitted
+model object `fit` using the `Meanform` and `SigmaKstar` functions
+(using only the first 5 landmarks here):
+
+```{r fit}
+fit <- edma_fit(x1[1:5,,])
+fit
+Meanform(fit)
+SigmaKstar(fit)
+```
+
+We can extract the mean form as pairwise Euclidean distances
+(object class _dist_ as it is customary in R, see `?dist` for the details):
+
+```{r ed}
+as.dist(fit)
+```
+
+The Euclidean distances can be stacked, and the stacked distances
+sorted:
+
+```{r stackeddist}
+stacked_dist(fit)
+stacked_dist(fit, sort=TRUE, decreasing=TRUE)
+stacked_dist(fit, sort=TRUE, decreasing=FALSE)
+```
+
+## Comparing 2 sets of landmark data
+
+We can fit the EDMA object with bootstrap resampling by
+specifying the `B` argument, this is needed for statistical testing:
+
+```{r boot}
+B <- 25
+numerator <- edma_fit(x1[1:25,,], B=B)
+denominator <- edma_fit(x2[1:25,,], B=B)
+```
+
+The form difference is defined as the ratio of the
+two Euclidean distances based on the mean forms from the
+numerator and denominator model objects:
+
+```{r formdiff}
+fd <- form_difference(numerator, denominator)
+str(fd)
+```
+
+The global $T$-test assesses if the form difference is significant:
+
+```{r}
+et <- edma_test(numerator, denominator)
+et
+
+hist(et$Tvals, xlab="T-values", main="")
+abline(v=et$statistic, col=2, lwd=2)
+```
+
+The local test is achieved by looking at the stacked for mdifference,
+where the bootstrap based `lower` and `upper` confidence limits are
+also provided with the column `inside` indicating if the
+`dist`ance is inside these limits:
+
+```{r}
+sfd <- stacked_form_difference(numerator, denominator, 
+    sort=TRUE, level=0.95)
+head(sfd)
+```
+
+## Parametric estimation
+
+We start with simulated data and test that the approach
+(both nonparametric and parametric) works.
+
+Here is a simple triangular mean form ($M$) in 2D:
+
+```{r M}
+K <- 3 # number of landmarks
+D <- 2 # dimension, 2 or 3
+
+M <- matrix(c(0,1,0,0,0,1), 3, 2)
+M[,1] <- M[,1] - mean(M[,1])
+M[,2] <- M[,2] - mean(M[,2])
+M <- 10*M
+M
+```
+
+We make a $\Sigma_{K}$ matrix with constant variance and 0 covariance:
+
+```{r}
+sig <- 0.75
+rho <- 0
+SigmaK <- sig^2*diag(1, K, K) + sig^2*rho*(1-diag(1, K, K))
+SigmaK
+```
+
+Now we generate $n=100$ realizations based on $M$ and $\Sigma_{K}$:
+
+```{r simul}
+x <- simulate_edma_data(n=100, M, SigmaK)
+x
+```
+
+First, we need the nonparametric fit to provide 
+$\hat{M}$ and $\hat{\Sigma}_{K}^\ast$:
+
+```{r fitnp}
+est <- edma_fit(x)
+est
+```
+Let us test if the pairwise Euclidean distances are estimated correctly:
+
+```{r testnp}
+cbind(true=dist(M), est=dist(Meanform(est)))
+```
+
+Now let us inspect elements of $\hat{\Sigma}_{K}^\ast$:
+
+```{r testkstar}
+true_SigmaKstar <- attr(x, "simulation_settings")$SigmaKstar
+cbind(true=c(diag(true_SigmaKstar), true_SigmaKstar[upper.tri(true_SigmaKstar)]),
+    nonpar=c(diag(SigmaKstar(est)), SigmaKstar(est)[upper.tri(SigmaKstar(est))]))
+```
+
+This part here is still experimental in terms of the user interface.
+We can estimate the constant variance model parameter as:
+
+```{r par}
+o <- SigmaK_fit(est)
+str(o$optim)
+
+cbind(true=c(diag(SigmaK), SigmaK[upper.tri(SigmaK)]),
+    param=c(diag(o$optim$SigmaK),
+      o$optim$SigmaK[upper.tri(o$optim$SigmaK)]))
+
+c(true_sigma=sig, estimate=o$optim$coefficients)
+```
+
+## References
+
+Lele, S. R., and Richtsmeier, J. T., 1991.
+Euclidean distance matrix analysis: A coordinate‐free approach for 
+comparing biological shapes using landmark data.
+American Journal of Physical Anthropology 86(3):415--27.
+DOI: [10.1002/ajpa.1330860307](https://doi.org/10.1002/ajpa.1330860307).
+
+Hu, L., 2007. Euclidean Distance Matrix Analysis of Landmarks Data:
+Estimation of Variance. Thesis, Master of Science in Statistics,
+Department of Mathematical and Statistical Sciences, 
+University of Alberta, Edmonton, Alberta, Canada. Pp. 49.
