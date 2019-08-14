@@ -1,3 +1,5 @@
+file1 <- "inst/extdata/purplebook/cebusage1.xyz"
+x1 <- read_xyz(file1)
 
 source("R/read.R")
 source("R/nonparametric.R")

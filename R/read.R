@@ -8,14 +8,23 @@ read_xyz <- function(file, ...) {
     DIMS <- character(nchar(h[2L]))
     for (i in seq_along(DIMS))
         DIMS[i] <- substr(h[2L], i, i)
-    tmp <- strsplit(h[3L], " ")[[1L]]
-    K <- as.integer(substr(tmp[1L], 1L, nchar(tmp[1L])-1L))
+    tmp <- gsub("\\D+","", strsplit(h[3L], " ")[[1L]])
+    K <- as.integer(tmp[1L])
     D <- as.integer(tmp[2L])
     n <- as.integer(tmp[3L])
     LABELS <- make.names(strsplit(h[4L], " ")[[1L]])
+    if (length(LABELS) < 1L) {
+        LABELS <- NULL # missing
+    } else {
+        if (length(LABELS) != K) {
+            warning("Labels are ignored, length did not match data.")
+        }
+    }
     X <- read.table(file, header=FALSE, sep=" ", skip=4L, nrows=n*K, ...)
-    NOTES <- read.table(file, header=FALSE, sep="\t", skip=4L+n*K,
-        stringsAsFactors=FALSE)[[1L]]
+    NOTES <- try(read.table(file, header=FALSE, sep="\t", skip=4L+n*K,
+        stringsAsFactors=FALSE)[[1L]], silent=TRUE)
+    if (inherits(NOTES, "try-error"))
+        NOTES <- NULL
     DATA <- list()
     for (i in seq_len(n)) {
         DATA[[i]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
