@@ -13,8 +13,8 @@ read_xyz <- function(file, ...) {
     D <- as.integer(tmp[2L])
     n <- as.integer(tmp[3L])
     LABELS <- make.names(strsplit(h[4L], " ")[[1L]])
-    if (length(LABELS) < 1L) {
-        LABELS <- NULL # missing
+    if (length(LABELS) < 1L) { # missing
+        LABELS <- paste0("L", seq_len(K))
     } else {
         if (length(LABELS) != K) {
             warning("Labels are ignored, length did not match data.")
