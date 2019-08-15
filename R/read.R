@@ -103,7 +103,7 @@ as.array.edma_data <- function (x, ...) {
     out
 }
 
-simulate_edma_data <- function(n, M, SigmaK) {
+edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     K <- nrow(M)
     D <- ncol(M)
     if (D > 3 || D < 2)
@@ -119,16 +119,17 @@ simulate_edma_data <- function(n, M, SigmaK) {
         X[((i - 1) * K + 1):(i * K), ] <- crossprod(Cmat,
             Z[((i - 1) * K + 1):(i * K), ]) + M
     }
-    I <- diag(1, K)
-    ones <- array(rep(1, K), c(1, K))
-    H <- I - (1/K) * crossprod(ones, ones)
+    if (is.null(H)) {
+        ones <- array(rep(1, K), c(1, K))
+        H <- diag(1, K) - (1/K) * crossprod(ones, ones)
+    }
     SigmaKstar = H %*% SigmaK %*% H
 
     DATA <- list()
     for (i in seq_len(n)) {
         DATA[[i]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
         dimnames(DATA[[i]]) <- list(
-            paste0("Landmark", seq_len(K)),
+            paste0("L", seq_len(K)),
             c("X", "Y", "Z")[seq_len(D)])
     }
     out <- list(
