@@ -8,6 +8,11 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
+```{r pre,include=FALSE}
+#knitr::opts_chunk$set(eval=FALSE)
+set.seed(1)
+```
+
 ## Introduction
 
 **EDMAinR** is an R package for Euclidean Distance Matrix Analysis (EDMA).
@@ -99,19 +104,22 @@ SigmaKstar(fit)
 ```
 
 We can extract the mean form as pairwise Euclidean distances
-(object class _dist_ as it is customary in R, see `?dist` for the details):
+(object class _dist_ as it is customary in R, see `?dist` for the details).
+This is the form matrix in distance matrix format:
 
 ```{r ed}
 as.dist(fit)
 ```
 
-The Euclidean distances can be stacked, and the stacked distances
-sorted:
+The Euclidean distances from the form matrix can be stacked, 
+and the stacked distances sorted. The `edma_fm` function
+produces the stacked for matrix, because this is most useful to us
+as it can be sorted and more easily inspected:
 
 ```{r stackeddist}
-stacked_dist(fit)
-stacked_dist(fit, sort=TRUE, decreasing=TRUE)
-stacked_dist(fit, sort=TRUE, decreasing=FALSE)
+edma_fm(fit)
+edma_fm(fit, sort=TRUE, decreasing=TRUE)
+edma_fm(fit, sort=TRUE, decreasing=FALSE)
 ```
 
 ## Comparing 2 sets of landmark data
@@ -125,35 +133,64 @@ numerator <- edma_fit(x1[1:25,,], B=B)
 denominator <- edma_fit(x2[1:25,,], B=B)
 ```
 
-The form difference is defined as the ratio of the
-two Euclidean distances based on the mean forms from the
+The form difference matrix is defined as the ratio of the
+two Euclidean distances form matrices based on the mean forms from the
 numerator and denominator model objects:
 
 ```{r formdiff}
-fd <- form_difference(numerator, denominator)
+fd <- formdiff(numerator, denominator)
 str(fd)
 ```
 
 The global $T$-test assesses if the form difference is significant:
 
-```{r}
+```{r ttest}
 et <- edma_test(numerator, denominator)
 et
-
-hist(et$Tvals, xlab="T-values", main="")
-abline(v=et$statistic, col=2, lwd=2)
+plot(et)
 ```
 
-The local test is achieved by looking at the stacked for mdifference,
+The local test is achieved by looking at the stacked form difference,
 where the bootstrap based `lower` and `upper` confidence limits are
 also provided with the column `inside` indicating if the
 `dist`ance is inside these limits:
 
-```{r}
-sfd <- stacked_form_difference(numerator, denominator, 
+```{r fdm}
+fdm <- edma_fdm(numerator, denominator, 
     sort=TRUE, level=0.95)
-head(sfd)
+head(fdm)
+tail(fdm)
+plot(fdm)
 ```
+
+## Comparing relative growth
+
+We will use the Cabus data sets from the 'Purple Book':
+
+```{r gdata}
+file_a1 <- system.file("extdata/purplebook/cebusage1.xyz", 
+    package="EDMAinR")
+a1 <- read_xyz(file_a1)
+file_a2 <- system.file("extdata/purplebook/cebusage6.xyz", 
+    package="EDMAinR")
+a2 <- read_xyz(file_a2)
+a1
+a2
+```
+
+Estimate the nonparametric forms and then the growth matrix:
+
+```{r gm}
+fit_a1 <- edma_fit(a1, B=B)
+fit_a2 <- edma_fit(a2, B=B)
+
+gm <- edma_gm(fit_a1, fit_a2, sort=TRUE, level=0.95)
+head(gm)
+tail(gm)
+```
+
+The `edma_gdm` function works similarly to the `edma_fdm` function,
+but instead of 2 fitted objects it takes 4 inputs: a1, a2, b1, and b2.
 
 ## Parametric estimation
 
@@ -185,7 +222,7 @@ SigmaK
 Now we generate $n=100$ realizations based on $M$ and $\Sigma_{K}$:
 
 ```{r simul}
-x <- simulate_edma_data(n=100, M, SigmaK)
+x <- edma_simulate_data(n=100, M, SigmaK)
 x
 ```
 
@@ -229,8 +266,13 @@ c(true_sigma=sig, estimate=o$optim$coefficients)
 Lele, S. R., and Richtsmeier, J. T., 1991.
 Euclidean distance matrix analysis: A coordinate‐free approach for 
 comparing biological shapes using landmark data.
-American Journal of Physical Anthropology 86(3):415--27.
+American Journal of Physical Anthropology 86:415--27.
 DOI: [10.1002/ajpa.1330860307](https://doi.org/10.1002/ajpa.1330860307).
+
+Lele, S. R., and Richtsmeier, J. T., 1995.
+Euclidean Distance Matrix Analysis: Confidence Intervals for
+Form and Growth Differences.
+American Journal of Physical Anthropology 98:73--86.
 
 Hu, L., 2007. Euclidean Distance Matrix Analysis of Landmarks Data:
 Estimation of Variance. Thesis, Master of Science in Statistics,
