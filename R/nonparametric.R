@@ -296,8 +296,8 @@ sort=FALSE, level=0.95, ...) {
     polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), col="lightblue", border=NA)
     abline(h=1, col="grey")
     for (i in seq_len(k))
-        if (1 > x$upper[i] || 1 < x$lower[i])
-            lines(xv[i]+c(-0.5, 0.5), c(1, 1), col="red")
+        lines(xv[i]+c(-0.5, 0.5), c(1, 1),
+            col=if (1 > x$upper[i] || 1 < x$lower[i]) "red" else "grey")
     lines(xv, x$dist, col="blue")
     axis(2)
     if (xshow) {
