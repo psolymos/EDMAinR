@@ -184,7 +184,8 @@ formdiff <- function (numerator, denominator, ...) {
 ## T-test for 2 edma_fit objects
 edma_test <- function (numerator, denominator) {
     .compare_objects(numerator, denominator)
-    DNAME <- paste(numerator$name, denominator$name, sep = " / ")
+    DNAME <- paste(deparse(substitute(numerator)),
+        deparse(substitute(denominator)), sep = " / "))
     METHOD <- "Bootstrap based EDMA T-test"
     B <- length(numerator$boot)
     Tval <- attr(formdiff(numerator, denominator), "Tval")

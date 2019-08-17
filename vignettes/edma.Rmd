@@ -122,7 +122,7 @@ edma_fm(fit, sort=TRUE, decreasing=TRUE)
 edma_fm(fit, sort=TRUE, decreasing=FALSE)
 ```
 
-## Comparing 2 sets of landmark data
+## Comparing 2 sets of 3D landmark data
 
 We can fit the EDMA object with bootstrap resampling by
 specifying the `B` argument, this is needed for statistical testing:
@@ -131,6 +131,51 @@ specifying the `B` argument, this is needed for statistical testing:
 B <- 25
 numerator <- edma_fit(x1[1:25,,], B=B)
 denominator <- edma_fit(x2[1:25,,], B=B)
+```
+
+The form difference matrix is defined as the ratio of the
+two Euclidean distances form matrices based on the mean forms from the
+numerator and denominator model objects:
+
+```{r formdiff}
+fd <- formdiff(numerator, denominator)
+str(fd)
+```
+
+The global $T$-test assesses if the form difference is significant:
+
+```{r ttest}
+et <- edma_test(numerator, denominator)
+et
+plot(et)
+```
+
+The local test is achieved by looking at the stacked form difference,
+where the bootstrap based `lower` and `upper` confidence limits are
+also provided with the column `inside` indicating if the
+`dist`ance is inside these limits:
+
+```{r fdm}
+fdm <- edma_fdm(numerator, denominator, 
+    sort=TRUE, level=0.95)
+head(fdm)
+tail(fdm)
+plot(fdm)
+```
+
+## Comparing 2 sets of 2D landmark data
+
+```{r boot2d}
+file_a <- system.file("extdata/apert/ALLAPT4.xyz", 
+    package="EDMAinR")
+(a <- read_xyz(file_a))
+
+file_b <- system.file("extdata/apert/ALLNORM4.xyz", 
+    package="EDMAinR")
+(b <- read_xyz(file_b))
+
+numerator <- edma_fit(a, B=B)
+denominator <- edma_fit(b, B=B)
 ```
 
 The form difference matrix is defined as the ratio of the

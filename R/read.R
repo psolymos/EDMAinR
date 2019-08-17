@@ -5,12 +5,13 @@
 read_xyz <- function(file, ...) {
     h <- readLines(file, n=4L)
     NAME <- h[1L]
+    DIMS <- character(nchar(h[2L]))
     for (i in seq_along(DIMS))
         DIMS[i] <- substr(h[2L], i, i)
     tmp <- gsub("\\D+","", strsplit(h[3L], " ")[[1L]])
     K <- as.integer(tmp[1L])
     D <- as.integer(tmp[2L])
-    DIMS <- character(nchar(h[2L]))[seq_len(D)]
+    DIMS <- DIMS[seq_len(D)]
     n <- as.integer(tmp[3L])
     LABELS <- make.names(strsplit(h[4L], " ")[[1L]])
     if (length(LABELS) < 1L) { # missing
@@ -50,9 +51,17 @@ stack.edma_data <- function(x, ...) {
     out
 }
 
+.shorten_name <- function(x, truncate=20) {
+    n <- nchar(x[1L])
+    x <- trimws(substr(x[1L], 1, min(truncate, n)))
+    if (n > truncate)
+        x <- paste0(x, "...")
+    x
+}
+
 ## print function
-print.edma_data <- function(x, ...) {
-    cat("EDMA data: ", x$name, "\n",
+print.edma_data <- function(x, truncate=20, ...) {
+    cat("EDMA data: ", .shorten_name(x$name, truncate), "\n",
         ncol(x$data[[1L]]), " dimensions, ",
         nrow(x$data[[1L]]), " landmarks, ",
         length(x$data), " replicates", sep="")
