@@ -174,8 +174,43 @@ file_b <- system.file("extdata/apert/ALLNORM4.xyz",
     package="EDMAinR")
 (b <- read_xyz(file_b))
 
-numerator <- edma_fit(a, B=B)
-denominator <- edma_fit(b, B=B)
+#numerator <- edma_fit(a, B=B)
+#denominator <- edma_fit(b, B=B)
+
+edma_plot2d <- function(x, dims=1:2, landmarks=NULL, ...) {
+    d <- x$data
+    n <- length(d)
+    if (length(dims) != 2L)
+      stop("dims length must be 2")
+    for (i in seq_len(n)) {
+        d[[i]] <- d[[i]][,dims]
+        d[[i]] <- t(t(d[[i]]) - colMeans(d[[i]]))
+    }
+    X <- do.call(rbind, d)
+    L <- landmark_names(x)
+    if (is.null(landmarks))
+        landmarks <- L
+    if (is.numeric(landmarks))
+        landmarks <- L[landmarks]
+    K <- length(L)
+    y <- list()
+    for (j in seq_len(K)) {
+        y[[L[j]]] <- t(sapply(d, function(z) z[j,]))
+    }
+    rx <- range(X[,1L])
+    ry <- range(X[,2L])
+    plot(0, type="n", xlim=rx, ylim=ry, 
+        xlab=colnames(X)[1L], ylab=colnames(X)[2L], main=x$name)
+    for (j in seq_len(K)) {
+        if (L[j] %in% landmarks) {
+            points(y[[j]], col=j)
+            points(matrix(colMeans(y[[j]]), nrow=1), pch=3, col=j, cex=2)
+        }
+    }
+    invisible(x)
+}
+edma_plot2d(a)
+edma_plot2d(b)
 ```
 
 ## Comparing relative growth
