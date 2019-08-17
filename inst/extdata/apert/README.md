@@ -3,8 +3,25 @@
 2D landmarks collected from sagittal xrays.  
 These data were published in Lele and Richtsmeier 1991.  
 They represent landmarks representing a sample of 
-typically developing children aged 4 (ALLNORM4) 
-and a sample of children with Apert syndrome aged 4 (ALLAPT4).  
+typically developing children aged 4 
+(`ALLNORM4`, originally 20 individuals - see note!) 
+and a sample of children with Apert syndrome aged 4 
+(`ALLAPT4`, 5 individuals).  
+
+**Note**: data of child #9 was removed from the original data set due to errors:
+
+```
+-5.4777 -1.9765
+-5.7382 -0.5759
+-5.2680 1.6943
+-4.8801 3.2750
+-0.9673 1.6943
+0.3147 -2.0910
+0.7539 -1.6099
+1.1629 -2.0326
+9.2142 -1.1222 // error here
+6.6496 1.2624  // error here
+```
 
 ## List of landmarks
 
