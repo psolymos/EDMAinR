@@ -165,19 +165,8 @@ plot(fdm)
 
 ## Comparing 2 sets of 2D landmark data
 
-```{r boot2d,eval=FALSE}
-file_a <- system.file("extdata/apert/ALLAPT4.xyz", 
-    package="EDMAinR")
-(a <- read_xyz(file_a))
-
-file_b <- system.file("extdata/apert/ALLNORM4.xyz", 
-    package="EDMAinR")
-(b <- read_xyz(file_b))
-
-#numerator <- edma_fit(a, B=B)
-#denominator <- edma_fit(b, B=B)
-
-edma_plot2d <- function(x, dims=1:2, landmarks=NULL, ...) {
+```{r functions,include=FALSE}
+edma_plot2d_data <- function(x, dims=1:2, landmarks=NULL, ...) {
     d <- x$data
     n <- length(d)
     if (length(dims) != 2L)
@@ -209,8 +198,74 @@ edma_plot2d <- function(x, dims=1:2, landmarks=NULL, ...) {
     }
     invisible(x)
 }
-edma_plot2d(a)
-edma_plot2d(b)
+edma_plot2d_npfit <- function(x, add=FALSE, ...) {
+    M <- Meanform(x)
+    SKS <- SigmaKstar(x)
+    sig <- 2 * sqrt(diag(SigmaKstar(x)))
+    cex <- 2.5 * (0.5 + sig) / max(0.5 + sig)
+    if (!add) {
+        plot(M, cex=cex, ...)
+    } else {
+        points(M, cex=cex, ...)
+    }
+    invisible(x)
+}
+```
+
+Using data from Lele and Richtsmeier 1991, with 2D landmarks visualized:
+
+```{r boot2d}
+file_a <- system.file("extdata/apert/ALLAPT4.xyz", 
+    package="EDMAinR")
+(a <- read_xyz(file_a))
+
+file_b <- system.file("extdata/apert/ALLNORM4.xyz", 
+    package="EDMAinR")
+(b <- read_xyz(file_b))
+
+op <- par(mfrow=c(1,2))
+edma_plot2d_data(a)
+edma_plot2d_data(b)
+par(op)
+```
+
+Here are the two EDMA fit objects and the mean form visualized in 2D.
+Sizes of circles are proportional to diagonal values in $\hat{\Sigma}^{\ast}_K$:
+
+```{r fit2d}
+numerator <- edma_fit(a, B=B)
+denominator <- edma_fit(b, B=B)
+```
+
+```{r plot2dfit,echo=FALSE}
+Ma <- Meanform(numerator)
+Mb <- Meanform(denominator)
+edma_plot2d_npfit(numerator, col=2, 
+    xlim=range(Ma[,1], Mb[,1]),
+    ylim=range(Ma[,2], Mb[,2]))
+edma_plot2d_npfit(denominator, col=4, add=TRUE)
+for (i in 1:10){
+    lines(c(Ma[i,1], Mb[i,1]), c(Ma[i,2], Mb[i,2]), col="grey")
+}
+legend("topright", bty="n", pch=21, col=c(2,4),
+    legend=c("Apert", "Normal"))
+```
+
+We had to drop a normal child, and maybe as a result, the observed T statistic
+is lower than the published result. The bootstrap distribution seems
+similar, but now a lot more T's are higher than the observed T.
+
+```{r et2d}
+(et <- edma_test(numerator, denominator))
+plot(et)
+```
+
+Form difference matrix visualized:
+
+```{r fdm2d}
+fdm <- edma_fdm(numerator, denominator, 
+    sort=TRUE, level=0.95)
+plot(fdm)
 ```
 
 ## Comparing relative growth
