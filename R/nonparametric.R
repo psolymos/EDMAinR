@@ -156,8 +156,8 @@ edma_fm.edma_fit <- function (object, sort=FALSE, ...) {
         stop(paste(text, "number of landmarks must be identical"))
     if (ncol(a$data[[1L]]) != ncol(b$data[[1L]]))
         stop(paste(text, "number of dimensions must be identical"))
-    if (length(a$boot) != length(b$boot))
-        warning(paste(text, "number of bootstrap runs not identical (using min)"))
+#    if (length(a$boot) != length(b$boot))
+#        warning(paste(text, "number of bootstrap runs not identical (using min)"))
     if (!all(rownames(a$data[[1L]]) == rownames(b$data[[1L]])))
         stop(paste(text, "landmark names and ordering must be identical"))
     if (!all(colnames(a$data[[1L]]) == colnames(b$data[[1L]])))
@@ -181,18 +181,39 @@ formdiff <- function (numerator, denominator, ...) {
     .formdiff(Meanform(numerator), Meanform(denominator))
 }
 
+.get_Tstar <- function(numerator, denominator) {
+    d1 <- numerator[c("name", "data", "notes")]
+    class(d1) <- "edma_data"
+    n1 <- dim(d1)[1L]
+    d2 <- denominator[c("name", "data", "notes")]
+    class(d2) <- "edma_data"
+    n2 <- dim(d1)[1L]
+    ii <- c(-seq_len(n1), seq_len(n2))
+    ii <- sample(nn, length(nn), replace=TRUE)
+    i1 <- ii[seq_len(n1)]
+    i2 <- ii[seq_len(n2)+n1]
+    d1o <- c(d1$data[-i1[i1 < 0]], d2$data[i1[i1 > 0]])
+    d2o <- c(d1$data[-i2[i2 < 0]], d2$data[i2[i2 > 0]])
+    d1$data <- d1o
+    d2$data <- d2o
+    f1 <- edma_fit(d1)
+    f2 <- edma_fit(d2)
+    fd <- formdiff(f1, f2)
+    attr(fd, "Tval")
+}
 ## T-test for 2 edma_fit objects
-edma_test <- function (numerator, denominator) {
+edma_test <- function (numerator, denominator, B=99) {
     .compare_objects(numerator, denominator)
     DNAME <- paste(deparse(substitute(numerator)),
         deparse(substitute(denominator)), sep = " / ")
     METHOD <- "Bootstrap based EDMA T-test"
-    B <- min(length(numerator$boot), length(denominator$boot))
+#    B <- min(length(numerator$boot), length(denominator$boot))
     Tval <- attr(formdiff(numerator, denominator), "Tval")
-    Tvals <- c(Tval, sapply(seq_len(B), function(i) {
-        attr(.formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M), "Tval")
-    }))
-    PVAL <- sum(Tvals <= 1) / (B + 1)
+    Tvals <- c(Tval, pbapply::pbreplicate(B, .get_Tstar(numerator, denominator)))
+#    Tvals <- c(Tval, sapply(seq_len(B), function(i) {
+#        attr(.formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M), "Tval")
+#    }))
+    PVAL <- sum(Tvals > Tval) / (B + 1)
     PARAMETER <- B + 1L
     names(Tval) <- "T-value"
     names(PARAMETER) <- "B+1"
