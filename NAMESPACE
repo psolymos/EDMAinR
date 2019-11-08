@@ -8,7 +8,8 @@ export(
     "edma_gdm",
     "SigmaK_fit",
     "edma_simulate_data",
-    "formdiff"
+    "formdiff",
+    "edma_pca"
 )
 
 ## export new generics
@@ -23,7 +24,7 @@ export(
 importFrom("utils",
     "stack", "read.table")
 importFrom("stats",
-    "as.dist", "dist", "optim", "quantile", "rnorm")
+    "as.dist", "dist", "optim", "quantile", "rnorm", "cmdscale")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon", "text", "hist")
 

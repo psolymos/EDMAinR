@@ -1,8 +1,8 @@
 Package: EDMAinR
 Type: Package
 Title: Euclidean Distance Matrix Analysis in R
-Version: 0.0-1
-Date: 2019-08-14
+Version: 0.0-2
+Date: 2019-11-07
 Author: Peter Solymos [aut, cre] (<https://orcid.org/0000-0001-7337-1740>),
     Subhash R. Lele [aut], Theodore M. Cole [aut],
     Liangyuan Hu [aut], Joan T. Richtsmeier [aut]

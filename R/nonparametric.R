@@ -313,3 +313,12 @@ plot.edma_fdm <- function(x, ...) {
 plot.edma_gdm <- function(x, ...) {
     .sdmplot(x, ylab="GDM Ratio", ...)
 }
+
+## EDMA distances to PCA using MDS
+edma_pca <- function (object, ...) UseMethod("edma_pca")
+edma_pca.edma_fit <- function (object, k=2, ...) {
+    d <- as.dist(object, diag = FALSE, upper = FALSE)
+    out <- cmdscale(d, k=k)
+    class(out) <- c("edma_pca", class(out))
+    out
+}
