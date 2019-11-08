@@ -1,7 +1,20 @@
 ## read in xyz landmark data
 ## file: file name
 ## ...: passed to read.table for things like dec
-## consider: what to do for 2D samples? Have only XY columns, or add Z=0?
+## Structure is the following:
+## Header
+## XYZ
+## 42L 3 9    (which means 42 landmarks, 3 dimensions, 9 specimens)
+## amsph bas ethma ethmp intpar laalf lalp lflac lfppm liohd lnasapl loci lpalf lpfl lplpp lpmx lpns lpsq lpto lptyp lsqu lsyn lzyt raalf ralp rflac rfppm riohd rmaxi rnasapl roci rpalf rpfl rplpp rpmx rpns rpsq rpto rptyp rsqu rsyn rzyt
+## 3.27773899999999995813 3.08274600000000020827 3.82010100000000019094
+## 1.69021700000000008046 3.48286000000000006693 2.04403800000000002157
+## ...I truncated the XYZ data itself here...
+## a blank line, then the date on of scans for each specimen
+##
+## CZEM_087 Scanned on
+## CZEM_094 Scanned on
+## CZEM_097 Scanned on
+## etc, this part is particularly useful because then you actually know the specimen numbers for the data within the file. Space is the delimiter in the XYZ files.
 read_xyz <- function(file, ...) {
     h <- readLines(file, n=4L)
     NAME <- h[1L]
