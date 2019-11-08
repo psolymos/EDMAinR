@@ -157,7 +157,7 @@ edma_fm.edma_fit <- function (object, sort=FALSE, ...) {
     if (ncol(a$data[[1L]]) != ncol(b$data[[1L]]))
         stop(paste(text, "number of dimensions must be identical"))
     if (length(a$boot) != length(b$boot))
-        stop(paste(text, "number of bootstrap runs  must be identical"))
+        warning(paste(text, "number of bootstrap runs not identical (using min)"))
     if (!all(rownames(a$data[[1L]]) == rownames(b$data[[1L]])))
         stop(paste(text, "landmark names and ordering must be identical"))
     if (!all(colnames(a$data[[1L]]) == colnames(b$data[[1L]])))
@@ -187,12 +187,12 @@ edma_test <- function (numerator, denominator) {
     DNAME <- paste(deparse(substitute(numerator)),
         deparse(substitute(denominator)), sep = " / ")
     METHOD <- "Bootstrap based EDMA T-test"
-    B <- length(numerator$boot)
+    B <- min(length(numerator$boot), length(denominator$boot))
     Tval <- attr(formdiff(numerator, denominator), "Tval")
     Tvals <- c(Tval, sapply(seq_len(B), function(i) {
         attr(.formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M), "Tval")
     }))
-    PVAL = sum(Tvals > Tval) / (B + 1)
+    PVAL <- sum(Tvals <= 1) / (B + 1)
     PARAMETER <- B + 1L
     names(Tval) <- "T-value"
     names(PARAMETER) <- "B+1"
