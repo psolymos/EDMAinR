@@ -53,7 +53,7 @@ method = "Nelder-Mead", control = list(), hessian = FALSE) {
     o
 }
 
-## simulate stuff
+## simulate stuff -- this is already there as edma_simulate_data !!!
 .edma_simulate <- function(n, M, SigmaK) {
     D <- ncol(M)
     K <- nrow(M)

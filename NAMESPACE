@@ -6,7 +6,6 @@ export(
     "edma_fdm",
     "edma_gm",
     "edma_gdm",
-    "SigmaK_fit",
     "edma_simulate_data",
     "formdiff",
     "edma_pca"
@@ -44,6 +43,7 @@ S3method("as.array", "edma_data")
 S3method("Meanform", "edma_fit")
 S3method("as.dist", "edma_fit")
 S3method("edma_fm", "edma_fit")
+S3method("edma_pca", "edma_fit")
 
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
