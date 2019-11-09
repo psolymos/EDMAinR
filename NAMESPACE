@@ -1,14 +1,12 @@
 ## export main functions
 export(
+    "edma_simulate_data",
     "read_xyz",
     "edma_fit",
-    "edma_test",
     "edma_fdm",
     "edma_gm",
     "edma_gdm",
-    "edma_simulate_data",
-    "formdiff",
-    "edma_pca"
+    "formdiff"
 )
 
 ## export new generics
@@ -16,7 +14,10 @@ export(
     "landmark_names",
     "Meanform",
     "SigmaKstar",
-    "edma_fm"
+    "get_fm",
+    "get_fdm",
+    "get_pca",
+    "test"
 )
 
 ## imports
@@ -42,8 +43,8 @@ S3method("as.array", "edma_data")
 ## edma_fit methods
 S3method("Meanform", "edma_fit")
 S3method("as.dist", "edma_fit")
-S3method("edma_fm", "edma_fit")
-S3method("edma_pca", "edma_fit")
+S3method("get_fm", "edma_fit")
+S3method("get_pca", "edma_fit")
 
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
@@ -52,9 +53,16 @@ S3method("SigmaKstar", "edma_fit_np")
 ## other methods
 S3method("stack", "dist") # not to import from mefa
 
+## edma_fdm methods
+S3method("get_fdm", "edma_fdm")
+S3method("test", "edma_fdm")
+S3method("print", "edma_fdm")
+
+## edma_gm methods
+S3method("print", "edma_gm")
+
 ## visualization
 S3method("plot", "edma_gdm")
 S3method("plot", "edma_fdm")
-S3method("plot", "edma_test")
 
 

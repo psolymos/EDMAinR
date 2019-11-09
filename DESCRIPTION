@@ -13,5 +13,5 @@ License: GPL-2
 LazyLoad: yes
 LazyData: true
 Imports: pbapply
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, plot3D, plot3Drgl
 VignetteBuilder: knitr
