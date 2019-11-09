@@ -23,9 +23,11 @@ The implementation follows Hu (2007).
 ## Install
 
 ```{r install,eval=FALSE}
-if (!require(remotes))
-    install.packages("remotes")
-remotes::install_github("psolymos/EDMAinR")
+if (!require(EDMAinR)) {
+  if (!require(remotes))
+      install.packages("remotes")
+  remotes::install_github("psolymos/EDMAinR")
+}
 ```
 
 We can now load the package:
@@ -138,9 +140,8 @@ We can fit the EDMA object with bootstrap resampling by
 specifying the `B` argument, this is needed for statistical testing:
 
 ```{r boot}
-B <- 25
-numerator <- edma_fit(x1[1:25,,], B=B)
-denominator <- edma_fit(x2[1:25,,], B=B)
+numerator <- edma_fit(x1[1:25,,])
+denominator <- edma_fit(x2[1:25,,])
 ```
 
 The form difference matrix is defined as the ratio of the
@@ -154,8 +155,9 @@ str(fd)
 
 The global $T$-test assesses if the form difference is significant:
 
-```{r ttest}
-et <- edma_test(numerator, denominator)
+```{r ttest,eval=FALSE}
+B <- 25
+et <- edma_test(numerator, denominator, B=B)
 et
 plot(et)
 ```
@@ -165,7 +167,7 @@ where the bootstrap based `lower` and `upper` confidence limits are
 also provided with the column `inside` indicating if the
 `dist`ance is inside these limits:
 
-```{r fdm}
+```{r fdm,eval=FALSE}
 fdm <- edma_fdm(numerator, denominator, 
     sort=TRUE, level=0.95)
 head(fdm)
@@ -265,14 +267,14 @@ We had to drop a normal child, and maybe as a result, the observed T statistic
 is lower than the published result. The bootstrap distribution seems
 similar, but now a lot more T's are higher than the observed T.
 
-```{r et2d}
+```{r et2d,eval=FALSE}
 (et <- edma_test(numerator, denominator))
 plot(et)
 ```
 
 Form difference matrix visualized:
 
-```{r fdm2d}
+```{r fdm2d,eval=FALSE}
 fdm <- edma_fdm(numerator, denominator, 
     sort=TRUE, level=0.95)
 plot(fdm)
@@ -282,7 +284,7 @@ plot(fdm)
 
 We will use the Cabus data sets from the 'Purple Book':
 
-```{r gdata}
+```{r gdata,eval=FALSE}
 file_a1 <- system.file("extdata/purplebook/cebusage1.xyz", 
     package="EDMAinR")
 a1 <- read_xyz(file_a1)
@@ -295,7 +297,7 @@ a2
 
 Estimate the nonparametric forms and then the growth matrix:
 
-```{r gm}
+```{r gm,eval=FALSE}
 fit_a1 <- edma_fit(a1, B=B)
 fit_a2 <- edma_fit(a2, B=B)
 
