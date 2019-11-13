@@ -24,7 +24,7 @@ export(
 importFrom("utils",
     "stack", "read.table")
 importFrom("stats",
-    "as.dist", "dist", "optim", "quantile", "rnorm", "cmdscale")
+    "as.dist", "dist", "optim", "quantile", "rnorm", "cmdscale", "confint")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon", "text", "hist")
 
@@ -56,6 +56,7 @@ S3method("stack", "dist") # not to import from mefa
 ## edma_fdm methods
 S3method("get_fdm", "edma_fdm")
 S3method("test", "edma_fdm")
+S3method("confint", "edma_fdm")
 S3method("print", "edma_fdm")
 
 ## edma_gm methods

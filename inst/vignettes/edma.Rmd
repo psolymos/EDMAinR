@@ -1,11 +1,7 @@
 ---
 title: "EDMAinR: basic usage"
-output: rmarkdown::html_vignette
+output: pdf_document
 date: "`r Sys.Date()`"
-vignette: >
-  %\VignetteIndexEntry{EDMAinR: basic usage}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
 ---
 
 ```{r pre,include=FALSE}
@@ -21,6 +17,8 @@ as described in Lele and Richtsmeier (1991).
 The implementation follows Hu (2007).
 
 ## Install
+
+The package can be installed from GitHub:
 
 ```{r install,eval=FALSE}
 if (!require(EDMAinR)) {
@@ -38,18 +36,40 @@ library(EDMAinR)
 
 ## Landmark data
 
-Use the `read_xyz` function to read 2 or 3 D landmark data from `*.xyz` files:
+Use the `read_xyz` function to read 2 or 3 D landmark data from `*.xyz` files.
+First we specify the paths to two xyz files:
 
-```{r readxyz}
+```{r filexyz}
 file1 <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz", 
     package="EDMAinR")
-x1 <- read_xyz(file1)
-x1
 
 file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz", 
     package="EDMAinR")
+```
+
+Note: we use the `system.file()` function to access example files
+from the package. When defining your own files,
+you will either set the working directory using `setwd()` or
+a path like `c:/Users/<user>/<etc>`.
+
+Now we can read in these text files:
+
+```{r readxyz}
+x1 <- read_xyz(file1)
+x1
+
 x2 <- read_xyz(file2)
 x2
+```
+
+The data objects are lists with 3 elements: 
+
+- `$name` contains info about the file from its header
+- `$data` contains the landmark data
+- `$notes` contains optional information about the individuals
+
+```{r notes}
+x1$notes
 ```
 
 Here are the methods that we can use to learn more about the data sets.
@@ -69,11 +89,14 @@ refer to the landmarks, dimensions, and replicates (most often individuals).
 The `subset` method subsets the replicates:
 
 ```{r datasubset}
-x1[1:10, 2:3, 1:5]
-subset(x1, 1:10)
+x1[1:10, , ]  # select the 1st 10 landmarks
+x1[ , 1:2, ]  # select 2 of the 2 dimensions
+x1[ , , 1:20] # select the 1st 20 individuals
+x1[1:10, , 1:20] # combine multiple indices
 ```
 
-The data format inside the objects `x1` and `x2` is list of the $K \times D$
+
+The data (`$data`) format inside the objects `x1` and `x2` is list of the $K \times D$
 matrices for each individual. Sometimes it is handy to stack these
 matrices and create a rectangular data (either as a matrix, or data frame,
 with $n \times K$ rows and $D$ columns):
@@ -83,6 +106,9 @@ str(as.matrix(x1))
 str(as.data.frame(x1))
 str(stack(x1))
 ```
+
+Note: we are using `str` to show the structure of these objects,
+this is not necessary when exploring the data.
 
 Alternatively, we can store the data as an array
 ($K \times D \times n$):
@@ -114,70 +140,96 @@ as.dist(fit)
 ```
 
 The Euclidean distances from the form matrix can be stacked, 
-and the stacked distances sorted. The `edma_fm` function
+and the stacked distances sorted. The `get_fm` function
 produces the stacked for matrix, because this is most useful to us
 as it can be sorted and more easily inspected:
 
 ```{r stackeddist}
-edma_fm(fit)
-edma_fm(fit, sort=TRUE, decreasing=TRUE)
-edma_fm(fit, sort=TRUE, decreasing=FALSE)
+get_fm(fit)
+get_fm(fit, sort=TRUE, decreasing=TRUE)
+get_fm(fit, sort=TRUE, decreasing=FALSE)
 ```
 
 We can turn the Euclidean distance into principal components
-using the `edma_pcs` function:
+using the `get_pca` function:
 
 ```{r pca}
-pc <- edma_pca(fit)
-plot(pc)
+pc <- get_pca(fit)
+pc
+plot(pc, type="n")
+text(pc, labels=rownames(pc))
+abline(h=0, v=0, lty=2)
 ```
-
 
 
 ## Comparing 2 sets of 3D landmark data
 
 We can fit the EDMA object with bootstrap resampling by
-specifying the `B` argument, this is needed for statistical testing:
+specifying the `B` argument, this is needed for downstream statistical testing:
 
 ```{r boot}
-numerator <- edma_fit(x1[1:25,,])
-denominator <- edma_fit(x2[1:25,,])
+B <- 99
+numerator <- edma_fit(x1[1:25,,], B=B)
+denominator <- edma_fit(x2[1:25,,], B=B)
 ```
 
 The form difference matrix is defined as the ratio of the
 two Euclidean distances form matrices based on the mean forms from the
-numerator and denominator model objects:
+numerator and denominator model objects. This is in the matrix (`dist`) format:
 
 ```{r formdiff}
 fd <- formdiff(numerator, denominator)
 str(fd)
 ```
 
-The global $T$-test assesses if the form difference is significant:
+The global $T$-test assesses if the form difference is significant.
+It uses a bootstrap distribution that is a mixture of the
+two samples, thus the bootstrap leads to a 'null' distribution
+and the observed $T$ values is compared against this set of
+bootstrap based values:
 
-```{r ttest,eval=FALSE}
-B <- 25
-et <- edma_test(numerator, denominator, B=B)
-et
-plot(et)
+```{r ttest}
+fdm <- edma_fdm(numerator, denominator, B=B)
+fdm
 ```
 
-The local test is achieved by looking at the stacked form difference,
-where the bootstrap based `lower` and `upper` confidence limits are
-also provided with the column `inside` indicating if the
-`dist`ance is inside these limits:
+The plot compares the bootstrap distribution (histogram) to the observed value
+(red line):
 
-```{r fdm,eval=FALSE}
-fdm <- edma_fdm(numerator, denominator, 
-    sort=TRUE, level=0.95)
-head(fdm)
-tail(fdm)
-plot(fdm)
+```{r fdmplot}
+plot(fdm, type="global")
 ```
 
-## Comparing 2 sets of 2D landmark data
+The local test can be achieved in 2 ways.
+One way is to use the 'mixed' bootstrap distribution from the global test
+and calculate the probability that a random pairwise distance ratio
+is lower, higher (one sided p-value), or lower or higher (two sided p-value)
+than the observed distance ratio. This p-value can be accessed
+as part of the stacked form difference matrix via the `get_fdm` function:
 
-```{r functions,include=FALSE}
+```{r fdm1}
+head(get_fdm(fdm, sort=TRUE))
+tail(get_fdm(fdm, sort=TRUE))
+plot(fdm, type="local_p")
+```
+
+The other way is to use the bootstrap distribution from the individual
+`edma_fit` objects (this represents uncertainty around the mean form).
+This provides the confidence intervals around the distance ratios.
+This local test is significant when the interval does not overlap 1
+(no form difference). The coverage of the confidence interval
+depends on the `level` argument that is set to 95% by default:
+
+```{r fdm2}
+head(confint(fdm))
+plot(fdm, type="local_ci")
+```
+
+
+```{r functions,include=FALSE, eval=FALSE}
+## etc
+
+
 edma_plot2d_data <- function(x, dims=1:2, landmarks=NULL, ...) {
     d <- x$data
     n <- length(d)
@@ -222,11 +274,8 @@ edma_plot2d_npfit <- function(x, add=FALSE, ...) {
     }
     invisible(x)
 }
-```
 
-Using data from Lele and Richtsmeier 1991, with 2D landmarks visualized:
-
-```{r boot2d}
+## Using data from Lele and Richtsmeier 1991, with 2D landmarks visualized:
 file_a <- system.file("extdata/apert/ALLAPT4.xyz", 
     package="EDMAinR")
 (a <- read_xyz(file_a))
@@ -239,17 +288,13 @@ op <- par(mfrow=c(1,2))
 edma_plot2d_data(a)
 edma_plot2d_data(b)
 par(op)
-```
 
-Here are the two EDMA fit objects and the mean form visualized in 2D.
-Sizes of circles are proportional to diagonal values in $\hat{\Sigma}^{\ast}_K$:
+#Here are the two EDMA fit objects and the mean form visualized in 2D.
+#Sizes of circles are proportional to diagonal values in $\hat{\Sigma}^{\ast}_K$:
 
-```{r fit2d}
 numerator <- edma_fit(a, B=B)
 denominator <- edma_fit(b, B=B)
-```
 
-```{r plot2dfit,echo=FALSE}
 Ma <- Meanform(numerator)
 Mb <- Meanform(denominator)
 edma_plot2d_npfit(numerator, col=2, 
@@ -261,30 +306,25 @@ for (i in 1:10){
 }
 legend("topright", bty="n", pch=21, col=c(2,4),
     legend=c("Apert", "Normal"))
-```
 
-We had to drop a normal child, and maybe as a result, the observed T statistic
-is lower than the published result. The bootstrap distribution seems
-similar, but now a lot more T's are higher than the observed T.
 
-```{r et2d,eval=FALSE}
+#We had to drop a normal child, and maybe as a result, the observed T statistic
+#is lower than the published result. The bootstrap distribution seems
+#similar, but now a lot more T's are higher than the observed T.
+
 (et <- edma_test(numerator, denominator))
 plot(et)
-```
 
-Form difference matrix visualized:
+#Form difference matrix visualized:
 
-```{r fdm2d,eval=FALSE}
 fdm <- edma_fdm(numerator, denominator, 
     sort=TRUE, level=0.95)
 plot(fdm)
-```
 
 ## Comparing relative growth
 
-We will use the Cabus data sets from the 'Purple Book':
+#We will use the Cabus data sets from the 'Purple Book':
 
-```{r gdata,eval=FALSE}
 file_a1 <- system.file("extdata/purplebook/cebusage1.xyz", 
     package="EDMAinR")
 a1 <- read_xyz(file_a1)
@@ -293,22 +333,19 @@ file_a2 <- system.file("extdata/purplebook/cebusage6.xyz",
 a2 <- read_xyz(file_a2)
 a1
 a2
-```
 
-Estimate the nonparametric forms and then the growth matrix:
+#Estimate the nonparametric forms and then the growth matrix:
 
-```{r gm,eval=FALSE}
 fit_a1 <- edma_fit(a1, B=B)
 fit_a2 <- edma_fit(a2, B=B)
 
 gm <- edma_gm(fit_a1, fit_a2, sort=TRUE, level=0.95)
 head(gm)
 tail(gm)
+
+#The `edma_gdm` function works similarly to the `edma_fdm` function,
+#but instead of 2 fitted objects it takes 4 inputs: a1, a2, b1, and b2.
 ```
-
-The `edma_gdm` function works similarly to the `edma_fdm` function,
-but instead of 2 fitted objects it takes 4 inputs: a1, a2, b1, and b2.
-
 
 ## References
 

@@ -260,15 +260,17 @@ edma_fdm <- function(numerator, denominator, B=0) {
         numerator=numerator,
         denominator=denominator,
         B=B,
-        fdm=fd,
+        dm=fd,
         boot=b)
     class(out) <- c("edma_fdm", class(out))
     out
 }
 print.edma_fdm <- function(x, ...) {
-    cat("EDMA form difference matrix, ",
+    H <- test(x)
+    cat("EDMA form difference matrix\n",
         if (x$B)
             paste(x$B, "bootstrap runs") else "no bootstrap",
+        ", T=", round(H$statistic, 4), ", p=", round(H$p.value, 4),
         sep="")
     invisible(x)
 }
@@ -278,11 +280,12 @@ print.edma_fdm <- function(x, ...) {
 get_fdm <- function (object, ...) UseMethod("get_fdm")
 get_fdm.edma_fdm <- function (object, sort=FALSE,
 alternative = c("two.sided", "less", "greater"), ...) {
-    out <- object$fdm
+    out <- object$dm
     out$pval <- apply(object$boot, 1, .Ttest_pval, alternative)
     if (sort)
         out <- out[order(out$dist, ...),]
     class(out) <- c("fdm", class(out))
+    attr(out, "alternative") <- alternative
     out
 }
 
@@ -303,8 +306,30 @@ test.edma_fdm <- function (object, ...) {
     out
 }
 
+## CI based on the 2x input object boot sample
+confint.edma_fdm <- function (object, parm, level=0.95, ...) {
+    d <- stack(formdiff(object$numerator, object$denominator))
+    if (missing(parm))
+        parm <- seq_len(nrow(d))
+    if (is.null(object$numerator$boot) || is.null(object$denominator$boot)) {
+        fd <- NULL
+    } else {
+        B <- min(length(object$numerator$boot), length(object$denominator$boot))
+        fd <- sapply(seq_len(B), function(i) {
+            stack(.formdiff(object$numerator$boot[[i]]$M,
+                            object$denominator$boot[[i]]$M))$dist
+        })
+    }
+    a <- c((1-level)/2, 1-(1-level)/2)
+    out <- t(apply(cbind(d$dist, fd), 1, quantile, a))
+    if (is.null(fd))
+        out[] <- NA
+    rownames(out) <- rownames(d)
+    out[parm,,drop=FALSE]
+}
+
 ## this needs more love
-.sdmplot <- function(x, xlab="", ylab="",
+.sdmplot_p <- function(x, xlab="", ylab="",
     bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
     x <- x[order(x$dist),]
     k <- nrow(x)
@@ -314,7 +339,8 @@ test.edma_fdm <- function (object, ...) {
     on.exit(par(op), add=TRUE)
     plot(xv, x$dist, ylim=r, type="n",
         xlab=xlab, ylab=ylab, axes=FALSE)
-    abline(h=1, col="grey")
+    #abline(h=1, col="grey")
+    lines(xv, rep(1, k), col="grey")
     xv2 <- c(xv[1L], xv)
     dis <- c(x$dist[1L], x$dist)
     for (i in xv) {
@@ -328,9 +354,33 @@ test.edma_fdm <- function (object, ...) {
     }
     invisible(x)
 }
+.sdmplot_ci <- function(x, xlab="", ylab="",
+    bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
+    x <- x[order(x$dist),]
+    k <- nrow(x)
+    xv <- seq_len(k)
+    r <- range(x$dist, x$lower, x$upper)
+    op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
+    on.exit(par(op), add=TRUE)
+    plot(xv, x$dist, ylim=r, type="n",
+        xlab=xlab, ylab=ylab, axes=FALSE)
+    polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), col="lightblue", border=NA)
+    #abline(h=1, col="grey")
+    lines(xv, rep(1, k), col="grey")
+    for (i in seq_len(k))
+        lines(xv[i]+c(-0.5, 0.5), c(1, 1),
+            col=if (1 > x$upper[i] || 1 < x$lower[i]) "red" else "grey")
+    lines(xv, x$dist, col="blue")
+    axis(2)
+    if (xshow) {
+        lab <- paste0(as.character(x$row), "-", as.character(x$col))
+        text(xv, min(r) - 0.02 * diff(r), lab, adj=c(1, 0.5), cex=xcex)
+    }
+    invisible(x)
+}
 
 ## plot global/local test based on FDM
-plot.edma_fdm <- function(x, type=c("global", "local"), ...) {
+plot.edma_fdm <- function(x, type=c("global", "local_p", "local_ci"), ...) {
     type <- match.arg(type)
     if (type == "global") {
         z <- test(x)
@@ -338,7 +388,13 @@ plot.edma_fdm <- function(x, type=c("global", "local"), ...) {
         abline(v=z$statistic, col=2, lwd=2)
     } else {
         z <- get_fdm(x)
-        .sdmplot(z, ylab="FDM Ratio", ...)
+        ci <- confint(x)
+        z$lower <- ci[,1L]
+        z$upper <- ci[,2L]
+        if (type == "local_p")
+            .sdmplot_p(z, ylab="FDM Ratio", ...)
+        if (type == "local_ci")
+            .sdmplot_ci(z, ylab="FDM Ratio", ...)
     }
     invisible(x)
 }
@@ -349,13 +405,18 @@ plot.edma_fdm <- function(x, type=c("global", "local"), ...) {
     lmn <- landmark_names(.Ttest_data(object$numerator))
     which <- intersect(which, lmn)
     H <- test(object)
-    j <- object$fdm$row %in% which | object$fdm$col %in% which
+    j <- object$dm$row %in% which | object$dm$col %in% which
     b <- object$boot[!j,]
     Tval <- apply(b, 2, max) / apply(b, 2, min)
     TT <- Tval[1L]
     PP <- sum(Tval[1L] <= Tval) / length(Tval)
-    list(TT, PP)
+    c(TT, PP)
 }
+
+## TODO:
+## - if fit level boot is available: add lower/upper to stacked FDM as before
+## - ise that in the plot too?
+
 
 ## stacked growth matrix
 ## inputs are edma_fit objects
@@ -386,9 +447,9 @@ edma_gdm <- function (a1, a2, b1, b2, B=0) {
         call=match.call(),
         a1=a1, a2=a2, b1=b1, b2=b2,
         B=B,
-        gdm=gma$fdm,
+        gdm=gma$dm,
         boot=gma$boot)
-    out$gdm$dist <- gmb$fdm$dist / gma$fdm$dist
+    out$gdm$dist <- gmb$dm$dist / gma$dm$dist
     out$boot <- gmb$boot / gma$boot
     attr(out$boot, "Tval") <- apply(out$boot, 2, max) / apply(out$boot, 2, min)
     class(out) <- c("edma_gdm", class(out))
@@ -396,6 +457,6 @@ edma_gdm <- function (a1, a2, b1, b2, B=0) {
 }
 
 plot.edma_gdm <- function(x, ...) {
-    .sdmplot(x, ylab="GDM Ratio", ...)
+    .sdmplot_p(x, ylab="GDM Ratio", ...)
 }
 

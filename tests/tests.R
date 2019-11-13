@@ -1,3 +1,4 @@
+#remotes::install_github("psolymos/EDMAinR")
 library(EDMAinR)
 B <- 9
 
@@ -39,8 +40,10 @@ pc <- get_pca(edma_fit(x1))
 plot(pc, pch=3)
 polygon(pc[chull(pc),], col="#ff000022", lty=2, border=2)
 
-numerator <- edma_fit(x1[1:25,,])
-denominator <- edma_fit(x2[1:25,,])
+numerator <- edma_fit(x1, B=B)
+denominator <- edma_fit(x2, B=B)
+#numerator <- edma_fit(x1[1:25,,])
+#denominator <- edma_fit(x2[1:25,,])
 fd <- formdiff(numerator, denominator)
 str(fd)
 
@@ -52,7 +55,8 @@ head(get_fdm(fdm, sort=TRUE, decreasing=FALSE))
 
 test(fdm)
 plot(fdm, "global")
-plot(fdm, "local")
+plot(fdm, "local_p")
+plot(fdm, "local_ci")
 
 if (interactive()) {
 
@@ -67,3 +71,7 @@ scatter3D(mf$X, mf$Y, mf$Z)
 plotrgl()
 
 }
+
+
+
+
