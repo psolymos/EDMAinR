@@ -58,17 +58,20 @@ plot(fdm, "global")
 plot(fdm, "local_p")
 plot(fdm, "local_ci")
 
+pc2 <- get_pca(fdm)
+plot(pc2)
+
 if (interactive()) {
 
-library(plot3D)
-library(plot3Drgl)
+#library(plot3D)
+#library(plot3Drgl)
 
-fit <- edma_fit(x1)
-mf <- data.frame(Meanform(fit))
+#fit <- edma_fit(x1)
+#mf <- data.frame(Meanform(fit))
 
-scatter3D(mf$X, mf$Y, mf$Z)
+#scatter3D(mf$X, mf$Y, mf$Z)
 
-plotrgl()
+#plotrgl()
 
 }
 

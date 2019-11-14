@@ -207,7 +207,7 @@ formdiff <- function (numerator, denominator, ...) {
     unname(out)
 }
 ## make a fit object like input data
-.Ttest_data <- function(object) {
+.get_data <- function(object) {
     object <- object[c("name", "data", "notes")]
     class(object) <- "edma_data"
     object
@@ -228,8 +228,8 @@ formdiff <- function (numerator, denominator, ...) {
 }
 ## form diff matrix based on bootstrap, multiple runs
 .Ttest_fit <- function(numerator, denominator, B=0) {
-    d1 <- .Ttest_data(numerator)
-    d2 <- .Ttest_data(denominator)
+    d1 <- .get_data(numerator)
+    d2 <- .get_data(denominator)
     ii <- .Ttest_index(numerator, denominator, B=B)
     fd <- pbapply::pblapply(seq_len(B+1L),
         function(i) .Ttest_fit1(ii[,i], d1, d2))
@@ -399,10 +399,47 @@ plot.edma_fdm <- function(x, type=c("global", "local_p", "local_ci"), ...) {
     invisible(x)
 }
 
+get_pca.edma_fdm <- function (object, ...) {
+    ## K x D x n arrays
+    anum <- as.array(.get_data(object$numerator))
+    aden <- as.array(.get_data(object$denominator))
+    K <- dim(anum)[[1L]]
+    D <- dim(anum)[[2L]]
+    nnum <- dim(anum)[[3L]]
+    nden <- dim(aden)[[3L]]
+    ## n x (K x D) matrices
+    mnum <- t(matrix(anum, K*D, nnum))
+    mden <- t(matrix(aden, K*D, nden))
+    ## 2 samples stacked (n1+n2) x (D x K)
+    m <- rbind(mnum, mden)
+    rownames(m) <- c(paste0("Num_", seq_len(nnum)),
+        paste0("Den_", seq_len(nden)))
+    colnames(m) <- paste(
+        rep(dimnames(anum)[[1L]], D),
+        rep(dimnames(anum)[[2L]], each=K),
+        sep="_")
+    out <- prcomp(m)
+    out$dims <- c(K=K, D=D, nnum=nnum, nden=nden)
+    out$data <- m
+    class(out) <- c("edma_fdm_pca", class(out))
+    out
+}
+
+plot.edma_fdm_pca <- function(x, ...) {
+    v <- 100 * x$sdev / sum(x$sdev[x$sdev > 0])
+    plot(x$x[,1:2],
+        col=rep(c(2,4), x$dims[3:4]),
+        xlab=paste0("PC1 (", round(v[1L], 1), "%)"),
+        ylab=paste0("PC2 (", round(v[2L], 1), "%)"))
+    abline(h=0, v=0, col="grey", lty=2)
+    invisible(x)
+}
+
+## -----------
 
 ## this should also refit the model???
 .drop_landmark <- function(object, which) {
-    lmn <- landmark_names(.Ttest_data(object$numerator))
+    lmn <- landmark_names(.get_data(object$numerator))
     which <- intersect(which, lmn)
     H <- test(object)
     j <- object$dm$row %in% which | object$dm$col %in% which
@@ -459,4 +496,5 @@ edma_gdm <- function (a1, a2, b1, b2, B=0) {
 plot.edma_gdm <- function(x, ...) {
     .sdmplot_p(x, ylab="GDM Ratio", ...)
 }
+
 

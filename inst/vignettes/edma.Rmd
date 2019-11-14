@@ -225,6 +225,19 @@ head(confint(fdm))
 plot(fdm, type="local_ci")
 ```
 
+We might also want to compare the 2 groups (numerator and denominator)
+based on the landmark data of each individual.
+This can be done by the `get_pca` function applied on the FDM object.
+This will extract the data from the two populations and stack them in
+a $(n_{num} + n_{den}) \times K D$ matrix, and subject it to PCA.
+The resulting scores are then visualized along the percent of explained variance,
+numerator in red, denominator in blue:
+
+```{r fdmpca}
+pc2 <- get_pca(fdm)
+plot(pc2)
+```
+
 
 ```{r functions,include=FALSE, eval=FALSE}
 ## etc

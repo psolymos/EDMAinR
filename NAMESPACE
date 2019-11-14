@@ -24,7 +24,8 @@ export(
 importFrom("utils",
     "stack", "read.table")
 importFrom("stats",
-    "as.dist", "dist", "optim", "quantile", "rnorm", "cmdscale", "confint")
+    "as.dist", "dist", "optim", "quantile", "rnorm",
+    "cmdscale", "confint", "prcomp")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon", "text", "hist")
 
@@ -58,6 +59,7 @@ S3method("get_fdm", "edma_fdm")
 S3method("test", "edma_fdm")
 S3method("confint", "edma_fdm")
 S3method("print", "edma_fdm")
+S3method("get_pca", "edma_fdm")
 
 ## edma_gm methods
 S3method("print", "edma_gm")
@@ -65,5 +67,6 @@ S3method("print", "edma_gm")
 ## visualization
 S3method("plot", "edma_gdm")
 S3method("plot", "edma_fdm")
+S3method("plot", "edma_fdm_pca")
 
 
