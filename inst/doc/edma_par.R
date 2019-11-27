@@ -155,7 +155,7 @@ fit <- EDMAinR:::.edma_fit_np(sim$X, sim$n, sim$K, sim$D)
 o <- .SigmaK_fit(fit$SigmaKstar, fit$H, m, init=c(a=runif(0, 1), b=0))
 o
 
-replicate(10, .SigmaK_fit(fit$SigmaKstar, fit$H, m, init=c(a=runif(1), b=0))[1:2], simplify=F)
+summary(t(replicate(10, unlist(.SigmaK_fit(fit$SigmaKstar, fit$H, m, init=c(a=runif(1), b=0))[1:2]))))
 
 cbind(true=parm, est=o$par)
 
