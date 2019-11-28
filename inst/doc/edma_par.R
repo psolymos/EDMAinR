@@ -22,11 +22,7 @@
 
 .SigmaK_fit <- function(SigmaKstar, H, pattern, init,
 method = "Nelder-Mead", control = list(), hessian = FALSE) {
-    ## test that SigmaKstar is of the right (K-1) rank
-    r <- qr(SigmaKstar)$rank
     K <- nrow(SigmaKstar)
-    if (r != K-1)
-        warning(sprintf("rank of SigmaKstar was %s instead of %s", r, K-1))
     if (any(is.na(diag(pattern))))
         stop("pattern matrix must have parameters in the diagonal")
     if (dim(pattern)[1L] != dim(pattern)[1L])

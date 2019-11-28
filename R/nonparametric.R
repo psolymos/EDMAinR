@@ -60,6 +60,20 @@
         a <- a + BX[((i - 1) * K + 1):(i * K), ]
     }
     est.SigmaKstar <- (a/n - BM)/D
+
+    ## check rank of SigmaKstar
+    r <- qr(est.SigmaKstar)$rank
+    if (r != K-1)
+        warning(sprintf("rank of SigmaKstar was %s instead of %s", r, K-1))
+
+    ## meanform eigenvalues: first D values > 0, rest =0
+    mds <- cmdscale(dist(est.M), k=D, eig=TRUE)
+    if (!all(mds$eig[seq_len(D)] > 0))
+        warning(sprintf("%s of the first %s eigenvalues <= 0",
+            sum(mds$eig[seq_len(D)] > 0), D))
+    if (sum(mds$eig[seq_len(D)]) / sum(mds$eig) < 1)
+        warning(sprintf("the first %s eigenvalues did not sum to 1", D))
+
     out <- list(
         M=est.M,
         SigmaKstar=est.SigmaKstar,
