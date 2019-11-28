@@ -26,7 +26,7 @@ importFrom("utils",
     "stack", "read.table")
 importFrom("stats",
     "as.dist", "dist", "optim", "quantile", "rnorm",
-    "cmdscale", "confint", "prcomp")
+    "cmdscale", "confint", "prcomp", "runif")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon", "text", "hist")
 
