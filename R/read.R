@@ -127,7 +127,7 @@ as.array.edma_data <- function (x, ...) {
     out
 }
 
-edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
+.edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     K <- nrow(M)
     D <- ncol(M)
     if (D > 3 || D < 2)
@@ -148,13 +148,18 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
         H <- diag(1, K) - (1/K) * crossprod(ones, ones)
     }
     SigmaKstar = H %*% SigmaK %*% H
-
+    list(
+        M=M, SigmaK=SigmaK, SigmaKstar=SigmaKstar, H=H,
+        X=X, D=D, K=K, n=n)
+}
+edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
+    z <- .edma_simulate_data(n, M, SigmaK, H)
     DATA <- list()
-    for (i in seq_len(n)) {
-        DATA[[i]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
+    for (i in seq_len(z$n)) {
+        DATA[[i]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,drop=FALSE])
         dimnames(DATA[[i]]) <- list(
-            paste0("L", seq_len(K)),
-            c("X", "Y", "Z")[seq_len(D)])
+            paste0("L", seq_len(z$K)),
+            c("X", "Y", "Z")[seq_len(z$D)])
     }
     out <- list(
         name="Simulated landmark data",
@@ -162,8 +167,8 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
         specimens=NULL
     )
     class(out) <- c("edma_data")
-    attr(out, "simulation_settings") <- list(M=M, SigmaK=SigmaK,
-        SigmaKstar=SigmaKstar, H=H)
+    attr(out, "simulation_settings") <- list(M=z$M, SigmaK=z$SigmaK,
+        SigmaKstar=z$SigmaKstar, H=z$H)
     out
 }
 
