@@ -99,11 +99,15 @@ SigmaK.edma_fit_p <- function (object, ...) object[["SigmaK"]]
 
 sensitivity <- function (object, ...) UseMethod("sensitivity")
 sensitivity.edma_fit_p <- function (object, m=10, ...) {
+    if (m < 1)
+        stop("m must be > 1")
     f <- function() {
-        o <- SigmaK_fit(object, object$pattern)$results
+        o <- .SigmaK_fit(object$SigmaKstar, object$H, object$pattern,
+            method=object$results$method, control=object$results$control)
         unname(c(o$par, o$value))
     }
-    out <- t(replicate(m, f()))
+    out <- rbind(unname(c(object$results$par, object$results$value)),
+        t(replicate(m, f())))
     colnames(out) <- c(paste0("par_", names(object$results$par)), "value")
     out
 }

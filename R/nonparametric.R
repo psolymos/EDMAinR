@@ -192,14 +192,14 @@ formdiff <- function (numerator, denominator, ...) {
     .compare_objects(numerator, denominator)
     .formdiff(Meanform(numerator), Meanform(denominator))
 }
-## random bootstrap index based on 2 objects, singe draw
+## random mixed bootstrap index based on 2 objects, singe draw
 .Test_index1 <- function(n1, n2, sample=TRUE, replace=TRUE, ...) {
     ii <- c(-seq_len(n1), seq_len(n2))
     if (sample)
         ii <- sample(ii, length(ii), replace=replace, ...)
     ii
 }
-## random bootstrap index based on 2 objects, multiple
+## random mixed bootstrap index based on 2 objects, multiple
 .Ttest_index <- function(numerator, denominator, B=0) {
     n1 <- length(numerator$data)
     n2 <- length(denominator$data)
@@ -217,7 +217,7 @@ formdiff <- function (numerator, denominator, ...) {
     class(object) <- "edma_data"
     object
 }
-## form diff matrix based on bootstrap, single draw
+## form diff matrix based on mixed bootstrap, single draw
 .Ttest_fit1 <- function(i, d1, d2) {
     n1 <- length(d1$data)
     n2 <- length(d2$data)
@@ -231,7 +231,7 @@ formdiff <- function (numerator, denominator, ...) {
     f2 <- edma_fit(d2)
     .formdiff(Meanform(f1), Meanform(f2))
 }
-## form diff matrix based on bootstrap, multiple runs
+## form diff matrix based on mixed bootstrap, multiple runs
 .Ttest_fit <- function(numerator, denominator, B=0) {
     d1 <- .get_data(numerator)
     d2 <- .get_data(denominator)
@@ -244,7 +244,7 @@ formdiff <- function (numerator, denominator, ...) {
     out
 }
 
-## form difference matrix with bootstrap
+## form difference matrix with mixed bootstrap
 edma_fdm <- function(numerator, denominator, B=0) {
     .compare_objects(numerator, denominator)
     fd <- stack(formdiff(numerator, denominator))
@@ -262,8 +262,8 @@ edma_fdm <- function(numerator, denominator, B=0) {
 .print_edma_fdm <- function(x, title="EDMA", truncate=20, ...) {
     H <- T_test(x)
     cat(title, "\n",
-        "Numerator: ", .shorten_name(x$numerator$name, truncate), "\n",
-        "Denominator: ", .shorten_name(x$denominator$name, truncate), "\n",
+        #"Numerator: ", .shorten_name(x$numerator$name, truncate), "\n",
+        #"Denominator: ", .shorten_name(x$denominator$name, truncate), "\n",
         if (x$B)
             paste(x$B, "mixed bootstrap runs") else "no mixed bootstrap",
         ", T=", round(H$statistic, 4), ", p=", round(H$p.value, 4),
@@ -376,9 +376,11 @@ plot.edma_fdm <- function(x, type=c("global", "local"), ylab, ...) {
 
 ## stacked growth matrix
 ## inputs are edma_fit objects
-edma_gm <- function (numerator, denominator, B=0) {
-    out <- edma_fdm(numerator, denominator, B=B)
+edma_gm <- function (a1, a2, B=0) {
+    .compare_objects(a1, a2, "a1 vs a2:")
+    out <- edma_fdm(numerator=a2, denominator=a1, B=B)
     class(out) <- c("edma_gm", class(out))
+    out$call <- match.call()
     out
 }
 print.edma_gm <- function(x, ...) {

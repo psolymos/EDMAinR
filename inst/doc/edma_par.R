@@ -97,7 +97,9 @@ sim <- edma_simulate_data(n=1000, M, SigmaK)
 fit <- edma_fit(sim, B=10)
 o <- SigmaK_fit(fit, m)
 cbind(true=parm, est=o$results$par)
-sensitivity(o)
+s <- sensitivity(o, m=20)
+summary(s)
+boxplot(s)
 
 ## Liangyuan's estimator
 
