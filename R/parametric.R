@@ -78,6 +78,15 @@ method = "Nelder-Mead", control = list()) {
 }
 
 SigmaK_fit <- function(object, pattern, ...) {
+    utri <- pattern[upper.tri(pattern)]
+    ltri <- t(pattern)[upper.tri(pattern)]
+    if (!all(is.na(utri) == is.na(ltri)))
+        stop("NA's (0's) are not symmertic in pattern matrix")
+    if (!all(utri[!is.na(utri)] == ltri[!is.na(ltri)]))
+        stop("non-NA's (non-0's) are not symmertic in pattern matrix")
+    pattern[upper.tri(pattern)] <- NA
+    pattern[upper.tri(pattern)] <- t(pattern)[upper.tri(pattern)]
+
     o <- .SigmaK_fit(object$SigmaKstar, object$H, pattern, ...)
     object$SigmaK <- o$SigmaK
     o$SigmaK <- NULL

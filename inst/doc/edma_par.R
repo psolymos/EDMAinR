@@ -2,9 +2,9 @@ library(EDMAinR)
 
 ## test pattern matrix manipulation
 m <- matrix(c(
-    "a", NA, NA, NA,
+    "a", "c", NA, NA,
     "c", "a", NA, NA,
-    NA,  NA, "b", NA,
+    NA,  NA, "b", "d",
     NA,  NA, "d", "b"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=1, b=2, c=3, d=4)
@@ -42,34 +42,34 @@ parm <- c(a=0.25, b=0.35, c=0.1, d=0.05)
 
 ## this works
 m <- matrix(c(
-    "a", NA, NA, NA,
+    "a", "b", NA, NA,
     "b", "a", NA, NA,
-    NA,  NA, "a", NA,
+    NA,  NA, "a", "b",
     NA,  NA, "b", "a"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.15, b=0.05)
 
 ## this does not work
 m <- matrix(c(
-    "a", NA, NA, NA,
-    "b", "a", NA, NA,
-    "b", "b", "a", NA,
+    "a", "b", "b", "b",
+    "b", "a", "b", "b",
+    "b", "b", "a", "b",
     "b", "b", "b", "a"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.07)
 
 ## this does not work
 m <- matrix(c(
-    "a", NA, NA, NA,
+    "a", "c", NA, NA,
     "c", "a", NA, NA,
-    NA,  NA, "b", NA,
+    NA,  NA, "b", "d",
     NA,  NA, "d", "b"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.3, c=0.075, d=0.09)
 
 ## this works
 m <- matrix(c(
-    "a", NA, NA, NA,
+    "a", "c", NA, NA,
     "c", "a", NA, NA,
     NA,  NA, "b", NA,
     NA,  NA, NA, "b"
