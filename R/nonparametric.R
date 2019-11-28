@@ -71,8 +71,9 @@
     if (!all(mds$eig[seq_len(D)] > 0))
         warning(sprintf("%s of the first %s eigenvalues <= 0",
             sum(mds$eig[seq_len(D)] > 0), D))
-    if (sum(mds$eig[seq_len(D)]) / sum(mds$eig) < 1)
-        warning(sprintf("the first %s eigenvalues did not sum to 1", D))
+    if (sum(mds$eig[seq_len(D)]) / sum(mds$eig) < 0.99)
+        warning(sprintf("the first %s eigenvalues summed to %s",
+            sum(mds$eig[seq_len(D)]), D))
 
     out <- list(
         M=est.M,
@@ -125,7 +126,7 @@ Meanform <- function (object, ...) UseMethod("Meanform")
 Meanform.edma_fit <- function (object, ...) object$M
 
 SigmaKstar <- function (object, ...) UseMethod("SigmaKstar")
-SigmaKstar.edma_fit_np <- function (object, ...) object$SigmaKstar
+SigmaKstar.edma_fit_np <- function (object, ...) object[["SigmaKstar"]]
 
 as.dist.edma_fit <- function(m, diag = FALSE, upper = FALSE) {
     out <- dist(Meanform(m), diag=diag, upper=upper)

@@ -83,6 +83,28 @@ SigmaK_fit <- function(object, pattern, ...) {
     o$SigmaK <- NULL
     object$pattern <- pattern
     object$results <- o
+    if (!is.null(object$boot)) {
+        for (i in seq_along(object$boot)) {
+            object$boot[[i]][["SigmaK"]] <- .SigmaK_fit(
+                object$boot[[i]][["SigmaKstar"]],
+                object$boot[[i]][["H"]], pattern)$SigmaK#, ...)
+        }
+    }
     class(object) <- c("edma_fit_p", "edma_fit")
     object
 }
+
+SigmaK <- function (object, ...) UseMethod("SigmaK")
+SigmaK.edma_fit_p <- function (object, ...) object[["SigmaK"]]
+
+sensitivity <- function (object, ...) UseMethod("sensitivity")
+sensitivity.edma_fit_p <- function (object, m=10, ...) {
+    f <- function() {
+        o <- SigmaK_fit(object, object$pattern)$results
+        unname(c(o$par, o$value))
+    }
+    out <- t(replicate(m, f()))
+    colnames(out) <- c(paste0("par_", names(object$results$par)), "value")
+    out
+}
+

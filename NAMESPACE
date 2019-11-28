@@ -15,10 +15,12 @@ export(
     "landmark_names",
     "Meanform",
     "SigmaKstar",
+    "SigmaK",
     "get_fm",
     "get_fdm",
     "T_test",
-    "specimens"
+    "specimens",
+    "sensitivity"
 )
 
 ## imports
@@ -51,6 +53,11 @@ S3method("get_fm", "edma_fit")
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
 S3method("SigmaKstar", "edma_fit_np")
+
+## edma_fit_np methods
+S3method("SigmaK", "edma_fit_p")
+S3method("sensitivity", "edma_fit_p")
+
 
 ## other methods
 S3method("stack", "dist") # not to import from mefa
