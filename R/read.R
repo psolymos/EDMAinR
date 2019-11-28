@@ -35,10 +35,10 @@ read_xyz <- function(file, ...) {
         }
     }
     X <- read.table(file, header=FALSE, sep=" ", skip=4L, nrows=n*K, ...)
-    NOTES <- try(read.table(file, header=FALSE, sep="\t", skip=4L+n*K,
+    SPECIEMNS <- try(read.table(file, header=FALSE, sep="\t", skip=4L+n*K,
         stringsAsFactors=FALSE)[[1L]], silent=TRUE)
-    if (inherits(NOTES, "try-error"))
-        NOTES <- NULL
+    if (inherits(SPECIEMNS, "try-error"))
+        SPECIEMNS <- NULL
     DATA <- list()
     for (i in seq_len(n)) {
         DATA[[i]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
@@ -47,7 +47,7 @@ read_xyz <- function(file, ...) {
     out <- list(
         name=NAME,
         data=DATA,
-        notes=NOTES
+        specimens=SPECIEMNS
     )
     class(out) <- c("edma_data")
     out
@@ -86,7 +86,7 @@ subset.edma_data <- function(x, subset, ...) {
     if (missing(subset))
         subset <- seq_along(x$data)
     x$data <- x$data[subset]
-    x$notes <- x$notes[subset]
+    x$specimens <- x$specimens[subset]
     x
 }
 
@@ -113,6 +113,8 @@ subset.edma_data <- function(x, subset, ...) {
 }
 landmark_names <- function (x, ...) UseMethod("landmark_names")
 landmark_names.edma_data <- function(x, ...) dimnames(x)[[1L]]
+specimens <- function (x, ...) UseMethod("specimens")
+specimens.edma_data <- function(x, ...) x$specimens
 
 
 ## coercion methods
@@ -157,7 +159,7 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     out <- list(
         name="Simulated landmark data",
         data=DATA,
-        notes=NULL
+        specimens=NULL
     )
     class(out) <- c("edma_data")
     attr(out, "simulation_settings") <- list(M=M, SigmaK=SigmaK,

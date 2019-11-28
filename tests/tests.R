@@ -15,6 +15,7 @@ x2
 dim(x1)
 dimnames(x1)
 landmark_names(x1)
+specimens(x1)
 
 x1[1:10, 2:3, 1:5]
 subset(x1, 1:10)
@@ -36,10 +37,6 @@ get_fm(fit)
 get_fm(fit, sort=TRUE, decreasing=TRUE)
 get_fm(fit, sort=TRUE, decreasing=FALSE)
 
-pc <- get_pca(edma_fit(x1))
-plot(pc, pch=3)
-polygon(pc[chull(pc),], col="#ff000022", lty=2, border=2)
-
 numerator <- edma_fit(x1, B=B)
 denominator <- edma_fit(x2, B=B)
 #numerator <- edma_fit(x1[1:25,,])
@@ -53,13 +50,9 @@ head(get_fdm(fdm))
 head(get_fdm(fdm, sort=TRUE, decreasing=TRUE))
 head(get_fdm(fdm, sort=TRUE, decreasing=FALSE))
 
-test(fdm)
+T_test(fdm)
 plot(fdm, "global")
-plot(fdm, "local_p")
-plot(fdm, "local_ci")
-
-pc2 <- get_pca(fdm)
-plot(pc2)
+plot(fdm, "local")
 
 if (interactive()) {
 

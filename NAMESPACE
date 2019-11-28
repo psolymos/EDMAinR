@@ -16,8 +16,8 @@ export(
     "SigmaKstar",
     "get_fm",
     "get_fdm",
-    "get_pca",
-    "test"
+    "T_test",
+    "specimens"
 )
 
 ## imports
@@ -40,12 +40,12 @@ S3method("dimnames", "edma_data")
 S3method("as.matrix", "edma_data")
 S3method("as.data.frame", "edma_data")
 S3method("as.array", "edma_data")
+S3method("specimens", "edma_data")
 
 ## edma_fit methods
 S3method("Meanform", "edma_fit")
 S3method("as.dist", "edma_fit")
 S3method("get_fm", "edma_fit")
-S3method("get_pca", "edma_fit")
 
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
@@ -56,10 +56,9 @@ S3method("stack", "dist") # not to import from mefa
 
 ## edma_fdm methods
 S3method("get_fdm", "edma_fdm")
-S3method("test", "edma_fdm")
+S3method("T_test", "edma_fdm")
 S3method("confint", "edma_fdm")
 S3method("print", "edma_fdm")
-S3method("get_pca", "edma_fdm")
 
 ## edma_gm methods
 S3method("print", "edma_gm")
@@ -67,6 +66,4 @@ S3method("print", "edma_gm")
 ## visualization
 S3method("plot", "edma_gdm")
 S3method("plot", "edma_fdm")
-S3method("plot", "edma_fdm_pca")
-
 
