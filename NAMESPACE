@@ -6,7 +6,8 @@ export(
     "edma_fdm",
     "edma_gm",
     "edma_gdm",
-    "formdiff"
+    "formdiff",
+    "SigmaK_fit"
 )
 
 ## export new generics
