@@ -2,10 +2,6 @@
 ## NA --> 0
 ## other unique values will be factor levels
 .mat2fac <- function(m) {
-    if (dim(m)[1L] != dim(m)[1L])
-        stop("matrix must be square matrix")
-    if (any(is.na(diag(m))))
-        stop("values in the diagonal must not be NA")
     K <- nrow(m)
     m[upper.tri(m)] <- m[lower.tri(m)]
     m <- factor(as.character(m))
@@ -49,6 +45,58 @@
         X=X, D=D, K=K, n=n)
 }
 
+.SigmaK_fit <- function(SigmaKstar, H, pattern, init,
+method = "Nelder-Mead", control = list(), hessian = FALSE) {
+    ## test that SigmaKstar is of the right (K-1) rank
+    r <- Matrix::rankMatrix(SigmaKstar)
+    K <- nrow(SigmaKstar)
+    #if (r != K-1)
+    #    warning(sprintf("rank of SigmaKstar was %s instead of %s", r, K-1))
+    if (any(is.na(diag(pattern))))
+        stop("pattern matrix must have parameters in the diagonal")
+    if (dim(pattern)[1L] != dim(pattern)[1L])
+        stop("pattern matrix must be square matrix")
+    pattern1 <- pattern
+    pattern1[] <- NA
+    diag(pattern1) <- diag(pattern)
+    pattern0 <- pattern
+    diag(pattern0) <- NA
+    fac <- .mat2fac(pattern) # all parms
+    lev1 <- levels(.mat2fac(pattern1)) # parms in diag
+    lev0 <- levels(.mat2fac(pattern0)) # parms off-diag
+    if (length(intersect(lev1, lev0)) > 0)
+        stop("diagonal and off-diagonal parameters must not overlap")
+    p <- nlevels(droplevels(fac))
+    if (p > K*(K-1)/2)
+        stop(
+            sprintf(
+                "pattern with %s unknowns implies non estimable SigmaK",
+            p))
+    ## make sure diags are >0
+    ## generate random starting values using runif()
+    if (missing(init)) {
+        init <- structure(numeric(p), names=levels(fac))
+        init[lev1] <- runif(length(lev1))
+    }
+    num_max <- .Machine$double.xmax^(1/3)
+    ## we might need constraints here, i.e. >0 diag values
+    fun <- function(parms){
+        SigmaK <- .vec2mat(parms, fac)
+        if (any(diag(SigmaK) <= 0))
+            return(num_max)
+        10^4 * max((SigmaKstar - (H %*% SigmaK %*% H))^2)
+    }
+    if (!is.null(control$fnscale) && control$fnscale < 0)
+        stop("control$fnscale can not be negative")
+    o <- suppressWarnings({
+        optim(init, fun, method=method, control=control, hessian=hessian)
+    })
+    o$SigmaK <- .vec2mat(o$par, fac)
+    o
+}
+
+
+
 m <- matrix(c(
     "a", NA, NA, NA,
     "c", "a", NA, NA,
@@ -61,15 +109,6 @@ S <- .vec2mat(parm, fac)
 .estimable_SigmaK(S)
 
 # Generate the data and test the method
-
-
-m <- matrix(c(
-    "a", NA, NA, NA,
-    "c", "a", NA, NA,
-    NA,  NA, "b", NA,
-    NA,  NA, "d", "b"
-), 4, 4, byrow=TRUE)
-parm <- c(a=0.25, b=0.3, c=0.075, d=0.09)
 
 ## this works
 m <- matrix(c(
@@ -116,35 +155,14 @@ m <- matrix(c(
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.07)
 
-.SigmaK_fit <- function(SigmaKstar, H, pattern, init,
-method = "Nelder-Mead", control = list(), hessian = FALSE) {
-    ## test that SigmaKstar is of the right (K-1) rank
-    K <- nrow(SigmaKstar)
-    fac <- .mat2fac(pattern)
-    p <- nlevels(droplevels(fac))
-    if (p > K*(K-1)/2)
-        stop(
-            sprintf(
-                "pattern with %s unknowns implies non estimable SigmaK",
-            p))
-    if (missing(init))
-        init <- structure(numeric(p), names=levels(fac))
-    num_max <- .Machine$double.xmax^(1/3)
-    ## we might need constraints here, i.e. >0 diag values
-    fun <- function(parms){
-        SigmaK <- .vec2mat(parms, fac)
-        if (any(diag(SigmaK) <= 0))
-            return(num_max)
-        10^4 * max((SigmaKstar - (H %*% SigmaK %*% H))^2)
-    }
-    if (!is.null(control$fnscale) && control$fnscale < 0)
-        stop("control$fnscale can not be negative")
-    o <- suppressWarnings({
-        optim(init, fun, method=method, control=control, hessian=hessian)
-    })
-    o$SigmaK <- .vec2mat(o$par, fac)
-    o
-}
+m <- matrix(c(
+    "a", NA, NA, NA,
+    "c", "a", NA, NA,
+    NA,  NA, "b", NA,
+    NA,  NA, "d", "b"
+), 4, 4, byrow=TRUE)
+parm <- c(a=0.25, b=0.3, c=0.075, d=0.09)
+
 
 M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
     .Dim = c(4L, 2L))
@@ -152,10 +170,17 @@ SigmaK <- .vec2mat(parm, .mat2fac(m))
 sim <- .edma_simulate(n=1000, M, SigmaK)
 
 fit <- EDMAinR:::.edma_fit_np(sim$X, sim$n, sim$K, sim$D)
-o <- .SigmaK_fit(fit$SigmaKstar, fit$H, m, init=c(a=runif(0, 1), b=0))
+sim$SigmaKstar
+fit$SigmaKstar
+
+SigmaKstar <- fit$SigmaKstar
+H <- fit$H
+pattern <- m
+
+o <- .SigmaK_fit(fit$SigmaKstar, fit$H, m)
 o
 
-summary(t(replicate(10, unlist(.SigmaK_fit(fit$SigmaKstar, fit$H, m, init=c(a=runif(1), b=0))[1:2]))))
+summary(t(replicate(10, unlist(.SigmaK_fit(fit$SigmaKstar, fit$H, m)[1:2]))))
 
 cbind(true=parm, est=o$par)
 
