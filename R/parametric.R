@@ -23,10 +23,6 @@
 .SigmaK_fit <- function(SigmaKstar, H, pattern, init,
 method = "Nelder-Mead", control = list()) {
     K <- nrow(SigmaKstar)
-    if (any(is.na(diag(pattern))))
-        stop("pattern matrix must have parameters in the diagonal")
-    if (dim(pattern)[1L] != dim(pattern)[1L])
-        stop("pattern matrix must be square matrix")
     pattern1 <- pattern
     pattern1[] <- NA
     diag(pattern1) <- diag(pattern)
@@ -49,16 +45,7 @@ method = "Nelder-Mead", control = list()) {
     }
     if (any(init0[lev1] <= 0))
         stop("inits for diagonal elements must be > 0")
-    ## check sparseness
-    tmp <- init0
-    tmp[] <- 1
-    UNK <- sum(.vec2mat(tmp, fac))
-    if (UNK > K*(K-1)/2)
-        stop(sprintf(
-            "number of nonzero cells (%s) in pattern matrix must be <= %s",
-            UNK, K*(K-1)/2))
     num_max <- .Machine$double.xmax^(1/3)
-    ## we might need constraints here, i.e. >0 diag values
     fun <- function(parms){
         SigmaK <- .vec2mat(parms, fac)
         if (any(diag(SigmaK) <= 0))
@@ -77,7 +64,8 @@ method = "Nelder-Mead", control = list()) {
     o
 }
 
-SigmaK_fit <- function(object, pattern, ...) {
+.check_pattern <- function(object, pattern) {
+    mode(pattern) <- "character"
     utri <- pattern[upper.tri(pattern)]
     ltri <- t(pattern)[upper.tri(pattern)]
     if (!all(is.na(utri) == is.na(ltri)))
@@ -86,7 +74,29 @@ SigmaK_fit <- function(object, pattern, ...) {
         stop("non-NA's (non-0's) are not symmertic in pattern matrix")
     pattern[upper.tri(pattern)] <- NA
     pattern[upper.tri(pattern)] <- t(pattern)[upper.tri(pattern)]
-
+    if (any(is.na(diag(pattern))))
+        stop("pattern matrix must have parameters in the diagonal")
+    if (dim(pattern)[1L] != dim(pattern)[1L])
+        stop("pattern matrix must be square matrix")
+    if (is.null(dimnames(pattern)))
+        stop("pattern must have landmark names as dimnames")
+    if (!all(landmark_names(object) %in% rownames(pattern)) ||
+        !all(landmark_names(object) %in% colnames(pattern)))
+        stop("dimnames of patterm must match landmark names")
+    pattern <- pattern[rownames(object$SigmaKstar),
+        colnames(object$SigmaKstar)]
+    ## check spareness
+    UNK <- nlevels(factor(pattern))
+    MAX <- nrow(object$SigmaKstar)*(nrow(object$SigmaKstar)-1)/2
+    if (UNK > MAX)
+        stop(sprintf(
+            "number of nonzero cells (%s) in pattern matrix must be <= %s",
+            UNK, MAX))
+    invisible(pattern)
+}
+SigmaK_fit <- function(object, pattern, check_pattern=TRUE, ...) {
+    if (check_pattern)
+        pattern <- .check_pattern(object, pattern)
     o <- .SigmaK_fit(object$SigmaKstar, object$H, pattern, ...)
     object$SigmaK <- o$SigmaK
     o$SigmaK <- NULL
@@ -99,7 +109,7 @@ SigmaK_fit <- function(object, pattern, ...) {
                 object$boot[[i]][["H"]], pattern)$SigmaK#, ...)
         }
     }
-    class(object) <- c("edma_fit_p", "edma_fit")
+    class(object) <- c("edma_fit_p", "edma_fit", "edma_data")
     object
 }
 
