@@ -1,6 +1,6 @@
 #remotes::install_github("psolymos/EDMAinR")
 library(EDMAinR)
-B <- 9
+B <- 3
 
 file1 <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
     package="EDMAinR")
@@ -14,7 +14,7 @@ x2
 
 dim(x1)
 dimnames(x1)
-landmark_names(x1)
+landmarks(x1)
 specimens(x1)
 
 x1[1:10, 2:3, 1:5]

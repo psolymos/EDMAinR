@@ -15,7 +15,7 @@
 ## CZEM_094 Scanned on
 ## CZEM_097 Scanned on
 ## etc, this part is particularly useful because then you actually know the specimen numbers for the data within the file. Space is the delimiter in the XYZ files.
-read_xyz <- function(file, ...) {
+read_xyz <- function(file, split_spec_names=TRUE, ...) {
     h <- readLines(file, n=4L)
     NAME <- h[1L]
     DIMS <- character(nchar(h[2L]))
@@ -35,19 +35,26 @@ read_xyz <- function(file, ...) {
         }
     }
     X <- read.table(file, header=FALSE, sep=" ", skip=4L, nrows=n*K, ...)
-    SPECIEMNS <- try(read.table(file, header=FALSE, sep="\t", skip=4L+n*K,
+    SPECIMENS <- try(read.table(file, header=FALSE, sep="\t", skip=4L+n*K,
         stringsAsFactors=FALSE)[[1L]], silent=TRUE)
-    if (inherits(SPECIEMNS, "try-error"))
-        SPECIEMNS <- NULL
+    if (inherits(SPECIMENS, "try-error"))
+        SPECIMENS <- paste0("S", seq_len(n))
+    if (split_spec_names)
+        SPECIMENS <- sapply(strsplit(SPECIMENS, " "), "[[", 1L)
+    if (length(SPECIMENS) != n)
+        stop("length of specimen names must match n")
+    if (any(duplicated(SPECIMENS)))
+        stop("specimen names must be unique")
+    if (any(duplicated(LABELS)))
+        stop("landmark names must be unique")
     DATA <- list()
     for (i in seq_len(n)) {
-        DATA[[i]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
+        DATA[[SPECIMENS[i]]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
         dimnames(DATA[[i]]) <- list(LABELS, DIMS)
     }
     out <- list(
         name=NAME,
-        data=DATA,
-        specimens=SPECIEMNS
+        data=DATA
     )
     class(out) <- c("edma_data")
     out
@@ -58,9 +65,8 @@ read_xyz <- function(file, ...) {
 stack.edma_data <- function(x, ...) {
     d <- x$data
     out <- do.call(rbind, d)
-    rownames(out) <- paste0("rep", rep(seq_along(x$data),
-        each=nrow(x$data[[1L]])), "_",
-        rownames(x$data[[1L]]))
+    rownames(out) <- paste0(rep(specimens(x), each=nrow(x$data[[1L]])),
+        "_", rownames(x$data[[1L]]))
     out
 }
 
@@ -86,7 +92,6 @@ subset.edma_data <- function(x, subset, ...) {
     if (missing(subset))
         subset <- seq_along(x$data)
     x$data <- x$data[subset]
-    x$specimens <- x$specimens[subset]
     x
 }
 
@@ -99,7 +104,7 @@ subset.edma_data <- function(x, subset, ...) {
     if (missing(k))
         k <- seq_along(x$data)
     x <- subset(x, k)
-    for (h in seq_along(x$data))
+    for (h in names(x$data))
         x$data[[h]] <- x$data[[h]][i,j,drop=FALSE]
     x
 }
@@ -109,17 +114,17 @@ subset.edma_data <- function(x, subset, ...) {
     c(nrow(x$data[[1L]]), ncol(x$data[[1L]]), length(x$data))
 }
 `dimnames.edma_data` <- function(x) {
-    c(dimnames(x$data[[1L]]), NULL)
+    c(dimnames(x$data[[1L]]), list(names(x$data)))
 }
-landmark_names <- function (x, ...) UseMethod("landmark_names")
-landmark_names.edma_data <- function(x, ...) dimnames(x)[[1L]]
+landmarks <- function (x, ...) UseMethod("landmarks")
+landmarks.edma_data <- function(x, ...) dimnames(x)[[1L]]
 specimens <- function (x, ...) UseMethod("specimens")
-specimens.edma_data <- function(x, ...) x$specimens
+specimens.edma_data <- function(x, ...) names(x$data)
 
 
 ## coercion methods
 as.matrix.edma_data <- function(x, ...) stack(x, ...)
-as.data.frame.edma_data <- function(x, ...) stack(x, ...)
+as.data.frame.edma_data <- function(x, ...) as.data.frame(stack(x, ...))
 as.array.edma_data <- function (x, ...) {
     out <- array(0, dim(x), dimnames(x))
     for (i in seq_along(x$data))
@@ -155,7 +160,7 @@ as.array.edma_data <- function (x, ...) {
 edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     z <- .edma_simulate_data(n, M, SigmaK, H)
     DATA <- list()
-    for (i in seq_len(z$n)) {
+    for (i in paste0("S", seq_len(z$n))) {
         DATA[[i]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,drop=FALSE])
         dimnames(DATA[[i]]) <- list(
             paste0("L", seq_len(z$K)),
@@ -163,8 +168,7 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     }
     out <- list(
         name="Simulated landmark data",
-        data=DATA,
-        specimens=NULL
+        data=DATA
     )
     class(out) <- c("edma_data")
     attr(out, "simulation_settings") <- list(M=z$M, SigmaK=z$SigmaK,

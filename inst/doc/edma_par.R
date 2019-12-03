@@ -242,3 +242,27 @@ boxplot(s)
     est.SigmaK
 }
 
+
+## error checking
+
+object <- edma_simulate_data(n=100, M, SigmaK)
+
+x <- as.array(object)
+K <- dim(x)[1L]
+avg <- t(sapply(seq_len(K), function(i) apply(x[i,,], 1, mean)))
+avg
+M
+
+file <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
+    package="EDMAinR")
+x <- read_xyz(file)
+object <- edma_fit(x)
+
+p0 <- cmdscale(dist(Meanform(object)), k=2)
+colnames(p0) <- paste0("Axis", 1:2)
+pp <- list()
+for (i in seq_along(object$data)) {
+    pp[[]]
+}
+
+

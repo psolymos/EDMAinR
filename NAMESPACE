@@ -12,7 +12,7 @@ export(
 
 ## export new generics
 export(
-    "landmark_names",
+    "landmarks",
     "Meanform",
     "SigmaKstar",
     "SigmaK",
@@ -37,7 +37,7 @@ S3method("stack", "edma_data")
 S3method("print", "edma_data")
 S3method("subset", "edma_data")
 S3method("[", "edma_data")
-S3method("landmark_names", "edma_data")
+S3method("landmarks", "edma_data")
 S3method("dim", "edma_data")
 S3method("dimnames", "edma_data")
 S3method("as.matrix", "edma_data")

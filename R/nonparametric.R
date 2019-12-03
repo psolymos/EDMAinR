@@ -213,7 +213,7 @@ formdiff <- function (numerator, denominator, ...) {
 }
 ## make a fit object like input data
 .get_data <- function(object) {
-    object <- object[c("name", "data", "notes")]
+    object <- list(name=object$name, data=object$data)
     class(object) <- "edma_data"
     object
 }
