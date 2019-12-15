@@ -20,7 +20,8 @@ export(
     "get_fdm",
     "T_test",
     "specimens",
-    "sensitivity"
+    "sensitivity",
+    "get_influence"
 )
 
 ## imports
@@ -52,6 +53,7 @@ S3method("as.dist", "edma_data")
 S3method("Meanform", "edma_fit")
 S3method("as.dist", "edma_fit")
 S3method("get_fm", "edma_fit")
+S3method("landmarks", "edma_fit")
 
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
@@ -70,6 +72,8 @@ S3method("T_test", "edma_fdm")
 S3method("confint", "edma_fdm")
 S3method("print", "edma_fdm")
 S3method("plot", "edma_fdm")
+S3method("landmarks", "edma_fdm")
+S3method("get_influence", "edma_fdm")
 
 ## edma_gm methods
 S3method("print", "edma_gm")
@@ -77,3 +81,5 @@ S3method("print", "edma_gm")
 ## edma_gdm methods
 S3method("plot", "edma_gdm")
 
+## edma_influence methods
+S3method("plot", "edma_influence")
