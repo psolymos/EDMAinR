@@ -80,8 +80,8 @@ method = "Nelder-Mead", control = list()) {
         stop("pattern matrix must be square matrix")
     if (is.null(dimnames(pattern)))
         stop("pattern must have landmark names as dimnames")
-    if (!all(landmark_names(object) %in% rownames(pattern)) ||
-        !all(landmark_names(object) %in% colnames(pattern)))
+    if (!all(landmarks(object) %in% rownames(pattern)) ||
+        !all(landmarks(object) %in% colnames(pattern)))
         stop("dimnames of patterm must match landmark names")
     pattern <- pattern[rownames(object$SigmaKstar),
         colnames(object$SigmaKstar)]

@@ -168,5 +168,5 @@ get_fm.edma_fit <- function (object, sort=FALSE, ...) {
     object
 }
 
-landmarks.edma_fdm <- function(x, ...)
+landmarks.edma_fit <- function(x, ...)
     landmarks(.get_data(x))

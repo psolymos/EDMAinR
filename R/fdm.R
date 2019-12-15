@@ -140,7 +140,8 @@ confint.edma_fdm <- function (object, parm, level=0.95, ...) {
     out[parm,,drop=FALSE]
 }
 
-landmarks.edma_fdm <- function(x, ...) landmarks(x$numerator)
+landmarks.edma_fdm <- function(x, ...)
+    landmarks(x$numerator)
 
 .sdmplot_ci <- function(x, xlab="", ylab="",
     bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
@@ -189,9 +190,9 @@ plot.edma_fdm <- function(x, type=c("global", "local"), ylab, ...) {
 
 ## stacked growth matrix
 ## inputs are edma_fit objects
-edma_gm <- function (a1, a2, B=0) {
+edma_gm <- function (a1, a2, ...) {
     .compare_objects(a1, a2, "a1 vs a2:")
-    out <- edma_fdm(numerator=a2, denominator=a1, B=B)
+    out <- edma_fdm(numerator=a2, denominator=a1, ...)
     class(out) <- c("edma_gm", class(out))
     out$call <- match.call()
     out
@@ -207,17 +208,17 @@ plot.edma_gm <- function(x, type=c("global", "local"), ylab, ...) {
 
 ## stacked growth difference matrix
 ## inputs are edma_fit objects
-edma_gdm <- function (a1, a2, b1, b2, B=0) {
+edma_gdm <- function (a1, a2, b1, b2, ...) {
     .compare_objects(a1, a2, "a1 vs a2:")
     .compare_objects(b1, b2, "b1 vs b2:")
     .compare_objects(a1, b1, "a1 vs b1:")
     .compare_objects(a2, b2, "a2 vs b2:")
-    gma <- edma_fdm(numerator=a2, denominator=a1, B=B)
-    gmb <- edma_fdm(numerator=b2, denominator=b1, B=B)
+    gma <- edma_fdm(numerator=a2, denominator=a1, ...)
+    gmb <- edma_fdm(numerator=b2, denominator=b1, ...)
     out <- list(
         call=match.call(),
         a1=a1, a2=a2, b1=b1, b2=b2,
-        B=B,
+        B=a1$B,
         gdm=gma$dm,
         boot=gma$boot)
     out$gdm$dist <- gmb$dm$dist / gma$dm$dist

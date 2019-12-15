@@ -32,7 +32,9 @@ importFrom("stats",
     "cmdscale", "confint", "prcomp", "runif")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon",
-    "text", "hist")
+    "text", "hist", "points", "segments", "title")
+importFrom("grDevices",
+    "chull", "dev.interactive", "devAskNewPage")
 
 ## edma_data methods
 S3method("stack", "edma_data")
