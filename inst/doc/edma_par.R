@@ -246,45 +246,24 @@ boxplot(s)
 
 ## error checking
 
-object <- edma_simulate_data(n=10, M, SigmaK)
-
-x <- as.array(object)
-K <- dim(x)[1L]
-avg <- t(sapply(seq_len(K), function(i) apply(x[i,,], 1, mean)))
-avg
-M
-
 file <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
     package="EDMAinR")
 object <- read_xyz(file)
-#object <- edma_fit(x)
-x <- as.array(object)
-K <- dim(x)[1L]
-D <- dim(x)[2L]
-n <- dim(x)[3L]
-avg <- t(sapply(seq_len(K), function(i) apply(x[i,,], 1, median)))
-cnt <- colMeans(avg)
-avg <- t(t(avg) - cnt)
-r0 <- apply(avg, 2, range)
-p0 <- cmdscale(dist(avg), k=2L)
-
-plot(p0, pch=3, col=1, xlim=range(p0[,1]), ylim=range(p0[,2]))
-
-#i <- 1
-for (i in 1:n) {
-z <- x[,,i]
-z <- t(t(z) - cnt)
-ri <- apply(z, 2, range)
-ri[1,] <- pmin(r0[1,], ri[1,])
-ri[2,] <- pmin(r0[2,], ri[2,])
-pi <- cmdscale(dist(z), k=2L)
+plot(object)
 
 
-points(pi, pch=21, col="grey")
-}
-points(p0, pch=3, col=1)
+## data based hclust/pca
 
-what <- c("X", "Y")
-plot(avg[,what], pch=3, col=1, xlim=ri[,what[1]], ylim=ri[,what[2]])
-points(z[,what], pch=21, col="grey")
+o <- .combine_data(x1, x2)
+d <- as.dist(o)
+h <- hclust(d, "ward.D2")
+plot(h, cex=0.5)
+mds <- cmdscale(sqrt(d), k=2, add=TRUE)
+plot(mds$points, col=o$groups)
+
+km <- kmeans(mds$points, 2)
+table(km$cluster, o$groups)
+table(cutree(h, 2), o$groups)
+table(km$cluster, cutree(h, 2))
+
 
