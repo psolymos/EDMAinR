@@ -267,3 +267,14 @@ table(cutree(h, 2), o$groups)
 table(km$cluster, cutree(h, 2))
 
 
+file1 <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
+    package="EDMAinR")
+file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz",
+    package="EDMAinR")
+x1 <- read_xyz(file1)
+x2 <- read_xyz(file2)
+numerator <- edma_fit(x1, B=99)
+denominator <- edma_fit(x2, B=0)
+x <- edma_fdm(numerator, denominator)
+i <- get_influence(object)
+plot(i)
