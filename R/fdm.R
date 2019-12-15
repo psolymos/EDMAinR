@@ -31,69 +31,41 @@ formdiff <- function (numerator, denominator, ...) {
     .compare_objects(numerator, denominator)
     .formdiff(Meanform(numerator), Meanform(denominator))
 }
-## random mixed bootstrap index based on 2 objects, singe draw
-.Test_index1 <- function(n1, n2, sample=TRUE, replace=TRUE, ...) {
-    ii <- c(-seq_len(n1), seq_len(n2))
-    if (sample)
-        ii <- sample(ii, length(ii), replace=replace, ...)
-    ii
-}
-## random mixed bootstrap index based on 2 objects, multiple
-.Ttest_index <- function(numerator, denominator, B=0) {
-    n1 <- length(numerator$data)
-    n2 <- length(denominator$data)
-    v0 <- .Test_index1(n1, n2, sample=FALSE)
-    out <- if (B > 0) {
-        cbind(v0, replicate(B, .Test_index1(n1, n2, sample=TRUE)))
+
+## x: object w bootstrap
+## ref: reference object (w or w/o bootstrap)
+.Ttest_fit <- function(x, ref, boot=TRUE) {
+    if (!boot)
+        x$boot <- NULL
+    FMref <- as.numeric(as.dist(ref))
+    FM <- if (is.null(x$boot)) {
+        data.matrix(as.numeric(as.dist(x)))
     } else {
-        data.matrix(v0)
+        cbind(as.numeric(as.dist(x)),
+            sapply(x$boot, function(z) as.numeric(dist(z$M))))
     }
-    unname(out)
-}
-## make a fit object like input data
-.get_data <- function(object) {
-    object <- list(name=object$name, data=object$data)
-    class(object) <- "edma_data"
-    object
-}
-## form diff matrix based on mixed bootstrap, single draw
-.Ttest_fit1 <- function(i, d1, d2) {
-    n1 <- length(d1$data)
-    n2 <- length(d2$data)
-    i1 <- i[seq_len(n1)]
-    i2 <- i[seq_len(n2)+n1]
-    d1o <- c(d1$data[-i1[i1 < 0]], d2$data[i1[i1 > 0]])
-    d2o <- c(d1$data[-i2[i2 < 0]], d2$data[i2[i2 > 0]])
-    d1$data <- d1o
-    d2$data <- d2o
-    f1 <- edma_fit(d1)
-    f2 <- edma_fit(d2)
-    .formdiff(Meanform(f1), Meanform(f2))
-}
-## form diff matrix based on mixed bootstrap, multiple runs
-.Ttest_fit <- function(numerator, denominator, B=0) {
-    d1 <- .get_data(numerator)
-    d2 <- .get_data(denominator)
-    ii <- .Ttest_index(numerator, denominator, B=B)
-    fd <- pbapply::pblapply(seq_len(B+1L),
-        function(i) .Ttest_fit1(ii[,i], d1, d2))
-    Tval <- sapply(fd, function(z) attr(z, "Tval"))
-    out <- do.call(cbind, fd)
-    attr(out, "Tval") <- Tval
-    out
+    FDM <- FM/FMref
+    Tval <- apply(FDM, 2, function(z) max(z)/min(z))
+    attr(FDM, "Tval") <- Tval
+    FDM
 }
 
 ## form difference matrix with mixed bootstrap
-edma_fdm <- function(numerator, denominator, B=0) {
+edma_fdm <- function(numerator, denominator, ref_denom=TRUE) {
     .compare_objects(numerator, denominator)
     fd <- stack(formdiff(numerator, denominator))
-    b <- .Ttest_fit(numerator, denominator, B=B)
+    b <- if (ref_denom) {
+        .Ttest_fit(numerator, denominator)
+    } else {
+        .Ttest_fit(denominator, numerator)
+    }
     out <- list(
         call=match.call(),
         numerator=numerator,
         denominator=denominator,
-        B=B,
+        ref_denom=ref_denom,
         dm=fd,
+        B=ncol(b)-1,
         boot=b)
     class(out) <- c("edma_fdm", class(out))
     out
@@ -101,18 +73,18 @@ edma_fdm <- function(numerator, denominator, B=0) {
 .print_edma_fdm <- function(x, title="EDMA", truncate=20, ...) {
     H <- T_test(x)
     cat(title, "\n",
-        #"Numerator: ", .shorten_name(x$numerator$name, truncate), "\n",
-        #"Denominator: ", .shorten_name(x$denominator$name, truncate), "\n",
         if (x$B)
-            paste(x$B, "mixed bootstrap runs") else "no mixed bootstrap",
-        ", T=", round(H$statistic, 4), ", p=", round(H$p.value, 4),
+            paste(x$B, "bootstrap runs") else "no bootstrap",
+        " (ref: ", if (x$ref_denom) "denominator" else "numerator", ")",
+        "\nT=", round(H$statistic, 4),
+        if (x$B)
+            paste0(", p=", round(H$p.value, 4)) else "",
         sep="")
     invisible(x)
 }
 print.edma_fdm <- function(x, ...) {
     .print_edma_fdm(x, "EDMA form difference matrix", ...)
 }
-
 
 ## this pulls out the stacked form difference matrix
 get_fdm <- function (object, ...) UseMethod("get_fdm")
@@ -167,6 +139,8 @@ confint.edma_fdm <- function (object, parm, level=0.95, ...) {
     rownames(out) <- rownames(d)
     out[parm,,drop=FALSE]
 }
+
+landmarks.edma_fdm <- function(x, ...) landmarks(x$numerator)
 
 .sdmplot_ci <- function(x, xlab="", ylab="",
     bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
@@ -257,4 +231,51 @@ plot.edma_gdm <- function(x, ...) {
     .sdmplot_ci(x, ylab="GDM Ratio", ...)
 }
 
+## influential landmarks
+.influence <- function(i, object) {
+    ls <- landmarks(object)
+    names(ls) <- ls
+    i <- ls[i]
+    lsd <- ls[!(ls %in% i)]
+    if (object$ref_denom) {
+        x <- edma_fit(.get_data(object$numerator)[lsd,,])
+        ref <- edma_fit(.get_data(object$denominator)[lsd,,])
+    } else {
+        x <- edma_fit(.get_data(object$denominator)[lsd,,])
+        ref <- edma_fit(.get_data(object$numerator)[lsd,,])
+    }
+    res <- .Ttest_fit(x, ref, boot=FALSE)
+    attr(res, "Tval")
+}
 
+get_influence <- function (object, ...) UseMethod("get_influence")
+get_influence.edma_fdm <- function (object, ...) {
+    ls <- landmarks(object)
+    Tval <- T_test(object)$statistic
+    Tvals <- pbapply::pbsapply(ls, .influence, object=object)
+    out <- data.frame(landmark=ls, Tdrop=Tvals)
+    attr(out, "Tval") <- Tval
+    class(out) <- c("edma_influence", class(out))
+    out
+}
+i <- get_influence(object)
+
+plot.edma_influence <- function(x, ...) {
+    x <- x[order(x$Tdrop),]
+    Tval <- attr(x, "Tval")
+    k <- nrow(x)
+    xv <- seq_len(k)
+    Min <- 1
+    ylab <- "T-value"
+    r <- range(x$Tdrop, Min, Tval)
+    op <- par(las=2)
+    on.exit(par(op), add=TRUE)
+    plot(xv, x$Tdrop, ylim=r, type="n", axes=FALSE,
+        xlab="", ylab=ylab)
+    abline(h=Min, lty=2)
+    abline(h=Tval, col=2)
+    lines(xv, x$Tdrop, col="blue")
+    axis(2)
+    axis(1, xv, x$landmark, tick = FALSE, cex.axis=0.5)
+    invisible(x)
+}
