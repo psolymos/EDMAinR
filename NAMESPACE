@@ -30,7 +30,8 @@ importFrom("stats",
     "as.dist", "dist", "optim", "quantile", "rnorm",
     "cmdscale", "confint", "prcomp", "runif")
 importFrom("graphics",
-    "abline", "axis", "lines", "par", "plot", "polygon", "text", "hist")
+    "abline", "axis", "lines", "par", "plot", "polygon",
+    "text", "hist")
 
 ## edma_data methods
 S3method("stack", "edma_data")
@@ -45,6 +46,7 @@ S3method("as.data.frame", "edma_data")
 S3method("as.array", "edma_data")
 S3method("specimens", "edma_data")
 S3method("plot", "edma_data")
+S3method("as.dist", "edma_data")
 
 ## edma_fit methods
 S3method("Meanform", "edma_fit")
@@ -59,7 +61,6 @@ S3method("SigmaKstar", "edma_fit_np")
 S3method("SigmaK", "edma_fit_p")
 S3method("sensitivity", "edma_fit_p")
 
-
 ## other methods
 S3method("stack", "dist") # not to import from mefa
 
@@ -68,11 +69,11 @@ S3method("get_fdm", "edma_fdm")
 S3method("T_test", "edma_fdm")
 S3method("confint", "edma_fdm")
 S3method("print", "edma_fdm")
+S3method("plot", "edma_fdm")
 
 ## edma_gm methods
 S3method("print", "edma_gm")
 
-## visualization
+## edma_gdm methods
 S3method("plot", "edma_gdm")
-S3method("plot", "edma_fdm")
 

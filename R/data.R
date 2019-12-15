@@ -96,6 +96,7 @@ subset.edma_data <- function(x, subset, ...) {
 }
 
 ## subset landmarks, dimensions, replicates
+## [landmarks, dims, specimens]
 `[.edma_data` <- function (x, i, j, k) {
     if (missing(i))
         i <- seq_len(nrow(x$data[[1L]]))
@@ -243,3 +244,42 @@ col_chull="#44444444", col_spec=2, ...) {
     }
     invisible(x)
 }
+
+.combine_data <- function(a, b, ga="G1", gb="G2") {
+    ls <- intersect(landmarks(a), landmarks(b))
+    if (!all(ls %in% union(landmarks(a), landmarks(b))))
+        stop("landmarks must be the same in the two objects")
+    ds <- intersect(dimnames(a)[[2L]], dimnames(b)[[2L]])
+    if (!all(ds %in% union(dimnames(a)[[2L]], dimnames(b)[[2L]])))
+        stop("dimensions must be the same in the two objects")
+    names(a$data) <- paste0(ga, "_", names(a$data))
+    names(b$data) <- paste0(gb, "_", names(b$data))
+    a <- a[ls,ds,]
+    b <- b[ls,ds,]
+    ab <- a
+    na <- length(a$data)
+    nb <- length(b$data)
+    ab$name <- "data with 2 groups"
+    ab$data <- c(a$data, b$data)
+    ab$groups <- rep(1:2, c(na, nb))
+    ab
+}
+
+as.dist.edma_data <- function(m, diag = FALSE, upper = FALSE) {
+    n <- dim(m)[3L]
+    nam <- dimnames(m)[[3L]]
+    mat <- matrix(0, n, n)
+    dimnames(mat) <- list(nam, nam)
+    for (i in seq_len(n)) {
+        for (j in seq_len(i)) {
+            di <- dist(m$data[[i]])
+            dj <- dist(m$data[[j]])
+            fdm <- di / dj
+            mat[i,j] <- mat[j,i] <- log(max(fdm) / min(fdm))
+        }
+    }
+    out <- as.dist(mat, diag=diag, upper=upper)
+    class(out) <- c("edma_logT", class(out))
+    out
+}
+
