@@ -1,7 +1,5 @@
 ## a and b are edma_fit objects
-.compare_objects <- function (a, b, text="", ...) {
-    if (!inherits(b, "edma_fit") || !inherits(a, "edma_fit"))
-        stop("input must be edma_fit object")
+.compare_data <- function (a, b, text="", ...) {
     if (nrow(a$data[[1L]]) != nrow(b$data[[1L]]))
         stop(paste(text, "number of landmarks must be identical"))
     if (ncol(a$data[[1L]]) != ncol(b$data[[1L]]))
@@ -11,6 +9,11 @@
     if (!all(colnames(a$data[[1L]]) == colnames(b$data[[1L]])))
         stop(paste(text, "dimension names and ordering must be identical"))
     invisible(NULL)
+}
+.compare_objects <- function (a, b, text="", ...) {
+    if (!inherits(b, "edma_fit") || !inherits(a, "edma_fit"))
+        stop("input must be edma_fit object")
+    .compare_data(a, b, text, ...)
 }
 
 ## inputs are meanform matrices
