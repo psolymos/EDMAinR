@@ -161,3 +161,12 @@ get_fm.edma_fit <- function (object, sort=FALSE, ...) {
     class(out) <- c("fm", class(out))
     out
 }
+
+.get_data <- function(object) {
+    object <- list(name=object$name, data=object$data)
+    class(object) <- "edma_data"
+    object
+}
+
+landmarks.edma_fdm <- function(x, ...)
+    landmarks(.get_data(x))
