@@ -160,8 +160,9 @@ as.array.edma_data <- function (x, ...) {
 edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     z <- .edma_simulate_data(n, M, SigmaK, H)
     DATA <- list()
-    for (i in paste0("S", seq_len(z$n))) {
-        DATA[[i]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,drop=FALSE])
+    for (i in seq_len(z$n)) {
+        DATA[[paste0("S", i)]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,
+                                                drop=FALSE])
         dimnames(DATA[[i]]) <- list(
             paste0("L", seq_len(z$K)),
             c("X", "Y", "Z")[seq_len(z$D)])
@@ -176,3 +177,69 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     out
 }
 
+## diagnostics
+
+.plot_edma_data <- function(x, which=NULL,
+col_chull="#44444444", col_spec=2, ...) {
+    n <- length(x$data)
+    K <- nrow(x$data[[1]])
+    fm <- lapply(x$data, dist)
+    fma <- fm[[1]]
+    ii <- seq_len(n)
+    if (is.null(which)) {
+        fma[] <- rowMeans(sapply(fm, function(z) as.numeric(z)))
+    } else {
+        which <- as.integer(which[[1]])
+        fma[] <- rowMeans(sapply(fm[-which], function(z) as.numeric(z)))
+        ii <- ii[-which]
+    }
+    pca <- cmdscale(fma, k=2)
+    pci <- lapply(seq_len(n), function(i) {
+        pci <- cmdscale(fm[[i]], k=2)
+        tmp1 <- apply(abs(pca-pci), 2, max)
+        tmp2 <- apply(abs(pca+pci), 2, max)
+        if (tmp1[1] > tmp2[1]) {
+            pci[,1] <- -pci[,1]
+        }
+        if (tmp1[2] > tmp2[2]) {
+            pci[,2] <- -pci[,2]
+        }
+        pci
+    })
+    plot(pca, pch=3, axes=FALSE, ann=FALSE, ...)
+    for (j in seq_len(K)) {
+        ll <- t(sapply(pci[ii], function(z) z[j,]))
+        polygon(ll[chull(ll),], col=col_chull, border=NA)
+    }
+    if (!is.null(which)) {
+        segments(pca[,1], pca[,2],
+            pci[[which]][,1], pci[[which]][,2], col=col_spec)
+        points(pci[[which]][,1], pci[[which]][,2],
+            pch=19, cex=0.5, col=col_spec)
+    }
+    invisible(x)
+}
+
+plot.edma_data <- function(x, which=NULL,
+ask = dev.interactive(),
+col_chull="#44444444", col_spec=2, ...) {
+    n <- length(x$data)
+    if (!is.null(which)) {
+        if (which < 1 || which > n)
+            stop(sprintf("which must be <= %s", n))
+        .plot_edma_data(x, which, col_chull, col_spec, ...)
+        title(main=paste("Specimen", which))
+    } else {
+        if (ask) {
+            oask <- devAskNewPage(TRUE)
+            on.exit(devAskNewPage(oask))
+        }
+        .plot_edma_data(x, NULL, col_chull, col_spec, ...)
+        title(main="All specimens")
+        for (i in seq_len(n)) {
+            .plot_edma_data(x, i, col_chull, col_spec, ...)
+            title(main=paste("Specimen", i))
+        }
+    }
+    invisible(x)
+}

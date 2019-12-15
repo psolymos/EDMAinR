@@ -44,6 +44,7 @@ S3method("as.matrix", "edma_data")
 S3method("as.data.frame", "edma_data")
 S3method("as.array", "edma_data")
 S3method("specimens", "edma_data")
+S3method("plot", "edma_data")
 
 ## edma_fit methods
 S3method("Meanform", "edma_fit")
