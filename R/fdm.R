@@ -258,7 +258,6 @@ get_influence.edma_fdm <- function (object, ...) {
     class(out) <- c("edma_influence", class(out))
     out
 }
-i <- get_influence(object)
 
 plot.edma_influence <- function(x, ...) {
     x <- x[order(x$Tdrop),]
