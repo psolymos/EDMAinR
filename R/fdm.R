@@ -233,49 +233,83 @@ plot.edma_gdm <- function(x, ...) {
 }
 
 ## influential landmarks
-.influence <- function(i, object) {
+## no bootstrap for quick=FALSE
+.influence <- function(i, object, quick=TRUE, level=0.95) {
     ls <- landmarks(object)
     names(ls) <- ls
     i <- ls[i]
     lsd <- ls[!(ls %in% i)]
-    if (object$ref_denom) {
-        x <- edma_fit(.get_data(object$numerator)[lsd,,])
-        ref <- edma_fit(.get_data(object$denominator)[lsd,,])
+    ci <- c(NA, NA)
+    if (quick) {
+        a <- c((1-level)/2, 1-(1-level)/2)
+        keep <- !(object$dm$row %in% i) & !(object$dm$col %in% i)
+        FDMkeep <- object$boot[keep,,drop=FALSE]
+        Tvals <- apply(FDMkeep, 2, function(z) max(z)/min(z))
+        Tval <- Tvals[1L]
+        if (object$B > 0)
+            ci <- unname(quantile(Tvals, a))
     } else {
-        x <- edma_fit(.get_data(object$denominator)[lsd,,])
-        ref <- edma_fit(.get_data(object$numerator)[lsd,,])
+        if (object$ref_denom) {
+            x <- edma_fit(.get_data(object$numerator)[lsd,,])
+            ref <- edma_fit(.get_data(object$denominator)[lsd,,])
+        } else {
+            x <- edma_fit(.get_data(object$denominator)[lsd,,])
+            ref <- edma_fit(.get_data(object$numerator)[lsd,,])
+        }
+        Tval <- attr(.Ttest_fit(x, ref, boot=FALSE), "Tval")
     }
-    res <- .Ttest_fit(x, ref, boot=FALSE)
-    attr(res, "Tval")
+    c(Tval, ci)
 }
 
 get_influence <- function (object, ...) UseMethod("get_influence")
-get_influence.edma_fdm <- function (object, ...) {
+get_influence.edma_fdm <- function (object,
+quick=TRUE, level=0.95, ...) {
     ls <- landmarks(object)
     Tval <- T_test(object)$statistic
-    Tvals <- pbapply::pbsapply(ls, .influence, object=object)
-    out <- data.frame(landmark=ls, Tdrop=Tvals)
+    Tvals <- if (quick) {
+        t(sapply(ls, .influence,
+            object=object, quick=quick, level=level))
+    } else {
+        t(pbapply::pbsapply(ls, .influence,
+            object=object, quick=quick, level=level))
+    }
+    colnames(Tvals) <- c("Tdrop", "lower", "upper")
+    out <- data.frame(landmark=ls, Tvals)
+    rownames(out) <- NULL
     attr(out, "Tval") <- Tval
+    attr(out, "level") <- level
+    attr(out, "quick") <- quick
     class(out) <- c("edma_influence", class(out))
     out
 }
 
-plot.edma_influence <- function(x, ...) {
+.sdmplot_ci2 <- function(x, xlab="", ylab="",
+    bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
     x <- x[order(x$Tdrop),]
-    Tval <- attr(x, "Tval")
     k <- nrow(x)
     xv <- seq_len(k)
-    Min <- 1
-    ylab <- "T-value"
-    r <- range(x$Tdrop, Min, Tval)
-    op <- par(las=2)
+    r <- range(x$Tdrop, x$lower, x$upper, na.rm=TRUE)
+    op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
-    plot(xv, x$Tdrop, ylim=r, type="n", axes=FALSE,
-        xlab="", ylab=ylab)
-    abline(h=Min, lty=2)
-    abline(h=Tval, col=2)
+    plot(xv, x$Tdrop, ylim=r, type="n",
+        xlab=xlab, ylab=ylab, axes=FALSE)
+    polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), col="lightblue", border=NA)
+    lines(xv, rep(1, k), col="grey")
+    Tv <- attr(x, "Tval")
+    for (i in seq_len(k))
+        if (!is.na(x$upper[i]) && !is.na(x$lower[i]))
+        lines(xv[i]+c(-0.5, 0.5), c(Tv, Tv),
+            col=if (Tv > x$upper[i] ||
+                    Tv < x$lower[i]) "red" else "grey")
     lines(xv, x$Tdrop, col="blue")
     axis(2)
-    axis(1, xv, x$landmark, tick = FALSE, cex.axis=0.5)
+    if (xshow) {
+        lab <- x$landmark
+        text(xv, min(r) - 0.02 * diff(r), lab, adj=c(1, 0.5), cex=xcex)
+    }
+    invisible(x)
+}
+plot.edma_influence <- function(x, ...) {
+    .sdmplot_ci2(x, ylab="T-value", ...)
     invisible(x)
 }

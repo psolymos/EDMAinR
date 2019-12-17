@@ -1,4 +1,4 @@
-#devtools::install_github("psolymos/EDMAinR")
+#remotes::install_github("psolymos/EDMAinR")
 library(EDMAinR)
 
 ## test pattern matrix manipulation
@@ -273,8 +273,13 @@ file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz",
     package="EDMAinR")
 x1 <- read_xyz(file1)
 x2 <- read_xyz(file2)
-numerator <- edma_fit(x1, B=99)
+numerator <- edma_fit(x1, B=25)
 denominator <- edma_fit(x2, B=0)
 x <- edma_fdm(numerator, denominator)
-i <- get_influence(object)
-plot(i)
+
+i1 <- get_influence(x, quick=T)
+i2 <- get_influence(x, quick=F)
+plot(i1)
+plot(i2)
+
+
