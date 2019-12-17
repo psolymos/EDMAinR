@@ -123,18 +123,9 @@ confint.edma_fdm <- function (object, parm, level=0.95, ...) {
     d <- stack(formdiff(object$numerator, object$denominator))
     if (missing(parm))
         parm <- seq_len(nrow(d))
-    if (is.null(object$numerator$boot) || is.null(object$denominator$boot)) {
-        fd <- NULL
-    } else {
-        B <- min(length(object$numerator$boot), length(object$denominator$boot))
-        fd <- sapply(seq_len(B), function(i) {
-            stack(.formdiff(object$numerator$boot[[i]]$M,
-                            object$denominator$boot[[i]]$M))$dist
-        })
-    }
     a <- c((1-level)/2, 1-(1-level)/2)
-    out <- t(apply(cbind(d$dist, fd), 1, quantile, a))
-    if (is.null(fd))
+    out <- t(apply(object$boot, 1, quantile, a))
+    if (object$B < 1)
         out[] <- NA
     rownames(out) <- rownames(d)
     out[parm,,drop=FALSE]
