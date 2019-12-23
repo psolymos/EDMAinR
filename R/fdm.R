@@ -73,6 +73,8 @@ edma_fdm <- function(numerator, denominator, ref_denom=TRUE) {
 .print_edma_fdm <- function(x, title="EDMA", truncate=20, ...) {
     H <- T_test(x)
     cat(title, "\n",
+        "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+        "\n",
         if (x$B)
             paste(x$B, "bootstrap runs") else "no bootstrap",
         " (ref: ", if (x$ref_denom) "denominator" else "numerator", ")",
@@ -139,7 +141,7 @@ landmarks.edma_fdm <- function(x, ...)
     x <- x[order(x$dist),]
     k <- nrow(x)
     xv <- seq_len(k)
-    r <- range(x$dist, x$lower, x$upper)
+    r <- range(x$dist, x$lower, x$upper, 1)
     op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
     plot(xv, x$dist, ylim=r, type="n",
@@ -177,46 +179,6 @@ plot.edma_fdm <- function(x, type=c("global", "local"), ylab, ...) {
     if (missing(ylab))
         ylab <- "FDM Ratio"
     .plot_edma_fdm(x, type, ylab, ...)
-}
-
-## stacked growth matrix
-## inputs are edma_fit objects
-edma_gm <- function (a1, a2, ...) {
-    .compare_objects(a1, a2, "a1 vs a2:")
-    out <- edma_fdm(numerator=a2, denominator=a1, ...)
-    class(out) <- c("edma_gm", class(out))
-    out$call <- match.call()
-    out
-}
-print.edma_gm <- function(x, ...) {
-    .print_edma_fdm(x, "EDMA growth matrix", ...)
-}
-plot.edma_gm <- function(x, type=c("global", "local"), ylab, ...) {
-    if (missing(ylab))
-        ylab <- "GM Ratio"
-    .plot_edma_fdm(x, type, ylab, ...)
-}
-
-## stacked growth difference matrix
-## inputs are edma_fit objects
-edma_gdm <- function (a1, a2, b1, b2, ...) {
-    .compare_objects(a1, a2, "a1 vs a2:")
-    .compare_objects(b1, b2, "b1 vs b2:")
-    .compare_objects(a1, b1, "a1 vs b1:")
-    .compare_objects(a2, b2, "a2 vs b2:")
-    gma <- edma_fdm(numerator=a2, denominator=a1, ...)
-    gmb <- edma_fdm(numerator=b2, denominator=b1, ...)
-    out <- list(
-        call=match.call(),
-        a1=a1, a2=a2, b1=b1, b2=b2,
-        B=a1$B,
-        gdm=gma$dm,
-        boot=gma$boot)
-    out$gdm$dist <- gmb$dm$dist / gma$dm$dist
-    out$boot <- gmb$boot / gma$boot
-    attr(out$boot, "Tval") <- apply(out$boot, 2, max) / apply(out$boot, 2, min)
-    class(out) <- c("edma_gdm", class(out))
-    out
 }
 
 plot.edma_gdm <- function(x, ...) {
@@ -304,3 +266,57 @@ plot.edma_influence <- function(x, ...) {
     .sdmplot_ci2(x, ylab="T-value", ...)
     invisible(x)
 }
+
+
+## stacked growth matrix
+## inputs are edma_fit objects
+edma_gm <- function (a1, a2, ...) {
+    .compare_objects(a1, a2, "a1 vs a2:")
+    out <- edma_fdm(numerator=a2, denominator=a1, ...)
+    class(out) <- c("edma_gm", class(out))
+    out$call <- match.call()
+    out
+}
+print.edma_gm <- function(x, ...) {
+    .print_edma_fdm(x, "EDMA growth matrix", ...)
+}
+plot.edma_gm <- function(x, type=c("global", "local"), ylab, ...) {
+    if (missing(ylab))
+        ylab <- "GM Ratio"
+    .plot_edma_fdm(x, type, ylab, ...)
+}
+
+## stacked growth difference matrix
+## inputs are edma_fit objects
+edma_gdm <- function (a1, a2, b1, b2, ...) {
+    .compare_objects(a1, a2, "a1 vs a2:")
+    .compare_objects(b1, b2, "b1 vs b2:")
+    .compare_objects(a1, b1, "a1 vs b1:")
+    .compare_objects(a2, b2, "a2 vs b2:")
+    # ref is a1 an b1
+    gma <- edma_fdm(numerator=a2, denominator=a1, ...)
+    gmb <- edma_fdm(numerator=b2, denominator=b1, ...)
+    B <- min(gma$B, gmb$B)
+    gdm <- gma$dm
+    gdm$dist <- gmb$dm$dist / gma$dm$dist
+    i <- seq_len(B+1L)
+    b <- gmb$boot[,i,drop=FALSE] / gma$boot[,i,drop=FALSE]
+
+    out <- list(
+        call=match.call(),
+        a1=a1, a2=a2, b1=b1, b2=b2,
+        B=B,
+        ref_denom=gma$ref_denom,
+        dm=gdm,
+        boot=b)
+    attr(out$boot, "Tval") <- apply(out$boot, 2, max) / apply(out$boot, 2, min)
+#    class(out) <- c("edma_gdm", class(gma))
+    class(out) <- c("edma_gdm", class(out))
+    out
+}
+
+print.edma_gdm <- function(x, ...) {
+    .print_edma_fdm(x, "EDMA growth difference matrix", ...)
+}
+
+

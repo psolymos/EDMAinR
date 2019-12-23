@@ -113,6 +113,8 @@ edma_fit <- function(x, B=0) {
 
 print.edma_fit_np <- function(x, ...) {
     cat("EDMA nonparametric fit: ", x$name, "\n",
+        "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+        "\n",
         ncol(x$data[[1L]]), " dimensions, ",
         nrow(x$data[[1L]]), " landmarks, ",
         length(x$data), " replicates, ",
