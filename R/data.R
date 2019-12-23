@@ -83,11 +83,11 @@ print.edma_data <- function(x, truncate=20, ...) {
     cat("EDMA data: ", .shorten_name(x$name, truncate), "\n",
         ncol(x$data[[1L]]), " dimensions, ",
         nrow(x$data[[1L]]), " landmarks, ",
-        length(x$data), " replicates", sep="")
+        length(x$data), " specimens", sep="")
     invisible(x)
 }
 
-## subset replicates in the the data list
+## subset specimens in the the data list
 subset.edma_data <- function(x, subset, ...) {
     if (missing(subset))
         subset <- seq_along(x$data)
@@ -95,7 +95,7 @@ subset.edma_data <- function(x, subset, ...) {
     x
 }
 
-## subset landmarks, dimensions, replicates
+## subset landmarks, dimensions, specimens
 ## [landmarks, dims, specimens]
 `[.edma_data` <- function (x, i, j, k) {
     if (missing(i))
