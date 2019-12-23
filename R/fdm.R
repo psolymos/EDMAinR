@@ -241,7 +241,7 @@ quick=TRUE, level=0.95, ...) {
     x <- x[order(x$Tdrop),]
     k <- nrow(x)
     xv <- seq_len(k)
-    r <- range(x$Tdrop, x$lower, x$upper, na.rm=TRUE)
+    r <- range(x$Tdrop, x$lower, x$upper, 1, na.rm=TRUE)
     op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
     plot(xv, x$Tdrop, ylim=r, type="n",
