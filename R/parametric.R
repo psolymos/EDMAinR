@@ -64,8 +64,7 @@ method = "Nelder-Mead", control = list()) {
     o
 }
 
-.check_pattern <- function(object, pattern) {
-    mode(pattern) <- "character"
+.check_pattern1 <- function(pattern) {
     utri <- pattern[upper.tri(pattern)]
     ltri <- t(pattern)[upper.tri(pattern)]
     if (!all(is.na(utri) == is.na(ltri)))
@@ -80,6 +79,11 @@ method = "Nelder-Mead", control = list()) {
         stop("pattern matrix must be square matrix")
     if (is.null(dimnames(pattern)))
         stop("pattern must have landmark names as dimnames")
+    invisible(pattern)
+}
+.check_pattern <- function(object, pattern) {
+    mode(pattern) <- "character"
+    .check_pattern1(pattern)
     if (!all(landmarks(object) %in% rownames(pattern)) ||
         !all(landmarks(object) %in% colnames(pattern)))
         stop("dimnames of patterm must match landmark names")
@@ -94,6 +98,24 @@ method = "Nelder-Mead", control = list()) {
             UNK, MAX))
     invisible(pattern)
 }
+
+read_pattern <- function(file, ...) {
+    isCSV <- endsWith(file, ".csv")
+    x <- if (isCSV) {
+        read.csv(file, ...)
+    } else {
+        suppressMessages(read_excel(file, ...))
+    }
+    x <- as.data.frame(x)
+    rownames(x) <- as.character(x[,1L])
+    x[,1L] <- NULL
+    x <- as.matrix(x)
+    colnames(x) <- rownames(x)
+    mode(x) <- "character"
+    .check_pattern1(x)
+    x
+}
+
 SigmaK_fit <- function(object, pattern, check_pattern=TRUE, ...) {
     if (check_pattern)
         pattern <- .check_pattern(object, pattern)
@@ -111,6 +133,19 @@ SigmaK_fit <- function(object, pattern, check_pattern=TRUE, ...) {
     }
     class(object) <- c("edma_fit_p", "edma_fit", "edma_data")
     object
+}
+
+print.edma_fit_p <- function(x, ...) {
+    cat("EDMA parametric fit: ", x$name, "\n",
+        "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+        "\n",
+        ncol(x$data[[1L]]), " dimensions, ",
+        nrow(x$data[[1L]]), " landmarks, ",
+        length(x$data), " replicates, ",
+        if (length(x$boot))
+            paste(length(x$boot), "bootstrap runs") else "no bootstrap",
+        sep="")
+    invisible(x)
 }
 
 SigmaK <- function (object, ...) UseMethod("SigmaK")
