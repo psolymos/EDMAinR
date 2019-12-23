@@ -294,6 +294,7 @@ i <- get_influence(x)
 f <- get_fdm(x)
 f <- f[order(abs(log(f$dist))),]
 iSig <- !(i$lower < attr(i, "Tval") & i$upper > attr(i, "Tval"))
+names(iSig) <- rownames(xy)
 fSig <- !(f$lower < 1 & f$upper > 1)
 Max <- max(1/min(1, f$dist), max(f$dist))
 #v <- seq(1, Max, length.out = 5)
@@ -338,6 +339,37 @@ for (j in which(fSig & f$cut != 5)) {
         col=paste0(pal[f$cut[j]], if (f$cut[j] == 5) "44" else "ff"),
         lwd=if (f$cut[j] == 5) 0.5 else 2)
 }
+
+library(plotly)
+
+dat <- data.frame(xyz, Landmark=rownames(xyz),
+    col=factor(c("Landmark", "Influential")[iSig+1], c("Landmark", "Influential")),
+    cex=1+V*diff(range(xyz))/35)
+p <- plot_ly(dat, x = ~X, y = ~Y, z = ~Z,
+    color = ~col, colors=c("grey", "red"),
+    size=~cex,
+    type = 'scatter3d',
+    mode = 'markers',
+    marker = list(symbol = 'circle', sizemode = 'diameter'),
+    sizes = c(2, 10),
+    text = ~paste(Landmark))
+for (j in which(fSig & f$cut != 5)) {
+    xyz1 <- data.frame(rbind(xyz[as.character(f$row[j]),],
+        xyz[as.character(f$col[j]),]),
+        Landmark=paste(as.character(f$row[j]), as.character(f$col[j])),
+        cex=if (f$cut[j] == 5) 0.5 else 2,
+        col=factor(c("Landmark", "Influential")[iSig[c(as.character(f$row[j]), as.character(f$col[j]))]+1],
+                   c("Landmark", "Influential")))
+    p <- add_trace(p, x = ~X, y = ~Y, z = ~Z, data = xyz1,
+        type="scatter3d", mode="lines",
+        color = ~col, colors=c("green", "green"),
+        marker = list(symbol = 'circle', sizemode = 'diameter'),
+        line = list(width = 2,
+            color = if (f$cut[j] < 5) "blue" else "red"))
+}
+p <- layout(p, showlegend = FALSE)
+p
+
 
 library(readxl)
 
