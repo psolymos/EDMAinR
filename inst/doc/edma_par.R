@@ -283,3 +283,29 @@ plot(i1)
 plot(i2)
 
 
+library(readxl)
+
+read_pattern("./inst/doc/example.xlsx")
+read_pattern("./inst/doc/example.csv")
+
+
+## GDM
+
+
+file_a1 <- system.file("extdata/purplebook/cebusage1.xyz",
+    package="EDMAinR")
+xyz_a1 <- read_xyz(file_a1)
+file_a2 <- system.file("extdata/purplebook/cebusage6.xyz",
+    package="EDMAinR")
+xyz_a2 <- read_xyz(file_a2)
+
+B <- 25
+a1 <- edma_fit(xyz_a1, B=B)
+a2 <- edma_fit(xyz_a2, B=B)
+
+gm <- edma_gm(a1, a2)
+head(gm)
+tail(gm)
+gdm <- edma_gdm(a1, a2, b1, b2)
+
+
