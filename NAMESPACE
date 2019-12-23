@@ -21,20 +21,25 @@ export(
     "T_test",
     "specimens",
     "sensitivity",
-    "get_influence"
+    "get_influence",
+    "plot_specimens"
 )
 
 ## imports
 importFrom("utils",
-    "stack", "read.table")
+    "stack", "read.table", "read.csv")
 importFrom("stats",
     "as.dist", "dist", "optim", "quantile", "rnorm",
-    "cmdscale", "confint", "prcomp", "runif")
+    "cmdscale", "confint", "prcomp", "runif", "hclust")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon",
     "text", "hist", "points", "segments", "title")
 importFrom("grDevices",
     "chull", "dev.interactive", "devAskNewPage")
+importFrom("readxl",
+    "read_excel")
+importFrom("ape",
+    "as.phylo")
 
 ## edma_data methods
 S3method("stack", "edma_data")
@@ -61,12 +66,10 @@ S3method("landmarks", "edma_fit")
 S3method("print", "edma_fit_np")
 S3method("SigmaKstar", "edma_fit_np")
 
-## edma_fit_np methods
+## edma_fit_p methods
+S3method("print", "edma_fit_p")
 S3method("SigmaK", "edma_fit_p")
 S3method("sensitivity", "edma_fit_p")
-
-## other methods
-S3method("stack", "dist") # not to import from mefa
 
 ## edma_fdm methods
 S3method("get_fdm", "edma_fdm")
@@ -76,12 +79,18 @@ S3method("print", "edma_fdm")
 S3method("plot", "edma_fdm")
 S3method("landmarks", "edma_fdm")
 S3method("get_influence", "edma_fdm")
-
-## edma_gm methods
-S3method("print", "edma_gm")
-
-## edma_gdm methods
-S3method("plot", "edma_gdm")
+S3method("plot_specimens", "edma_fdm")
 
 ## edma_influence methods
 S3method("plot", "edma_influence")
+
+## edma_gm methods
+S3method("print", "edma_gm")
+S3method("plot", "edma_gm")
+
+## edma_gdm methods
+S3method("print", "edma_gdm")
+
+## other methods
+S3method("plot_specimens", "default")
+S3method("stack", "dist") # not to import from mefa
