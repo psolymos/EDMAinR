@@ -276,12 +276,68 @@ x2 <- read_xyz(file2)
 numerator <- edma_fit(x1, B=25)
 denominator <- edma_fit(x2, B=0)
 x <- edma_fdm(numerator, denominator)
+plot_specimens(x)
 
 i1 <- get_influence(x, quick=T)
 i2 <- get_influence(x, quick=F)
 plot(i1)
 plot(i2)
 
+
+proto <- if (x$ref_denom)
+    x$denominator else x$numerator
+V <- sqrt(diag(SigmaKstar(proto)))
+V <- 0.2 + 0.8 * V/max(V)
+xyz <- Meanform(proto)
+xy <- cmdscale(dist(xyz), k=2, add=TRUE)$points
+i <- get_influence(x)
+f <- get_fdm(x)
+f <- f[order(abs(log(f$dist))),]
+iSig <- !(i$lower < attr(i, "Tval") & i$upper > attr(i, "Tval"))
+fSig <- !(f$lower < 1 & f$upper > 1)
+Max <- max(1/min(1, f$dist), max(f$dist))
+#v <- seq(1, Max, length.out = 5)
+v <- (Max-1) * c(0, 0.1, 0.25, 0.5, 1) + 1
+v <- c(0, rev(1/v[-1]), v[-1], Inf)
+#v1 <- quantile(f$dist[f$dist > 1], c(0, 0.95, 0.99, 1))
+#v2 <- quantile(f$dist[f$dist < 1], c(0, 0.01, 0.05, 1))
+#v <- c(0, v2[-length(v2)], v1[-1], Inf)
+pal <- colorRampPalette(
+    rev(c('#d7191c','#fdae61','#eeeeee','#abd9e9','#2c7bb6'))
+    )(length(v)-1)
+f$cut <- cut(f$dist, v, include.lowest=TRUE, labels=FALSE)
+table(f$cut)
+
+## 2D
+plot(xy, type="n", axes=FALSE, ann=FALSE)
+for (j in which(fSig)) {
+    xy1 <- xy[as.character(f$row[j]),]
+    xy2 <- xy[as.character(f$col[j]),]
+    lines(rbind(xy1, xy2),
+        col=paste0(pal[f$cut[j]], "ff"),
+        lwd=if (f$cut[j] == 5) 0.5 else 2)
+}
+points(xy, pch=ifelse(iSig, 19, 21), cex=V)
+
+## 3D
+
+library(rgl)
+
+X <- xyz[,1L]
+Y <- xyz[,2L]
+Z <- xyz[,3L]
+plot3d(X, Y, Z,
+    type="s",
+    ann=FALSE, axes=FALSE,
+    xlab="", ylab="", zlab="",
+    col=c("grey", "red")[iSig+1], radius=V*diff(range(xyz))/35)
+for (j in which(fSig & f$cut != 5)) {
+    xyz1 <- rbind(xyz[as.character(f$row[j]),],
+        xyz[as.character(f$col[j]),])
+    lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+        col=paste0(pal[f$cut[j]], if (f$cut[j] == 5) "44" else "ff"),
+        lwd=if (f$cut[j] == 5) 0.5 else 2)
+}
 
 library(readxl)
 
@@ -303,9 +359,14 @@ B <- 25
 a1 <- edma_fit(xyz_a1, B=B)
 a2 <- edma_fit(xyz_a2, B=B)
 
+fdm <- edma_fdm(a1, a2)
+
 gm <- edma_gm(a1, a2)
 head(gm)
 tail(gm)
 gdm <- edma_gdm(a1, a2, b1, b2)
+
+
+
 
 
