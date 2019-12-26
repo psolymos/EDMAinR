@@ -273,25 +273,32 @@ file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz",
     package="EDMAinR")
 x1 <- read_xyz(file1)
 x2 <- read_xyz(file2)
-numerator <- edma_fit(x1, B=25)
+numerator <- edma_fit(x1, B=5)
 denominator <- edma_fit(x2, B=0)
 x <- edma_fdm(numerator, denominator)
-plot_specimens(x)
 
-i1 <- get_influence(x, quick=T)
-i2 <- get_influence(x, quick=F)
-plot(i1)
-plot(i2)
+#i1 <- get_influence(x, quick=T)
+#i2 <- get_influence(x, quick=F)
+#plot(i1)
+#plot(i2)
 
 
-proto <- if (x$ref_denom)
-    x$denominator else x$numerator
-V <- sqrt(diag(SigmaKstar(proto)))
-V <- 0.2 + 0.8 * V/max(V)
+
+if (inherits(x, "edma_fdm")) {
+    proto <- if (x$ref_denom)
+        x$denominator else x$numerator
+}
+if (inherits(x, "edma_gdm")) {
+    proto <- if (x$ref_denom)
+        x$a1 else x$a2
+}
 xyz <- Meanform(proto)
 xy <- cmdscale(dist(xyz), k=2, add=TRUE)$points
 i <- get_influence(x)
-f <- get_fdm(x)
+f <- x$dm
+ci <- confint(x)
+f$lower <- ci[,1L]
+f$upper <- ci[,2L]
 f <- f[order(abs(log(f$dist))),]
 iSig <- !(i$lower < attr(i, "Tval") & i$upper > attr(i, "Tval"))
 names(iSig) <- rownames(xy)
@@ -318,7 +325,7 @@ for (j in which(fSig)) {
         col=paste0(pal[f$cut[j]], "ff"),
         lwd=if (f$cut[j] == 5) 0.5 else 2)
 }
-points(xy, pch=ifelse(iSig, 19, 21), cex=V)
+points(xy, pch=ifelse(iSig, 19, 21))
 
 ## 3D
 
@@ -331,41 +338,35 @@ plot3d(X, Y, Z,
     type="s",
     ann=FALSE, axes=FALSE,
     xlab="", ylab="", zlab="",
-    col=c("grey", "red")[iSig+1], radius=V*diff(range(xyz))/35)
-for (j in which(fSig & f$cut != 5)) {
+    col=c("grey", "red")[iSig+1], radius=0.1)
+for (j in which(fSig & f$cut != 5)[1:5]) {
     xyz1 <- rbind(xyz[as.character(f$row[j]),],
         xyz[as.character(f$col[j]),])
     lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
-        col=paste0(pal[f$cut[j]], if (f$cut[j] == 5) "44" else "ff"),
-        lwd=if (f$cut[j] == 5) 0.5 else 2)
+        col=as.character(pal[f$cut[j]]),
+        lwd= 2)
 }
 
 library(plotly)
 
 dat <- data.frame(xyz, Landmark=rownames(xyz),
-    col=factor(c("Landmark", "Influential")[iSig+1], c("Landmark", "Influential")),
-    cex=1+V*diff(range(xyz))/35)
+    col=factor(c("Landmark", "Influential")[iSig+1],
+               c("Landmark", "Influential")))
 p <- plot_ly(dat, x = ~X, y = ~Y, z = ~Z,
     color = ~col, colors=c("grey", "red"),
-    size=~cex,
     type = 'scatter3d',
     mode = 'markers',
     marker = list(symbol = 'circle', sizemode = 'diameter'),
     sizes = c(2, 10),
     text = ~paste(Landmark))
-for (j in which(fSig & f$cut != 5)) {
-    xyz1 <- data.frame(rbind(xyz[as.character(f$row[j]),],
-        xyz[as.character(f$col[j]),]),
-        Landmark=paste(as.character(f$row[j]), as.character(f$col[j])),
-        cex=if (f$cut[j] == 5) 0.5 else 2,
-        col=factor(c("Landmark", "Influential")[iSig[c(as.character(f$row[j]), as.character(f$col[j]))]+1],
-                   c("Landmark", "Influential")))
-    p <- add_trace(p, x = ~X, y = ~Y, z = ~Z, data = xyz1,
-        type="scatter3d", mode="lines",
-        color = ~col, colors=c("green", "green"),
-        marker = list(symbol = 'circle', sizemode = 'diameter'),
-        line = list(width = 2,
-            color = if (f$cut[j] < 5) "blue" else "red"))
+for (j in which(fSig & f$cut != 5)[1:5]) {
+    dat1 <- dat[c(as.character(f$row[j]), as.character(f$col[j])),]
+    col <- if (f$cut[j] < 5) "blue" else "red"
+    col <- "red"
+    p <- add_trace(p, x = ~X, y = ~Y, z = ~Z, data = dat1,
+            type="scatter3d", mode="lines",
+            line = list(width = 2,
+                color = col))
 }
 p <- layout(p, showlegend = FALSE)
 p

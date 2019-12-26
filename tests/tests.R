@@ -54,6 +54,8 @@ str(SigmaKstar(fit))
 
 plot_ord(fit)
 plot_clust(fit)
+plot_2d(fit)
+plot_3d(fit)
 
 ## --- form matrix ---
 
@@ -129,6 +131,8 @@ plot_ord(fdm)
 plot_clust(fdm)
 plot_Ttest(fdm)
 plot_ci(fdm)
+plot_2d(fdm)
+plot_3d(fdm)
 
 ## --- growth matrix ---
 
@@ -156,6 +160,8 @@ plot_ord(gm)
 plot_clust(gm)
 plot_Ttest(gm)
 plot_ci(gm)
+plot_2d(gm)
+plot_3d(gm)
 
 ## --- growth difference matrix ---
 
@@ -171,4 +177,6 @@ plot_ord(gdm)
 plot_clust(gdm)
 plot_Ttest(gdm)
 plot_ci(gdm)
+#plot_2d(gdm) # need real data
+#plot_3d(gdm)
 

@@ -57,3 +57,7 @@ get_gdm <- function (object, ...) UseMethod("get_gdm")
 
 get_gdm.edma_gdm <- get_fdm.edma_fdm
 
+landmarks.edma_gdm <- function(x, ...)
+    landmarks(x$a1)
+dimensions.edma_gdm <- function(x, ...)
+    dimensions(x$a1)

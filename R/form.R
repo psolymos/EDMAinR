@@ -141,9 +141,9 @@ confint.edma_dm <- function (object, parm, level=0.95, ...) {
     out[parm,,drop=FALSE]
 }
 
-landmarks.edma_dm <- function(x, ...)
+landmarks.edma_fdm <- function(x, ...)
     landmarks(x$numerator)
-dimensions.edma_dm <- function(x, ...)
+dimensions.edma_fdm <- function(x, ...)
     dimensions(x$numerator)
 
 ## influential landmarks

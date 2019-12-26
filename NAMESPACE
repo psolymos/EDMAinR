@@ -48,11 +48,13 @@ importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon",
     "text", "hist", "points", "segments", "title")
 importFrom("grDevices",
-    "chull", "dev.interactive", "devAskNewPage")
+    "chull", "dev.interactive", "devAskNewPage", "colorRampPalette")
 importFrom("readxl",
     "read_excel")
 importFrom("ape",
     "as.phylo")
+importFrom("rgl",
+    "plot3d", "lines3d")
 
 ## edma_data methods
 S3method("stack", "edma_data")
@@ -94,8 +96,6 @@ S3method("plot_clust", "edma_fit")
 
 ## edma_dm methods: this is parent for fdm, gm, gdm
 S3method("confint", "edma_dm")
-S3method("landmarks", "edma_dm")
-S3method("dimensions", "edma_dm")
 S3method("get_influence", "edma_dm")
 S3method("plot_Ttest", "edma_dm")
 ## plot methods
@@ -107,6 +107,8 @@ S3method("plot_3d", "edma_dm")
 S3method("print", "edma_fdm")
 S3method("T_test", "edma_fdm")
 S3method("get_fdm", "edma_fdm")
+S3method("landmarks", "edma_fdm")
+S3method("dimensions", "edma_fdm")
 ## plot methods
 S3method("plot_ord", "edma_fdm")
 S3method("plot_clust", "edma_fdm")
@@ -120,13 +122,14 @@ S3method("print", "edma_gm")
 S3method("T_test", "edma_gm")
 S3method("get_gm", "edma_gm")
 ## plot methods
-S3method("plot", "edma_gm")
 S3method("plot_ci", "edma_gm")
 
 ## edma_gdm methods
 S3method("print", "edma_gdm")
 S3method("T_test", "edma_gdm")
 S3method("get_gdm", "edma_gdm")
+S3method("landmarks", "edma_gdm")
+S3method("dimensions", "edma_gdm")
 ## plot methods
 S3method("plot_ord", "edma_gdm")
 S3method("plot_clust", "edma_gdm")

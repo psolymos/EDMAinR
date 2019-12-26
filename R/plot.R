@@ -266,11 +266,98 @@ plot_ci.edma_gm <- function(x, ...)
 plot_ci.edma_gdm <- function(x, ...)
     .plot_ci(get_gdm(x), ylab="GDM Ratio", ...)
 
+## 2D and 3D plots
+
+.plot_d_data <- function(proto, d3=TRUE, ...) {
+    xyz <- Meanform(proto)
+    if (!d3) {
+        xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
+        xyz[,3L] <- 0
+    }
+    V <- sqrt(diag(SigmaKstar(proto)))
+    V <- 0.2 + 0.8 * V/max(V)
+    if (d3) {
+        plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
+            type="s",
+            ann=FALSE, axes=FALSE,
+            xlab="", ylab="", zlab="",
+            radius=V*diff(range(xyz))/50)
+    } else {
+        plot(xyz[,1:2], type="p", axes=FALSE, ann=FALSE,
+            cex=V, ...)
+    }
+    invisible(proto)
+}
+plot_2d.edma_fit <- function(x, ...) .plot_d_data(x, d3=FALSE, ...)
+plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
+
+.plot_d_dm <- function(x, d3=TRUE, pal=NULL, ...) {
+    if (inherits(x, "edma_fdm")) {
+        proto <- if (x$ref_denom)
+            x$denominator else x$numerator
+    }
+    if (inherits(x, "edma_gdm")) {
+        proto <- if (x$ref_denom)
+            x$a1 else x$a2
+    }
+    xyz <- Meanform(proto)
+    if (!d3) {
+        xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
+        xyz[,3L] <- 0
+    }
+    i <- get_influence(x)
+    f <- x$dm
+    ci <- confint(x)
+    f$lower <- ci[,1L]
+    f$upper <- ci[,2L]
+    f <- f[order(abs(log(f$dist))),]
+    iSig <- !(i$lower < attr(i, "Tval") & i$upper > attr(i, "Tval"))
+    names(iSig) <- rownames(xyz)
+    fSig <- !(f$lower < 1 & f$upper > 1)
+    Max <- max(1/min(1, f$dist), max(f$dist))
+    v <- (Max-1) * c(0, 0.1, 0.25, 0.5, 1) + 1
+    v <- c(0, rev(1/v[-1]), v[-1], Inf)
+    f$cut <- cut(f$dist, v, include.lowest=TRUE, labels=FALSE)
+    if (is.null(pal))
+        pal <- colorRampPalette(
+            rev(c('#d7191c','#fdae61','#eeeeee','#abd9e9','#2c7bb6'))
+            )(length(v)-1)
+    if (d3) {
+        plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
+            type="s",
+            ann=FALSE, axes=FALSE,
+            xlab="", ylab="", zlab="",
+            col=c("grey", "red")[iSig+1], radius=0.1)
+        for (j in which(fSig & f$cut != 5)) {
+            xyz1 <- rbind(xyz[as.character(f$row[j]),],
+                xyz[as.character(f$col[j]),])
+            lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+                col=as.character(pal[f$cut[j]]),
+                lwd= 2)
+        }
+
+    } else {
+        plot(xyz[,1:2], type="n", axes=FALSE, ann=FALSE)
+        for (j in which(fSig)) {
+            xy1 <- xyz[as.character(f$row[j]),1:2]
+            xy2 <- xyz[as.character(f$col[j]),1:2]
+            lines(rbind(xy1, xy2),
+                col=paste0(pal[f$cut[j]], "ff"),
+                lwd=if (f$cut[j] == 5) 0.5 else 2)
+        }
+        points(xyz[iSig,1:2], pch=19, col=2)
+        points(xyz[,1:2])
+    }
+    invisible(x)
+}
+
+plot_2d.edma_dm <- function(x, ...) .plot_d_dm(x, d3=FALSE, ...)
+plot_3d.edma_dm <- function(x, ...) .plot_d_dm(x, d3=TRUE, ...)
+
 
 ## default plot methods
 
 plot.edma_data <- plot_2d.edma_data
-#plot.edma_fit <- plot_2d.edma_fit
-#plot.edma_fdm <- plot_2d.edma_fdm
-#plot.edma_gdm <- plot_2d.edma_gdm
+plot.edma_fit <- plot_2d.edma_fit
+plot.edma_dm <- plot_2d.edma_dm
 
