@@ -111,8 +111,10 @@ edma_fit <- function(x, B=0) {
     out
 }
 
-print.edma_fit_np <- function(x, ...) {
-    cat("EDMA nonparametric fit: ", x$name, "\n",
+## print methods for np fit object
+print.edma_fit_np <- function(x, truncate=40, ...) {
+    cat("EDMA nonparametric fit: ",
+        .shorten_name(x$name, truncate), "\n",
         "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n",
         ncol(x$data[[1L]]), " dimensions, ",
@@ -124,18 +126,23 @@ print.edma_fit_np <- function(x, ...) {
     invisible(x)
 }
 
+## mean form
 Meanform <- function (object, ...) UseMethod("Meanform")
 Meanform.edma_fit <- function (object, ...) object$M
 
+## SigmaKstar
 SigmaKstar <- function (object, ...) UseMethod("SigmaKstar")
 SigmaKstar.edma_fit_np <- function (object, ...) object[["SigmaKstar"]]
 
+## KxK distance matrix based on mean form
 as.dist.edma_fit <- function(m, diag = FALSE, upper = FALSE) {
     out <- dist(Meanform(m), diag=diag, upper=upper)
     class(out) <- c("edma_dist", class(out))
     out
 }
 
+## stacked distances based on an input object of class dist
+## this is a generic method
 stack.dist <- function(x, ...) {
     id <- as.matrix(x)
     id[] <- 0
@@ -153,7 +160,8 @@ stack.dist <- function(x, ...) {
     out
 }
 
-## form matrix, stacked
+## form matrix, stacked distances from mean form
+## this is the intended EDMA interface
 get_fm <- function (object, ...) UseMethod("get_fm")
 get_fm.edma_fit <- function (object, sort=FALSE, ...) {
     d <- as.dist(object, diag = FALSE, upper = FALSE)
@@ -164,11 +172,9 @@ get_fm.edma_fit <- function (object, sort=FALSE, ...) {
     out
 }
 
+## reduces a fit object to a data object
 .get_data <- function(object) {
     object <- list(name=object$name, data=object$data)
     class(object) <- "edma_data"
     object
 }
-
-landmarks.edma_fit <- function(x, ...)
-    landmarks(.get_data(x))

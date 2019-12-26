@@ -1,3 +1,4 @@
+## compare data sets
 ## a and b are edma_fit objects
 .compare_data <- function (a, b, text="", ...) {
     if (nrow(a$data[[1L]]) != nrow(b$data[[1L]]))
@@ -10,6 +11,7 @@
         stop(paste(text, "dimension names and ordering must be identical"))
     invisible(NULL)
 }
+## compare fit objects (imitating multiple dispatch for S3)
 .compare_objects <- function (a, b, text="", ...) {
     if (!inherits(b, "edma_fit") || !inherits(a, "edma_fit"))
         stop("input must be edma_fit object")
@@ -17,8 +19,8 @@
 }
 
 ## inputs are meanform matrices
-.formdiff <- function(M1, M2) {
-    r <- dist(M1) / dist(M2)
+.formdiff <- function(a, b) {
+    r <- dist(a) / dist(b)
     attr(r, "method") <- "euclidean_distance_ratio"
     attr(r, "call") <- NULL
     attr(r, "Tval") <- max(r) / min(r)
@@ -32,6 +34,7 @@ formdiff <- function (numerator, denominator, ...) {
     .formdiff(Meanform(numerator), Meanform(denominator))
 }
 
+## calculate T-statistic
 ## x: object w bootstrap
 ## ref: reference object (w or w/o bootstrap)
 .Ttest_fit <- function(x, ref, boot=TRUE) {
@@ -50,7 +53,7 @@ formdiff <- function (numerator, denominator, ...) {
     FDM
 }
 
-## form difference matrix with mixed bootstrap
+## form difference matrix with bootstrap
 edma_fdm <- function(numerator, denominator, ref_denom=TRUE) {
     .compare_objects(numerator, denominator)
     fd <- stack(formdiff(numerator, denominator))
@@ -67,9 +70,12 @@ edma_fdm <- function(numerator, denominator, ref_denom=TRUE) {
         dm=fd,
         B=ncol(b)-1,
         boot=b)
-    class(out) <- c("edma_fdm", class(out))
+    class(out) <- c("edma_fdm", "edma_dm", class(out))
     out
 }
+
+## this is an internal function for printing similar objects
+## FDM, GM
 .print_edma_fdm <- function(x, title="EDMA", truncate=20, ...) {
     H <- T_test(x)
     cat(title, "\n",
@@ -84,6 +90,7 @@ edma_fdm <- function(numerator, denominator, ref_denom=TRUE) {
         sep="")
     invisible(x)
 }
+## print fmd objects
 print.edma_fdm <- function(x, ...) {
     .print_edma_fdm(x, "EDMA form difference matrix", ...)
 }
@@ -105,8 +112,7 @@ level = 0.95, ...) {
 
 ## T-test for 2 edma_fit objects
 T_test <- function (object, ...) UseMethod("T_test")
-T_test.edma_fdm <- function (object, ...) {
-    DNAME <- paste(object$call$numerator, object$call$denominator, sep = " / ")
+.T_test <- function (object, DNAME="", ...) {
     METHOD <- "Bootstrap based EDMA T-test"
     Tval <- attr(object$boot, "Tval")
     PVAL <- sum(Tval[1L] <= Tval) / length(Tval)
@@ -119,10 +125,12 @@ T_test.edma_fdm <- function (object, ...) {
     class(out) <- c("edma_test", "htest")
     out
 }
+T_test.edma_fdm <- function (object, ...)
+    .T_test(object, DNAME="form difference matrix", ...)
 
 ## CI based on the 2x input object boot sample
-confint.edma_fdm <- function (object, parm, level=0.95, ...) {
-    d <- stack(formdiff(object$numerator, object$denominator))
+confint.edma_dm <- function (object, parm, level=0.95, ...) {
+    d <- object$dm
     if (missing(parm))
         parm <- seq_len(nrow(d))
     a <- c((1-level)/2, 1-(1-level)/2)
@@ -133,60 +141,12 @@ confint.edma_fdm <- function (object, parm, level=0.95, ...) {
     out[parm,,drop=FALSE]
 }
 
-landmarks.edma_fdm <- function(x, ...)
+landmarks.edma_dm <- function(x, ...)
     landmarks(x$numerator)
-
-.sdmplot_ci <- function(x, xlab="", ylab="",
-    bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
-    x <- x[order(x$dist),]
-    k <- nrow(x)
-    xv <- seq_len(k)
-    r <- range(x$dist, x$lower, x$upper, 1)
-    op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
-    on.exit(par(op), add=TRUE)
-    plot(xv, x$dist, ylim=r, type="n",
-        xlab=xlab, ylab=ylab, axes=FALSE)
-    polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), col="lightblue", border=NA)
-    #abline(h=1, col="grey")
-    lines(xv, rep(1, k), col="grey")
-    for (i in seq_len(k))
-        lines(xv[i]+c(-0.5, 0.5), c(1, 1),
-            col=if (1 > x$upper[i] || 1 < x$lower[i]) "red" else "grey")
-    lines(xv, x$dist, col="blue")
-    axis(2)
-    if (xshow) {
-        lab <- paste0(as.character(x$row), "-", as.character(x$col))
-        text(xv, min(r) - 0.02 * diff(r), lab, adj=c(1, 0.5), cex=xcex)
-    }
-    invisible(x)
-}
-
-## plot global/local test based on FDM
-.plot_edma_fdm <- function(x, type=c("global", "local"),
-                           ylab="Distance Ratio", ...) {
-    type <- match.arg(type)
-    if (type == "global") {
-        z <- T_test(x)
-        hist(z$Tvals, xlab="T-values", main=z$data.name, ...)
-        abline(v=z$statistic, col=2, lwd=2)
-    } else {
-        z <- get_fdm(x)
-        .sdmplot_ci(z, ylab=ylab, ...)
-    }
-    invisible(x)
-}
-plot.edma_fdm <- function(x, type=c("global", "local"), ylab, ...) {
-    if (missing(ylab))
-        ylab <- "FDM Ratio"
-    .plot_edma_fdm(x, type, ylab, ...)
-}
-
-plot.edma_gdm <- function(x, ...) {
-    .sdmplot_ci(x, ylab="GDM Ratio", ...)
-}
+dimensions.edma_dm <- function(x, ...)
+    dimensions(x$numerator)
 
 ## influential landmarks
-## no bootstrap for quick=FALSE
 .influence <- function(i, object, quick=TRUE, level=0.95) {
     ls <- landmarks(object)
     names(ls) <- ls
@@ -214,9 +174,10 @@ plot.edma_gdm <- function(x, ...) {
     c(Tval, ci)
 }
 
+## this is the quick version with CIs (no refitting)
 get_influence <- function (object, ...) UseMethod("get_influence")
-get_influence.edma_fdm <- function (object,
-quick=TRUE, level=0.95, ...) {
+get_influence.edma_dm <- function (object, level=0.95, ...) {
+    quick <- TRUE
     ls <- landmarks(object)
     Tval <- T_test(object)$statistic
     Tvals <- if (quick) {
@@ -235,88 +196,3 @@ quick=TRUE, level=0.95, ...) {
     class(out) <- c("edma_influence", class(out))
     out
 }
-
-.sdmplot_ci2 <- function(x, xlab="", ylab="",
-    bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
-    x <- x[order(x$Tdrop),]
-    k <- nrow(x)
-    xv <- seq_len(k)
-    r <- range(x$Tdrop, x$lower, x$upper, 1, na.rm=TRUE)
-    op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
-    on.exit(par(op), add=TRUE)
-    plot(xv, x$Tdrop, ylim=r, type="n",
-        xlab=xlab, ylab=ylab, axes=FALSE)
-    polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), col="lightblue", border=NA)
-    lines(xv, rep(1, k), col="grey")
-    Tv <- attr(x, "Tval")
-    for (i in seq_len(k))
-        if (!is.na(x$upper[i]) && !is.na(x$lower[i]))
-        lines(xv[i]+c(-0.5, 0.5), c(Tv, Tv),
-            col=if (Tv > x$upper[i] ||
-                    Tv < x$lower[i]) "red" else "grey")
-    lines(xv, x$Tdrop, col="blue")
-    axis(2)
-    if (xshow) {
-        lab <- x$landmark
-        text(xv, min(r) - 0.02 * diff(r), lab, adj=c(1, 0.5), cex=xcex)
-    }
-    invisible(x)
-}
-plot.edma_influence <- function(x, ...) {
-    .sdmplot_ci2(x, ylab="T-value", ...)
-    invisible(x)
-}
-
-
-## stacked growth matrix
-## inputs are edma_fit objects
-edma_gm <- function (a1, a2, ...) {
-    .compare_objects(a1, a2, "a1 vs a2:")
-    out <- edma_fdm(numerator=a2, denominator=a1, ...)
-    class(out) <- c("edma_gm", class(out))
-    out$call <- match.call()
-    out
-}
-print.edma_gm <- function(x, ...) {
-    .print_edma_fdm(x, "EDMA growth matrix", ...)
-}
-plot.edma_gm <- function(x, type=c("global", "local"), ylab, ...) {
-    if (missing(ylab))
-        ylab <- "GM Ratio"
-    .plot_edma_fdm(x, type, ylab, ...)
-}
-
-## stacked growth difference matrix
-## inputs are edma_fit objects
-edma_gdm <- function (a1, a2, b1, b2, ...) {
-    .compare_objects(a1, a2, "a1 vs a2:")
-    .compare_objects(b1, b2, "b1 vs b2:")
-    .compare_objects(a1, b1, "a1 vs b1:")
-    .compare_objects(a2, b2, "a2 vs b2:")
-    # ref is a1 an b1
-    gma <- edma_fdm(numerator=a2, denominator=a1, ...)
-    gmb <- edma_fdm(numerator=b2, denominator=b1, ...)
-    B <- min(gma$B, gmb$B)
-    gdm <- gma$dm
-    gdm$dist <- gmb$dm$dist / gma$dm$dist
-    i <- seq_len(B+1L)
-    b <- gmb$boot[,i,drop=FALSE] / gma$boot[,i,drop=FALSE]
-
-    out <- list(
-        call=match.call(),
-        a1=a1, a2=a2, b1=b1, b2=b2,
-        B=B,
-        ref_denom=gma$ref_denom,
-        dm=gdm,
-        boot=b)
-    attr(out$boot, "Tval") <- apply(out$boot, 2, max) / apply(out$boot, 2, min)
-#    class(out) <- c("edma_gdm", class(gma))
-    class(out) <- c("edma_gdm", class(out))
-    out
-}
-
-print.edma_gdm <- function(x, ...) {
-    .print_edma_fdm(x, "EDMA growth difference matrix", ...)
-}
-
-

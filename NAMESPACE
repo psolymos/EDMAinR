@@ -7,10 +7,11 @@ export(
     "edma_gm",
     "edma_gdm",
     "formdiff",
-    "SigmaK_fit"
+    "SigmaK_fit",
+    "read_pattern"
 )
 
-## export new generics
+## export new generics, non visual
 export(
     "landmarks",
     "Meanform",
@@ -18,11 +19,23 @@ export(
     "SigmaK",
     "get_fm",
     "get_fdm",
+    "get_gm",
+    "get_gdm",
     "T_test",
     "specimens",
+    "dimensions",
     "sensitivity",
-    "get_influence",
-    "plot_specimens"
+    "get_influence"
+)
+
+## export new generics for visualization
+export(
+    "plot_2d",
+    "plot_3d",
+    "plot_ord",
+    "plot_clust",
+    "plot_Ttest",
+    "plot_ci"
 )
 
 ## imports
@@ -47,50 +60,77 @@ S3method("print", "edma_data")
 S3method("subset", "edma_data")
 S3method("[", "edma_data")
 S3method("landmarks", "edma_data")
+S3method("specimens", "edma_data")
+S3method("dimensions", "edma_data")
 S3method("dim", "edma_data")
 S3method("dimnames", "edma_data")
 S3method("as.matrix", "edma_data")
 S3method("as.data.frame", "edma_data")
 S3method("as.array", "edma_data")
-S3method("specimens", "edma_data")
-S3method("plot", "edma_data")
 S3method("as.dist", "edma_data")
+## plot methods
+S3method("plot", "edma_data")
+S3method("plot_2d", "edma_data")
+S3method("plot_ord", "edma_data")
+S3method("plot_clust", "edma_data")
 
 ## edma_fit methods
 S3method("Meanform", "edma_fit")
 S3method("as.dist", "edma_fit")
 S3method("get_fm", "edma_fit")
-S3method("landmarks", "edma_fit")
-
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
 S3method("SigmaKstar", "edma_fit_np")
-
 ## edma_fit_p methods
 S3method("print", "edma_fit_p")
 S3method("SigmaK", "edma_fit_p")
 S3method("sensitivity", "edma_fit_p")
+## plot methods
+S3method("plot", "edma_fit")
+S3method("plot_2d", "edma_fit")
+S3method("plot_3d", "edma_fit")
+S3method("plot_ord", "edma_fit")
+S3method("plot_clust", "edma_fit")
+
+## edma_dm methods: this is parent for fdm, gm, gdm
+S3method("confint", "edma_dm")
+S3method("landmarks", "edma_dm")
+S3method("dimensions", "edma_dm")
+S3method("get_influence", "edma_dm")
+S3method("plot_Ttest", "edma_dm")
+## plot methods
+S3method("plot", "edma_dm")
+S3method("plot_2d", "edma_dm")
+S3method("plot_3d", "edma_dm")
 
 ## edma_fdm methods
-S3method("get_fdm", "edma_fdm")
-S3method("T_test", "edma_fdm")
-S3method("confint", "edma_fdm")
 S3method("print", "edma_fdm")
-S3method("plot", "edma_fdm")
-S3method("landmarks", "edma_fdm")
-S3method("get_influence", "edma_fdm")
-S3method("plot_specimens", "edma_fdm")
+S3method("T_test", "edma_fdm")
+S3method("get_fdm", "edma_fdm")
+## plot methods
+S3method("plot_ord", "edma_fdm")
+S3method("plot_clust", "edma_fdm")
+S3method("plot_ci", "edma_fdm")
 
 ## edma_influence methods
 S3method("plot", "edma_influence")
 
 ## edma_gm methods
 S3method("print", "edma_gm")
+S3method("T_test", "edma_gm")
+S3method("get_gm", "edma_gm")
+## plot methods
 S3method("plot", "edma_gm")
+S3method("plot_ci", "edma_gm")
 
 ## edma_gdm methods
 S3method("print", "edma_gdm")
+S3method("T_test", "edma_gdm")
+S3method("get_gdm", "edma_gdm")
+## plot methods
+S3method("plot_ord", "edma_gdm")
+S3method("plot_clust", "edma_gdm")
+S3method("plot_ci", "edma_gdm")
 
 ## other methods
-S3method("plot_specimens", "default")
 S3method("stack", "dist") # not to import from mefa

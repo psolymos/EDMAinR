@@ -61,7 +61,6 @@ read_xyz <- function(file, split_spec_names=TRUE, ...) {
 }
 
 ## this turns the data into X expected by fitting functions
-## is centering useful here?
 stack.edma_data <- function(x, ...) {
     d <- x$data
     out <- do.call(rbind, d)
@@ -70,7 +69,8 @@ stack.edma_data <- function(x, ...) {
     out
 }
 
-.shorten_name <- function(x, truncate=20) {
+## shortens the xyz object title, it can be extra long
+.shorten_name <- function(x, truncate=40) {
     n <- nchar(x[1L])
     x <- trimws(substr(x[1L], 1, min(truncate, n)))
     if (n > truncate)
@@ -79,7 +79,7 @@ stack.edma_data <- function(x, ...) {
 }
 
 ## print function
-print.edma_data <- function(x, truncate=20, ...) {
+print.edma_data <- function(x, truncate=40, ...) {
     cat("EDMA data: ", .shorten_name(x$name, truncate), "\n",
         ncol(x$data[[1L]]), " dimensions, ",
         nrow(x$data[[1L]]), " landmarks, ",
@@ -118,7 +118,9 @@ subset.edma_data <- function(x, subset, ...) {
     c(dimnames(x$data[[1L]]), list(names(x$data)))
 }
 landmarks <- function (x, ...) UseMethod("landmarks")
-landmarks.edma_data <- function(x, ...) dimnames(x)[[1L]]
+landmarks.edma_data <- function(x, ...) rownames(x$data[[1L]])
+dimensions <- function (x, ...) UseMethod("dimensions")
+dimensions.edma_data <- function(x, ...) colnames(x$data[[1L]])
 specimens <- function (x, ...) UseMethod("specimens")
 specimens.edma_data <- function(x, ...) names(x$data)
 
@@ -133,6 +135,7 @@ as.array.edma_data <- function (x, ...) {
     out
 }
 
+## simulate data xyz sets
 .edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     K <- nrow(M)
     D <- ncol(M)
@@ -178,80 +181,15 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     out
 }
 
-## diagnostics
-
-.plot_edma_data <- function(x, which=NULL,
-col_chull="#44444444", col_spec=2, ...) {
-    n <- length(x$data)
-    K <- nrow(x$data[[1]])
-    fm <- lapply(x$data, dist)
-    fma <- fm[[1]]
-    ii <- seq_len(n)
-    if (is.null(which)) {
-        fma[] <- rowMeans(sapply(fm, function(z) as.numeric(z)))
-    } else {
-        which <- as.integer(which[[1]])
-        fma[] <- rowMeans(sapply(fm[-which], function(z) as.numeric(z)))
-        ii <- ii[-which]
-    }
-    pca <- cmdscale(fma, k=2)
-    pci <- lapply(seq_len(n), function(i) {
-        pci <- cmdscale(fm[[i]], k=2)
-        tmp1 <- apply(abs(pca-pci), 2, max)
-        tmp2 <- apply(abs(pca+pci), 2, max)
-        if (tmp1[1] > tmp2[1]) {
-            pci[,1] <- -pci[,1]
-        }
-        if (tmp1[2] > tmp2[2]) {
-            pci[,2] <- -pci[,2]
-        }
-        pci
-    })
-    plot(pca, pch=3, axes=FALSE, ann=FALSE, ...)
-    for (j in seq_len(K)) {
-        ll <- t(sapply(pci[ii], function(z) z[j,]))
-        polygon(ll[chull(ll),], col=col_chull, border=NA)
-    }
-    if (!is.null(which)) {
-        segments(pca[,1], pca[,2],
-            pci[[which]][,1], pci[[which]][,2], col=col_spec)
-        points(pci[[which]][,1], pci[[which]][,2],
-            pch=19, cex=0.5, col=col_spec)
-    }
-    invisible(x)
-}
-
-plot.edma_data <- function(x, which=NULL,
-ask = dev.interactive(),
-col_chull="#44444444", col_spec=2, ...) {
-    n <- length(x$data)
-    if (!is.null(which)) {
-        if (which < 1 || which > n)
-            stop(sprintf("which must be <= %s", n))
-        .plot_edma_data(x, which, col_chull, col_spec, ...)
-        title(main=paste("Specimen", which))
-    } else {
-        if (ask) {
-            oask <- devAskNewPage(TRUE)
-            on.exit(devAskNewPage(oask))
-        }
-        .plot_edma_data(x, NULL, col_chull, col_spec, ...)
-        title(main="All specimens")
-        for (i in seq_len(n)) {
-            .plot_edma_data(x, i, col_chull, col_spec, ...)
-            title(main=paste("Specimen", i))
-        }
-    }
-    invisible(x)
-}
-
+## combines 2 xyz data sets into 1 object
+## for plotting etc.
 .combine_data <- function(a, b, ga="G1", gb="G2") {
     ls <- intersect(landmarks(a), landmarks(b))
     if (!all(ls %in% union(landmarks(a), landmarks(b))))
-        stop("landmarks must be the same in the two objects")
+        stop("landmarks must be the same in the 2 objects")
     ds <- intersect(dimnames(a)[[2L]], dimnames(b)[[2L]])
     if (!all(ds %in% union(dimnames(a)[[2L]], dimnames(b)[[2L]])))
-        stop("dimensions must be the same in the two objects")
+        stop("dimensions must be the same in the 2 objects")
     names(a$data) <- paste0(ga, "_", names(a$data))
     names(b$data) <- paste0(gb, "_", names(b$data))
     a <- a[ls,ds,]
@@ -264,7 +202,51 @@ col_chull="#44444444", col_spec=2, ...) {
     ab$groups <- rep(1:2, c(na, nb))
     ab
 }
+## combines 4 xyz data sets into 1 object
+## for plotting etc.
+.combine_data4 <- function(a1, a2, b1, b2,
+ga1="A1", ga2="A2", gb1="B1", gb2="B2") {
+    ls <- intersect(landmarks(a1), landmarks(a2))
+    if (!all(ls %in% union(landmarks(a1), landmarks(a2))))
+        stop("landmarks must be the same in the 4 objects")
+    ls <- intersect(landmarks(b1), landmarks(b2))
+    if (!all(ls %in% union(landmarks(b1), landmarks(b2))))
+        stop("landmarks must be the same in the 4 objects")
+    ls <- intersect(landmarks(a1), landmarks(b1))
+    if (!all(ls %in% union(landmarks(a1), landmarks(b1))))
+        stop("landmarks must be the same in the 4 objects")
 
+    ds <- intersect(dimnames(a1)[[2L]], dimnames(a2)[[2L]])
+    if (!all(ds %in% union(dimnames(a1)[[2L]], dimnames(a2)[[2L]])))
+        stop("dimensions must be the same in the 4 objects")
+    ds <- intersect(dimnames(b1)[[2L]], dimnames(b2)[[2L]])
+    if (!all(ds %in% union(dimnames(b1)[[2L]], dimnames(b2)[[2L]])))
+        stop("dimensions must be the same in the 4 objects")
+    ds <- intersect(dimnames(a1)[[2L]], dimnames(b1)[[2L]])
+    if (!all(ds %in% union(dimnames(a1)[[2L]], dimnames(b1)[[2L]])))
+        stop("dimensions must be the same in the 4 objects")
+
+    names(a1$data) <- paste0(ga1, "_", names(a1$data))
+    names(a2$data) <- paste0(ga2, "_", names(a2$data))
+    names(b1$data) <- paste0(gb1, "_", names(b1$data))
+    names(b2$data) <- paste0(gb2, "_", names(b2$data))
+    a1 <- a1[ls,ds,]
+    a2 <- a2[ls,ds,]
+    b1 <- b1[ls,ds,]
+    b2 <- b2[ls,ds,]
+    ab <- a1
+    na1 <- length(a1$data)
+    na2 <- length(a2$data)
+    nb1 <- length(b1$data)
+    nb2 <- length(b2$data)
+    ab$name <- "data with 4 groups"
+    ab$data <- c(a1$data, a2$data, b1$data, b2$data)
+    ab$groups <- rep(1:4, c(na1, na2, nb1, nb2))
+    ab
+}
+
+## dissimilarity matrix: pairwise distance is defined
+## based on T-statistic (averaged on the log scale)
 as.dist.edma_data <- function(m, diag = FALSE, upper = FALSE) {
     n <- dim(m)[3L]
     nam <- dimnames(m)[[3L]]

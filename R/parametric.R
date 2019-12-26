@@ -131,12 +131,16 @@ SigmaK_fit <- function(object, pattern, check_pattern=TRUE, ...) {
                 object$boot[[i]][["H"]], pattern)$SigmaK#, ...)
         }
     }
+    dimnames(object$SigmaK) <- dimnames(object$SigmaKstar)
+    object$call <- match.call()
     class(object) <- c("edma_fit_p", "edma_fit", "edma_data")
     object
 }
 
-print.edma_fit_p <- function(x, ...) {
-    cat("EDMA parametric fit: ", x$name, "\n",
+## print parametric fit object
+print.edma_fit_p <- function(x, truncate=40, ...) {
+    cat("EDMA parametric fit: ",
+        .shorten_name(x$name, truncate), "\n",
         "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n",
         ncol(x$data[[1L]]), " dimensions, ",
@@ -148,10 +152,15 @@ print.edma_fit_p <- function(x, ...) {
     invisible(x)
 }
 
+## extract SigmaK estimate
 SigmaK <- function (object, ...) UseMethod("SigmaK")
 SigmaK.edma_fit_p <- function (object, ...) object[["SigmaK"]]
 
+## evaluates sensitivity:
+## par_* are parameters according to pattern matrix
+## value is the loss function value evaluated at par_* from optim
 sensitivity <- function (object, ...) UseMethod("sensitivity")
+## this works because initial values are random, so replicate is fine
 sensitivity.edma_fit_p <- function (object, m=10, ...) {
     if (m < 1)
         stop("m must be > 1")
