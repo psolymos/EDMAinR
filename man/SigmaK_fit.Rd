@@ -7,7 +7,7 @@
 \alias{sensitivity.edma_fit_p}
 \alias{read_pattern}
 \title{
-Nonparametric EDMA fit
+Parametric EDMA fit
 }
 \description{
 Estimate parameters of a structured SigmaK,
