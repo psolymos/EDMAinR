@@ -1,0 +1,138 @@
+---
+title: "EDMA data"
+author: "Peter Solymos"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{EDMA data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup,include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+set.seed(429)
+```
+
+## Introduction
+
+**EDMAinR** is an R package for Euclidean Distance Matrix Analysis (EDMA).
+EDMA is a coordinate‐free approach for comparing biological shapes using landmark data.
+
+We can install the package from GitHub as:
+
+```{r install,eval=FALSE}
+if (!require(EDMAinR)) {
+  if (!require(remotes))
+      install.packages("remotes")
+  remotes::install_github("psolymos/EDMAinR")
+}
+```
+
+We can now load the package:
+
+```{r load}
+library(EDMAinR)
+```
+
+## Landmark data
+
+Use the `read_xyz` function to read 2 or 3 D landmark data from `*.xyz` files.
+First we specify the paths to two xyz files:
+
+```{r filexyz}
+file <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz", 
+    package="EDMAinR")
+```
+
+Note: we use the `system.file()` function to access example files
+from the package. When defining your own files,
+you will either set the working directory using `setwd()` or
+a path like `c:/Users/<user>/<etc>`.
+
+Now we can read in these text files:
+
+```{r readxyz}
+x <- read_xyz(file)
+x
+```
+
+The data objects are lists with 2 elements: 
+
+- `$name` contains info about the file from its header
+- `$data` contains the landmark data
+
+Here are the methods that we can use to learn more about the data sets.
+
+Access dimensions (landmarks, $K$; dimensions, $D$; replicates, $n$) 
+and dimension names (`landmark_names` returns the landmark labels):
+
+```{r datamethods}
+dim(x)
+dimnames(x)
+landmarks(x)
+dimensions(x)
+specimens(x)
+```
+
+Subsetting the data comes handy sometimes. The most general way to subset
+the data sets is via the `[` function, the 3 indices inside the brackets
+refer to the landmarks, dimensions, and specimens:
+
+```{r datasubset}
+x[1:10, , ]  # select the 1st 10 landmarks
+x[ , 1:2, ]  # select 2 of the 2 dimensions
+x[ , , 1:20] # select the 1st 20 individuals
+x[1:10, , 1:20] # combine multiple indices
+```
+
+The data (`$data`) format inside the object `x` is list of the $K \times D$
+matrices for each individual. Sometimes it is handy to stack these
+matrices and create a rectangular data (either as a matrix, or data frame,
+with $n \times K$ rows and $D$ columns):
+
+```{r dataflat}
+str(as.matrix(x))
+```
+
+Note: we are using `str` to show the structure of these objects,
+this is not necessary when exploring the data.
+
+Alternatively, we can store the data as an array
+($K \times D \times n$):
+
+```{r dataarray}
+str(as.array(x))
+```
+
+Data sets can be checked using the `plot` function. 
+The function steps through all the speciments to check
+for eny surprises.
+The grey areas shows the convex hull for the landmark
+leaving the specimen out, while red dots show the
+actual specimen.
+We will insert an error to show how it can be helpful:
+
+```{r fig.width=7,fig.height=5,out.width='45%',fig.show='hold'}
+## original values for specimen 1
+plot(x, which=1)
+## we change the 1st landmark
+xwrong <- x
+xwrong$data[[1]][1,1:2] <- c(2, 2)
+plot(xwrong, which=1)
+```
+
+The ordination and cluster dendrogram
+
+```{r fig.width=7,fig.height=5,out.width='45%',fig.show='hold'}
+plot_ord(x)
+plot_ord(xwrong)
+```
+
+```{r fig.width=7,fig.height=7,out.width='45%',fig.show='hold'}
+plot_clust(x)
+plot_clust(xwrong)
+```
+
