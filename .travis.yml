@@ -7,10 +7,10 @@ r_packages:
 r:
   - release
   - devel
-  - oldrel
 
 env:
   - RGL_USE_NULL=TRUE
+
 r_binary_packages:
   - rgl
 
