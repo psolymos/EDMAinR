@@ -17,9 +17,11 @@ set.seed(0)
 
 [![CRAN version](http://www.r-pkg.org/badges/version/EDMAinR)](http://cran.rstudio.com/web/packages/EDMAinR/index.html)
 [![CRAN download stats](http://cranlogs.r-pkg.org/badges/grand-total/EDMAinR)](https://www.rdocumentation.org/packages/EDMAinR/)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
 [![Linux build Status](https://travis-ci.org/psolymos/EDMAinR.svg?branch=master)](https://travis-ci.org/psolymos/EDMAinR)
 [![Windows build status](https://ci.appveyor.com/api/projects/status/5y5fwgv90f8i84ck?svg=true)](https://ci.appveyor.com/project/psolymos/EDMAinR)
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![codecov](https://codecov.io/gh/psolymos/EDMAinR/branch/master/graph/badge.svg)](https://codecov.io/gh/psolymos/EDMAinR)
 
 > A coordinate‐free approach for comparing biological shapes using landmark data
 

@@ -9,6 +9,5 @@ r:
   - devel
   - oldrel
 
-
 after_success:
   - Rscript -e 'library(covr);codecov()'
