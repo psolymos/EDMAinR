@@ -62,17 +62,7 @@ fit
 #> EDMA nonparametric fit: Crouzon P0 MUT
 #> Call: edma_fit(x = x1, B = B)
 #> 3 dimensions, 47 landmarks, 28 replicates, 9 bootstrap runs
-
-plot_ord(fit)
 ```
-
-![](README-unnamed-chunk-3-1.png)<!-- -->
-
-``` r
-plot_clust(fit)
-```
-
-![](README-unnamed-chunk-3-2.png)<!-- -->
 
 ## References
 

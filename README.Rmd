@@ -61,9 +61,6 @@ B <- 9
 
 fit <- edma_fit(x1, B=B)
 fit
-
-plot_ord(fit)
-plot_clust(fit)
 ```
 
 ## References
