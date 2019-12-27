@@ -6,7 +6,6 @@ export(
     "edma_fdm",
     "edma_gm",
     "edma_gdm",
-    "formdiff",
     "SigmaK_fit",
     "read_pattern"
 )
@@ -80,9 +79,10 @@ S3method("plot_clust", "edma_data")
 S3method("Meanform", "edma_fit")
 S3method("as.dist", "edma_fit")
 S3method("get_fm", "edma_fit")
+S3method("SigmaKstar", "edma_fit")
+S3method("confint", "edma_fit")
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
-S3method("SigmaKstar", "edma_fit_np")
 ## edma_fit_p methods
 S3method("print", "edma_fit_p")
 S3method("SigmaK", "edma_fit_p")

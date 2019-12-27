@@ -15,7 +15,7 @@
 ## CZEM_094 Scanned on
 ## CZEM_097 Scanned on
 ## etc, this part is particularly useful because then you actually know the specimen numbers for the data within the file. Space is the delimiter in the XYZ files.
-read_xyz <- function(file, split_spec_names=TRUE, ...) {
+read_xyz <- function(file, ...) {
     h <- readLines(file, n=4L)
     NAME <- h[1L]
     DIMS <- character(nchar(h[2L]))
@@ -39,8 +39,7 @@ read_xyz <- function(file, split_spec_names=TRUE, ...) {
         stringsAsFactors=FALSE)[[1L]], silent=TRUE)
     if (inherits(SPECIMENS, "try-error"))
         SPECIMENS <- paste0("S", seq_len(n))
-    if (split_spec_names)
-        SPECIMENS <- sapply(strsplit(SPECIMENS, " "), "[[", 1L)
+    SPECIMENS <- sapply(strsplit(SPECIMENS, " "), "[[", 1L)
     if (length(SPECIMENS) != n)
         stop("length of specimen names must match n")
     if (any(duplicated(SPECIMENS)))

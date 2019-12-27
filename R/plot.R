@@ -51,23 +51,22 @@ col_chull="#44444444", col_spec=2, ...) {
 }
 
 plot_2d.edma_data <- function(x, which=NULL,
-ask = dev.interactive(),
-col_chull="#44444444", col_spec=2, ...) {
+ask = dev.interactive(), ...) {
     n <- length(x$data)
     if (!is.null(which)) {
         if (which < 1 || which > n)
             stop(sprintf("which must be <= %s", n))
-        .plot_edma_data(x, which, col_chull, col_spec, ...)
+        .plot_edma_data(x, which, ...)
         title(main=paste("Specimen", which))
     } else {
         if (ask) {
             oask <- devAskNewPage(TRUE)
             on.exit(devAskNewPage(oask))
         }
-        .plot_edma_data(x, NULL, col_chull, col_spec, ...)
+        .plot_edma_data(x, NULL,  ...)
         title(main="All specimens")
         for (i in seq_len(n)) {
-            .plot_edma_data(x, i, col_chull, col_spec, ...)
+            .plot_edma_data(x, i, ...)
             title(main=paste("Specimen", i))
         }
     }
@@ -320,7 +319,7 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
     f$cut <- cut(f$dist, v, include.lowest=TRUE, labels=FALSE)
     if (is.null(pal))
         pal <- colorRampPalette(
-            rev(c('#d7191c','#fdae61','#eeeeee','#abd9e9','#2c7bb6'))
+            getOption("edma_options")$palette
             )(length(v)-1)
     if (d3) {
         plot3d(xyz[,1L], xyz[,2L], xyz[,3L],

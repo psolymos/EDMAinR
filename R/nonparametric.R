@@ -132,7 +132,7 @@ Meanform.edma_fit <- function (object, ...) object$M
 
 ## SigmaKstar
 SigmaKstar <- function (object, ...) UseMethod("SigmaKstar")
-SigmaKstar.edma_fit_np <- function (object, ...) object[["SigmaKstar"]]
+SigmaKstar.edma_fit <- function (object, ...) object[["SigmaKstar"]]
 
 ## KxK distance matrix based on mean form
 as.dist.edma_fit <- function(m, diag = FALSE, upper = FALSE) {
@@ -160,15 +160,39 @@ stack.dist <- function(x, ...) {
     out
 }
 
+## CI based on the 1 input object boot sample
+confint.edma_fit <- function (object, parm, level=0.95, ...) {
+    d <- stack(as.dist(object))
+    if (missing(parm))
+        parm <- seq_len(nrow(d))
+    a <- c((1-level)/2, 1-(1-level)/2)
+    b <- if (is.null(object$boot)) {
+        data.matrix(d$dist)
+    } else {
+        cbind(d$dist,
+            sapply(object$boot, function(z) stack(dist(z$M))$dist))
+    }
+    out <- t(apply(b, 1, quantile, a))
+    if (is.null(object$boot))
+        out[] <- NA
+    rownames(out) <- rownames(d)
+    out[parm,,drop=FALSE]
+}
+
 ## form matrix, stacked distances from mean form
 ## this is the intended EDMA interface
 get_fm <- function (object, ...) UseMethod("get_fm")
-get_fm.edma_fit <- function (object, sort=FALSE, ...) {
+get_fm.edma_fit <- function (object, sort=FALSE,
+level = 0.95, ...) {
     d <- as.dist(object, diag = FALSE, upper = FALSE)
     out <- stack(d)
+    ci <- confint(object, level=level)
+    out$lower <- ci[,1L]
+    out$upper <- ci[,2L]
     if (sort)
         out <- out[order(out$dist, ...),]
     class(out) <- c("fm", class(out))
+    attr(out, "level") <- level
     out
 }
 

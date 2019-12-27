@@ -27,13 +27,6 @@
     r
 }
 
-## inputs are edma_fit objects
-## this returns the distance matrix, not stacked
-formdiff <- function (numerator, denominator, ...) {
-    .compare_objects(numerator, denominator)
-    .formdiff(Meanform(numerator), Meanform(denominator))
-}
-
 ## calculate T-statistic
 ## x: object w bootstrap
 ## ref: reference object (w or w/o bootstrap)
@@ -56,7 +49,7 @@ formdiff <- function (numerator, denominator, ...) {
 ## form difference matrix with bootstrap
 edma_fdm <- function(numerator, denominator, ref_denom=TRUE) {
     .compare_objects(numerator, denominator)
-    fd <- stack(formdiff(numerator, denominator))
+    fd <- stack(.formdiff(Meanform(numerator), Meanform(denominator)))
     b <- if (ref_denom) {
         .Ttest_fit(numerator, denominator)
     } else {

@@ -47,13 +47,14 @@ edma_simulate_data(10, M, SigmaK)
 
 ## --- nonparametric fit ---
 
-fit <- edma_fit(x1)
+fit <- edma_fit(x1, B=B)
 fit
 str(Meanform(fit))
 str(SigmaKstar(fit))
 
 plot_ord(fit)
 plot_clust(fit)
+plot(fit)
 plot_2d(fit)
 plot_3d(fit)
 
@@ -62,6 +63,7 @@ plot_3d(fit)
 str(as.dist(fit))
 str(stack(as.dist(fit)))
 
+head(confint(fit))
 head(get_fm(fit))
 head(get_fm(fit, sort=TRUE, decreasing=TRUE))
 head(get_fm(fit, sort=TRUE, decreasing=FALSE))
@@ -79,19 +81,16 @@ m <- matrix(c(
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.35)
 
-f <- function(fit)
-    unlist(.SigmaK_fit(fit$SigmaKstar, fit$H, m)[1:2])
 M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
     .Dim = c(4L, 2L))
 SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
 
-sim <- edma_simulate_data(n=10, M, SigmaK)
+sim <- edma_simulate_data(n=500, M, SigmaK)
 dimnames(M) <- dimnames(sim$data[[1L]])
 rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
 colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
 
-fit <- edma_fit(sim, B=B)
-o <- SigmaK_fit(fit, m)
+o <- SigmaK_fit(edma_fit(sim), m)
 o
 cbind(true=parm, est=o$results$par)
 SigmaK(o)
@@ -107,8 +106,6 @@ plot_clust(o)
 
 numerator <- edma_fit(x1, B=B)
 denominator <- edma_fit(x2, B=B)
-fd <- formdiff(numerator, denominator)
-str(fd)
 
 fdm <- edma_fdm(numerator, denominator)
 fdm2 <- edma_fdm(numerator, denominator, ref_denom = FALSE)
