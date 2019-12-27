@@ -90,7 +90,8 @@ method = "Nelder-Mead", control = list()) {
     pattern <- pattern[rownames(object$SigmaKstar),
         colnames(object$SigmaKstar)]
     ## check spareness
-    UNK <- nlevels(factor(pattern))
+    #UNK <- nlevels(factor(pattern))
+    UNK <- sum(!is.na(pattern))
     MAX <- nrow(object$SigmaKstar)*(nrow(object$SigmaKstar)-1)/2
     if (UNK > MAX)
         stop(sprintf(

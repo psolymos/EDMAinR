@@ -1,0 +1,112 @@
+---
+title: "Parametric estimation"
+author: "Peter Solymos"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Parametric estimation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup,include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+set.seed(429)
+```
+
+This section describes how to assess if SigmaK is esimable.
+
+The pattern matrix describes the unknowns in the SigmaK matrix.
+Diagonal must be filled. Upper and lower diagonal values must
+be symmetric or `NA`. The file can be created in R,
+or loaded as a csv or Excel (xls, xlsx) file:
+
+```{r}
+library(EDMAinR)
+
+read_pattern(system.file("extdata/example.csv", package="EDMAinR"))
+read_pattern(system.file("extdata/example.xlsx", package="EDMAinR"))
+```
+
+Now we go ahead with a simulated example:
+
+```{r}
+m <- matrix(c(
+    "a", NA, NA, NA,
+    NA, "a", NA, NA,
+    NA,  NA, "b", NA,
+    NA,  NA, NA, "b"
+), 4, 4, byrow=TRUE)
+parm <- c(a=0.25, b=0.35)
+
+M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
+    .Dim = c(4L, 2L))
+SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
+
+sim <- edma_simulate_data(n=500, M, SigmaK)
+dimnames(M) <- dimnames(sim$data[[1L]])
+rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
+colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
+```
+
+This simulated example has 2 unknowns: `a` and `b`,
+now we estimate these:
+
+```{r}
+fit <- edma_fit(sim)
+o <- SigmaK_fit(fit, m)
+o
+cbind(true=parm, est=o$results$par)
+SigmaK(o)
+```
+
+To check the sensitivity, we can re-estimate SigmaK matrix
+multiple times with random starting values for numerical
+optimization. When estimates vary while the loss function
+value is the same, it is usually a sign of non-identifiability.
+
+```{r}
+s <- sensitivity(o)
+summary(s)
+boxplot(s)
+```
+
+Now let's try a non identifiable pattern.
+The function is pretty smart to let us know, but we
+will disable such checks, so that we can demonstrate
+how do estimates and loss function value looks like in this case:
+lots of different values can lead to the same value
+
+```{r}
+m <- matrix(c(
+    "a", "b", "b", "b",
+    "b", "a", "b", "b",
+    "b", "b", "a", "b",
+    "b", "b", "b", "a"
+), 4, 4, byrow=TRUE)
+parm <- c(a=0.25, b=0.07)
+
+
+M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
+    .Dim = c(4L, 2L))
+SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
+
+sim <- edma_simulate_data(n=500, M, SigmaK)
+dimnames(M) <- dimnames(sim$data[[1L]])
+rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
+colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
+
+fit <- edma_fit(sim)
+try(SigmaK_fit(fit, m))
+
+o <- SigmaK_fit(fit, m, check_pattern=FALSE)
+o
+cbind(true=parm, est=o$results$par)
+SigmaK(o)
+
+s <- sensitivity(o)
+summary(s)
+boxplot(s)
+```

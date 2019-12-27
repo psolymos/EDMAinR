@@ -108,8 +108,8 @@ str(as.array(x))
 ```
 
 Data sets can be checked using the `plot` function. 
-The function steps through all the speciments to check
-for eny surprises.
+The function steps through all the specimens to check
+for any surprises.
 The grey areas shows the convex hull for the landmark
 leaving the specimen out, while red dots show the
 actual specimen.
