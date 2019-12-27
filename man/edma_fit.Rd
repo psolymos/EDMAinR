@@ -170,5 +170,12 @@ str(stack(as.dist(fit)))
 head(get_fm(fit))
 head(get_fm(fit, sort=TRUE, decreasing=TRUE))
 head(get_fm(fit, sort=TRUE, decreasing=FALSE))
+
+plot_ord(fit)
+plot_clust(fit)
+plot(fit)
+plot_2d(fit)
+if (interactive())
+    plot_3d(fit)
 }
 \keyword{ models }

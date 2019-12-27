@@ -191,6 +191,7 @@ plot_clust(fdm)
 plot_Ttest(fdm)
 plot_ci(fdm)
 plot_2d(fdm)
-plot_3d(fdm)
+if (interactive())
+    plot_3d(fdm)
 }
 \keyword{ models }

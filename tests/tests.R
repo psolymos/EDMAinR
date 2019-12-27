@@ -56,7 +56,7 @@ plot_ord(fit)
 plot_clust(fit)
 plot(fit)
 plot_2d(fit)
-plot_3d(fit)
+if (interactive()) plot_3d(fit)
 
 ## --- form matrix ---
 
@@ -129,7 +129,7 @@ plot_clust(fdm)
 plot_Ttest(fdm)
 plot_ci(fdm)
 plot_2d(fdm)
-plot_3d(fdm)
+if (interactive()) plot_3d(fdm)
 
 ## --- growth matrix ---
 
@@ -158,7 +158,7 @@ plot_clust(gm)
 plot_Ttest(gm)
 plot_ci(gm)
 plot_2d(gm)
-plot_3d(gm)
+if (interactive()) plot_3d(gm)
 
 ## --- growth difference matrix ---
 
@@ -175,5 +175,5 @@ plot_clust(gdm)
 plot_Ttest(gdm)
 plot_ci(gdm)
 #plot_2d(gdm) # need real data
-#plot_3d(gdm)
+#if (interactive()) plot_3d(gdm)
 
