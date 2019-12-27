@@ -1,5 +1,5 @@
 language: r
-sudo: required
+cache: packages
 
 r_packages:
   - covr
@@ -8,6 +8,9 @@ r:
   - release
   - devel
   - oldrel
+
+r_binary_packages:
+  - rgl
 
 after_success:
   - Rscript -e 'library(covr);codecov()'
