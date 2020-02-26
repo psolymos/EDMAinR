@@ -188,7 +188,7 @@ Peter Solymos
 \code{\link{edma_fit}} for EDMA analysis.
 
 \code{\link{dist}} for dissimilarity matrices and
-\code{T_test} for description of the T-statistic.
+\code{\link{T_test}} for description of the T-statistic.
 }
 \examples{
 ## read xyz files
