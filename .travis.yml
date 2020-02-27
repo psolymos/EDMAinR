@@ -4,6 +4,7 @@ cache: packages
 r_packages:
   - covr
   - pkgdown
+  - rcmdcheck
 
 r:
   - release
