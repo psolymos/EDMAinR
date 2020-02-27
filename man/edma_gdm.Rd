@@ -138,7 +138,7 @@ if (interactive())
 
 ## --- growth difference matrix ---
 
-gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_a1, b2=fit_a2)
+gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_a1, b2=fit_a2, B=10)
 gdm
 T_test(gdm)
 head(confint(gdm))

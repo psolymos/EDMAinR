@@ -247,8 +247,9 @@ plot.edma_influence <- function(x, ...) {
     #abline(h=1, col="grey")
     lines(xv, rep(1, k), col="grey")
     for (i in seq_len(k))
-        lines(xv[i]+c(-0.5, 0.5), c(1, 1),
-            col=if (1 > x$upper[i] || 1 < x$lower[i]) "red" else "grey")
+        if (!is.na(x$upper[i]) && !is.na(x$lower[i]))
+            lines(xv[i]+c(-0.5, 0.5), c(1, 1),
+                col=if (1 > x$upper[i] || 1 < x$lower[i]) "red" else "grey")
     lines(xv, x$dist, col="blue")
     axis(2)
     if (xshow) {
