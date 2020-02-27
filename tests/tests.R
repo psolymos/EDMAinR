@@ -104,11 +104,12 @@ plot_clust(o)
 
 ## --- form difference matrix ---
 
-numerator <- edma_fit(x1, B=B)
-denominator <- edma_fit(x2, B=B)
+numerator <- edma_fit(x1)
+denominator <- edma_fit(x2)
 
-fdm <- edma_fdm(numerator, denominator)
-fdm2 <- edma_fdm(numerator, denominator, ref_denom = FALSE)
+fdm0 <- edma_fdm(numerator, denominator, B=B, mix=TRUE)
+fdm <- edma_fdm(numerator, denominator, B=B)
+fdm2 <- edma_fdm(numerator, denominator, B=B, ref_denom = FALSE)
 fdm
 fdm2
 
@@ -142,10 +143,10 @@ a2 <- read_xyz(file_a2)
 a1
 a2
 
-fit_a1 <- edma_fit(a1, B=B)
-fit_a2 <- edma_fit(a2, B=B)
+fit_a1 <- edma_fit(a1)
+fit_a2 <- edma_fit(a2)
 
-gm <- edma_gm(fit_a1, fit_a2)
+gm <- edma_gm(fit_a1, fit_a2, B=B)
 gm
 T_test(gm)
 head(confint(gm))
@@ -162,7 +163,7 @@ if (interactive()) plot_3d(gm)
 
 ## --- growth difference matrix ---
 
-gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_a1, b2=fit_a2)
+gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_a1, b2=fit_a2, B=B)
 gdm
 T_test(gdm)
 head(confint(gdm))

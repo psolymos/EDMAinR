@@ -28,7 +28,8 @@ edma_gdm <- function (a1, a2, b1, b2, ...) {
     gdm$dist <- gmb$dm$dist / gma$dm$dist
     ii <- expand.grid(a=seq_len(gma$B), b=seq_len(gmb$B))
     b <- cbind(gdm$dist,
-            gmb$boot[,ii$b+1,drop=FALSE] / gma$boot[,ii$a+1,drop=FALSE])
+        gmb$boot[,ii$b+1,drop=FALSE] / gma$boot[,ii$a+1,drop=FALSE])
+    attr(b, "mix") <- attr(gma$boot, "mix")
     out <- list(
         call=match.call(),
         a1=a1, a2=a2, b1=b1, b2=b2,
