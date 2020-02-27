@@ -115,12 +115,12 @@ a2 <- read_xyz(file_a2)
 a1
 a2
 
-fit_a1 <- edma_fit(a1, B=0)
-fit_a2 <- edma_fit(a2, B=9)
+fit_a1 <- edma_fit(a1)
+fit_a2 <- edma_fit(a2)
 
 ## --- growth matrix ---
 
-gm <- edma_gm(a1=fit_a1, a2=fit_a2)
+gm <- edma_gm(a1=fit_a1, a2=fit_a2, B=10)
 gm
 T_test(gm)
 head(confint(gm))
