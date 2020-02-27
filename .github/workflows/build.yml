@@ -12,6 +12,8 @@ jobs:
       - uses: r-lib/actions/setup-r@master
       - uses: r-lib/actions/setup-pandoc@master
       - name: Install dependencies
+        env:
+          RGL_USE_NULL: TRUE
         run: |
           install.packages("remotes")
           remotes::install_deps(dependencies = TRUE)
