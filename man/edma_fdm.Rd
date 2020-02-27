@@ -28,7 +28,8 @@ Form difference matrix based inference based on
 Lele and Richtsmeier (1992, 1995).
 }
 \usage{
-edma_fdm(numerator, denominator, ref_denom = TRUE)
+edma_fdm(numerator, denominator,
+  B=0, ref_denom=TRUE, mix=FALSE)
 
 get_influence(object, ...)
 \method{get_influence}{edma_dm}(object, level=0.95, ...)
@@ -58,10 +59,18 @@ plot_Ttest(x, ...)
   \item{numerator, denominator}{
 EDMA fit object to compare forms.
 }
+  \item{B}{
+nonnegative integer, the number of bootstrap replicates.
+}
   \item{ref_denom}{
 logical, when \code{TRUE}, the \code{denominator} is used as
 reference object (its form matrix is fixed when calculating
 bootstrap comparing to the other object).
+}
+  \item{mix}{
+logical, to use mixed bootstrap (numeriator and denominator
+populations are mixed with replacement) or not
+(only the non-reference population is resampled with replacement).
 }
   \item{x, object}{
 an EDMA FDM object of class 'edma_fdm'.

@@ -27,41 +27,67 @@
     r
 }
 
-## calculate T-statistic
-## x: object w bootstrap
-## ref: reference object (w or w/o bootstrap)
-.Ttest_fit <- function(x, ref, boot=TRUE) {
-    if (!boot)
-        x$boot <- NULL
-    FMref <- as.numeric(as.dist(ref))
-    FM <- if (is.null(x$boot)) {
-        data.matrix(as.numeric(as.dist(x)))
+## this does the fixed or mixed test once, d2 = denominator
+## d1 and d2 are data objects
+.Ttest_data <- function(d1, d2, ref_denom=TRUE, mix=FALSE) {
+    n1 <- dim(d1)[3L]
+    n2 <- dim(d2)[3L]
+    s1 <- specimens(d1)
+    s2 <- specimens(d2)
+    if (mix) {
+        ii <- c(-seq_len(n1), seq_len(n2))
+        ii <- sample(ii, n1+n2, replace=TRUE)
+        i1 <- ii[seq_len(n1)]
+        i2 <- ii[seq_len(n2)+n1]
+        d1$data <- c(d1$data[-i1[i1 < 0]], d2$data[i1[i1 > 0]])
+        d2$data <- c(d1$data[-i2[i2 < 0]], d2$data[i2[i2 > 0]])
     } else {
-        cbind(as.numeric(as.dist(x)),
-            sapply(x$boot, function(z) as.numeric(dist(z$M))))
+        if (ref_denom) {
+            d2$data <- d1$data[sample(seq_len(n1), n2, replace=TRUE)]
+            d1$data <- d1$data[sample(seq_len(n1), n1, replace=TRUE)]
+        } else {
+            d1$data <- d2$data[sample(seq_len(n2), n1, replace=TRUE)]
+            d2$data <- d2$data[sample(seq_len(n2), n2, replace=TRUE)]
+        }
     }
-    FDM <- FM/FMref
-    Tval <- apply(FDM, 2, function(z) max(z)/min(z))
-    attr(FDM, "Tval") <- Tval
-    FDM
+    names(d1$data) <- s1
+    names(d2$data) <- s2
+    fit1 <- edma_fit(d1)
+    fit2 <- edma_fit(d2)
+    .formdiff(Meanform(fit1), Meanform(fit2))
+}
+
+.Ttest_fit <- function (d1, d2, B=0, ref_denom=TRUE, mix=FALSE, ...) {
+    fd <- .formdiff(Meanform(d1), Meanform(d2))
+    d1 <- .get_data(d1)
+    d2 <- .get_data(d2)
+    .compare_data(d1, d2)
+    bfd <- if (B > 0) {
+        pbapply::pbreplicate(B,
+            as.numeric(.Ttest_data(d1, d2, mix=mix, ref_denom=ref_denom)))
+    } else {
+        NULL
+    }
+    fds <- cbind(fd, bfd)
+    Tval <- apply(fds, 2, function(z) max(z)/min(z))
+    attr(fds, "Tval") <- unname(Tval)
+    attr(fds, "mix") <- mix
+    fds
 }
 
 ## form difference matrix with bootstrap
-edma_fdm <- function(numerator, denominator, ref_denom=TRUE) {
+edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
     .compare_objects(numerator, denominator)
     fd <- stack(.formdiff(Meanform(numerator), Meanform(denominator)))
-    b <- if (ref_denom) {
-        .Ttest_fit(numerator, denominator)
-    } else {
-        .Ttest_fit(denominator, numerator)
-    }
+    b <- .Ttest_fit(numerator, denominator, B=B, ref_denom=ref_denom, mix=mix)
     out <- list(
         call=match.call(),
         numerator=numerator,
         denominator=denominator,
         ref_denom=ref_denom,
+        mix=mix,
         dm=fd,
-        B=ncol(b)-1,
+        B=B,
         boot=b)
     class(out) <- c("edma_fdm", "edma_dm", class(out))
     out
@@ -106,15 +132,16 @@ level = 0.95, ...) {
 ## T-test for 2 edma_fit objects
 T_test <- function (object, ...) UseMethod("T_test")
 .T_test <- function (object, DNAME="", ...) {
-    METHOD <- "Bootstrap based EDMA T-test"
+    METHOD <- if (attr(object$boot, "mix"))
+        "Mixed bootstrap based EDMA T-test" else "Bootstrap based EDMA T-test"
     Tval <- attr(object$boot, "Tval")
-    PVAL <- sum(Tval[1L] <= Tval) / length(Tval)
+    PVAL <- sum(Tval[1L] <= Tval[-1L]) / (length(Tval)-1L)
     PARAMETER <- length(Tval) - 1L
     names(Tval) <- "T-value"
     names(PARAMETER) <- "B"
     out <- list(statistic = Tval[1L], parameter = PARAMETER,
-        p.value = PVAL, method = METHOD, data.name = DNAME,
-        Tvals=Tval)
+        p.value = if (PARAMETER > 0) PVAL else NA,
+        method = METHOD, data.name = DNAME, Tvals=Tval)
     class(out) <- c("edma_test", "htest")
     out
 }
@@ -162,7 +189,7 @@ dimensions.edma_fdm <- function(x, ...)
             x <- edma_fit(.get_data(object$denominator)[lsd,,])
             ref <- edma_fit(.get_data(object$numerator)[lsd,,])
         }
-        Tval <- attr(.Ttest_fit(x, ref, boot=FALSE), "Tval")
+        Tval <- attr(.formdiff(Meanform(x), Meanform(ref)), "Tval")
     }
     c(Tval, ci)
 }
