@@ -238,7 +238,7 @@ plot.edma_influence <- function(x, ...) {
     x <- x[order(x$dist),]
     k <- nrow(x)
     xv <- seq_len(k)
-    r <- range(x$dist, x$lower, x$upper, 1)
+    r <- range(x$dist, x$lower, x$upper, 1, na.rm=TRUE)
     op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
     plot(xv, x$dist, ylim=r, type="n",

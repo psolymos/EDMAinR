@@ -175,11 +175,11 @@ file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz",
     package="EDMAinR")
 x2 <- read_xyz(file2)
 
-numerator <- edma_fit(x1)
+numerator <- edma_fit(x1, B=10)
 denominator <- edma_fit(x2)
 
 fdm <- edma_fdm(numerator, denominator, B=10)
-fdm2 <- edma_fdm(numerator, denominator, ref_denom = FALSE)
+fdm2 <- edma_fdm(numerator, denominator, B=10, ref_denom = FALSE)
 fdm
 fdm2
 

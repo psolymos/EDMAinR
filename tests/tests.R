@@ -104,8 +104,8 @@ plot_clust(o)
 
 ## --- form difference matrix ---
 
-numerator <- edma_fit(x1)
-denominator <- edma_fit(x2)
+numerator <- edma_fit(x1, B=B)
+denominator <- edma_fit(x2, B=0)
 
 fdm0 <- edma_fdm(numerator, denominator, B=B, mix=TRUE)
 fdm <- edma_fdm(numerator, denominator, B=B)
@@ -143,8 +143,8 @@ a2 <- read_xyz(file_a2)
 a1
 a2
 
-fit_a1 <- edma_fit(a1)
-fit_a2 <- edma_fit(a2)
+fit_a1 <- edma_fit(a1, B=B)
+fit_a2 <- edma_fit(a2, B=0)
 
 gm <- edma_gm(fit_a1, fit_a2, B=B)
 gm

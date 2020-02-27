@@ -115,7 +115,7 @@ a2 <- read_xyz(file_a2)
 a1
 a2
 
-fit_a1 <- edma_fit(a1)
+fit_a1 <- edma_fit(a1, B=10)
 fit_a2 <- edma_fit(a2)
 
 ## --- growth matrix ---
