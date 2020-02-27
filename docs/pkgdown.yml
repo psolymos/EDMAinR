@@ -1,9 +1,0 @@
-pandoc: 2.3.1
-pkgdown: 1.4.1
-pkgdown_sha: ~
-articles:
-  edma01-data: edma01-data.html
-  edma02-form: edma02-form.html
-  edma03-parametric: edma03-parametric.html
-  edma04-form-difference: edma04-form-difference.html
-
