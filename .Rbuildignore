@@ -14,3 +14,4 @@ appveyor.yml
 .png
 .gif
 ^inst/tmp$
+^_build\.sh$
