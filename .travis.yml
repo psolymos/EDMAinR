@@ -7,7 +7,6 @@ r_packages:
 
 r:
   - release
-  - devel
 
 env:
   - RGL_USE_NULL=TRUE
