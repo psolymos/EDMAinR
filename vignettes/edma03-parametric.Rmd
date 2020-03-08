@@ -16,97 +16,247 @@ knitr::opts_chunk$set(
 set.seed(429)
 ```
 
-This section describes how to assess if SigmaK is esimable.
+## Introduction
 
-The pattern matrix describes the unknowns in the SigmaK matrix.
-Diagonal must be filled. Upper and lower diagonal values must
-be symmetric or `NA`. The file can be created in R,
+This section describes how to assess if SigmaK is estimable.
+We use a non-parametric model fit to begin with
+that has the estimate of the form matrix and the SigmaKstar matrix.
+The parametric estimation requires a pattern matrix
+that describes the unknowns in the SigmaK matrix.
+This SigmaK matrix is the variance covariance matrix
+describing the variances (diagonal) associated with each landmark,
+and the covariances (off-diagonal) among the landmarks.
+
+## Pattern matrix
+
+The pattern matrix describes the unknowns in the SigmaK matrix:
+
+- the 1st row describes the landmarks starting from the 2nd column,
+- the 1st column describes the landmarks in the same order as the column headers,
+- leave the cell in the topleft corner empty,
+- use unique names or numbers in the rest of the table to denote unique variables in the Sigma matrix,
+- structural zeros (cells where the covariance is known or assumed to be 0) have to be blank,
+- there cannot be blank cells in the diagonal of the matrix,
+- values below and above the diagonal must be symmetric (value in row 2/column 3 must be the same as row 3/column 2), either unique names or numbers, or blank.
+
+The construction of the pattern matrix should be dome using biological
+reasoning. E.g. structural zeros can indicate that groups of landmarks
+might be correlated within the group, but not correlated among the groups.
+
+This file can be created in R,
 or loaded as a csv or Excel (xls, xlsx) file:
 
 ```{r}
 library(EDMAinR)
 
+matrix(
+  c("1", "2", NA,             # row 1
+    "2", "1", NA,             # row 2
+    NA,  NA,  "1"),           # row 3
+  nrow=3, ncol=3, byrow=TRUE, # dimensions
+  dimnames=list(
+    c("a", "b", "c"),         # row names
+    c("a", "b", "c")          # column names
+  ))
+
+## read in csv
 read_pattern(system.file("extdata/example.csv", package="EDMAinR"))
+
+## read in xlsx
 read_pattern(system.file("extdata/example.xlsx", package="EDMAinR"))
 ```
 
-Now we go ahead with a simulated example:
+## Simulated example
+
+This example has 4 landmarks, a corresponding form matrix (`M`)
 
 ```{r}
+M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
+    .Dim = c(4L, 2L))
+M
+```
+
+The true `SigmaK` matrix will have no covariance terms (`NA`s),
+we will set the variances for the first two the same (`"a"`),
+and the and the variances for the other two the same too (`"b"`),
+the values for the parameters are stored in the `parm` vector
+($a = 0.25$, $b = 0.35$):
+
+```{r}
+parm <- c(a=0.25, b=0.35)
 m <- matrix(c(
     "a", NA, NA, NA,
     NA, "a", NA, NA,
     NA,  NA, "b", NA,
     NA,  NA, NA, "b"
 ), 4, 4, byrow=TRUE)
-parm <- c(a=0.25, b=0.35)
+```
 
-M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
-    .Dim = c(4L, 2L))
+Finally, the `SigmaK` matrix based on the parameter values and the pattern matrix:
+
+```{r}
 SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
+SigmaK
+```
 
+We can use `M` and `SigmaK` matrix to simulate 500 specimens:
+
+```{r}
 sim <- edma_simulate_data(n=500, M, SigmaK)
+sim
+```
+
+The following few lines set the dimension names for `M` and `SigmaK`:
+
+```{r}
 dimnames(M) <- dimnames(sim$data[[1L]])
 rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
 colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
 ```
 
-This simulated example has 2 unknowns: `a` and `b`,
-now we estimate these:
+Now we have everything we need to estimate
+the form matrix, SigmaKstar, and SigmaK.
+
+## Parametric estimation
+
+The first step is to use the data set from our 500 simulated specimens
+and estimate mean form and SigmaKstar using the non-parametric
+estimation function `edma_fit`:
 
 ```{r}
 fit <- edma_fit(sim)
+fit
+```
+
+Now we estimate SigmaK using `fit` and the pattern matrix `m`
+as arguments for the `SigmaK_fit` function:
+
+```{r}
 o <- SigmaK_fit(fit, m)
 o
+```
+
+We can compare the estimates with our known parameters, because
+we used simulation, thus we know the truth. This is not the case
+for real cases, but this way we can check if our methods work.
+These are the individual parameters that make up the SigmaK matrix:
+
+```{r}
 cbind(true=parm, est=o$results$par)
+```
+
+And this is our estimated SigmaK matrix:
+
+```{r}
 SigmaK(o)
 ```
 
-To check the sensitivity, we can re-estimate SigmaK matrix
+## Sensitivity analysis
+
+We use sensitivity analysis to check how well we can estimate SigmaK.
+We need to do this, because we want to make sure the optimization
+routine is finding the same solutions no matter what initial
+values we use. This indicates that the estimates are in fact
+identifiable.
+
+To check the sensitivity using the aptly named `sensitivity` function. 
+This function re-estimates the SigmaK matrix
 multiple times with random starting values for numerical
-optimization. When estimates vary while the loss function
-value is the same, it is usually a sign of non-identifiability.
+optimization. The result is a matrix with estimates of each
+parameter as columns. The last column contains the value of the
+loss function (used in the optimization) evaluated at the parameter values
+in that row. The rows represent the original estimates and the
+10 re-estimated sets of values. The number of replicates can be increased
+further:
 
 ```{r}
-s <- sensitivity(o)
+s <- sensitivity(o, 10)
+s
+```
+
+When we look at the results and see that the estimates are very similar
+(5th digit differences), this indicates that the parameters are identifiable.
+We can do this via the `summary` function or by looking at the `boxplot`:
+
+```{r fig.width=6,fig.height=4}
 summary(s)
 boxplot(s)
 ```
 
-Now let's try a non identifiable pattern.
-The function is pretty smart to let us know, but we
-will disable such checks, so that we can demonstrate
-how do estimates and loss function value looks like in this case:
-lots of different values can lead to the same value
+## Non-estimability
+
+When estimates vary while the loss function
+value is the same, it is usually a sign of non-identifiability.
+Let's see an example for this situation.
+
+The simulation is very similar to the previous example.
+The only difference is that the pattern matrix has
+the `"a"` parameter describing the diagonal variance elements,
+the `"b"` parameter is put in all the off-diagonal cells,
+thus we have constant covariances:
 
 ```{r}
+parm <- c(a=0.25, b=0.07)
 m <- matrix(c(
     "a", "b", "b", "b",
     "b", "a", "b", "b",
     "b", "b", "a", "b",
     "b", "b", "b", "a"
 ), 4, 4, byrow=TRUE)
-parm <- c(a=0.25, b=0.07)
-
-
-M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
-    .Dim = c(4L, 2L))
 SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
+SigmaK
+```
 
+The rest of the simulation is the same as before:
+
+```{r}
 sim <- edma_simulate_data(n=500, M, SigmaK)
 dimnames(M) <- dimnames(sim$data[[1L]])
 rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
 colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
+```
 
+Now let's try to estimate SigmaK for a non identifiable pattern.
+The `SigmaK_fit` function is pretty smart to let us know when
+the pattern matrix has too many non-zero values, and thus
+is non-estimate:
+
+```{r}
 fit <- edma_fit(sim)
 try(SigmaK_fit(fit, m))
+```
 
+For the sake of understanding the consequences of non-estimability,
+let's no disable this check and see what we get:
+
+```{r}
 o <- SigmaK_fit(fit, m, check_pattern=FALSE)
 o
+```
+
+The estimates are pretty far off from the true values:
+
+```{r}
 cbind(true=parm, est=o$results$par)
 SigmaK(o)
+```
 
+If we now do the sensitivity analysis,
+we see all kinds of estimates while all leading to the same
+loss function value. This a clear indication of non-estimability:
+
+```{r fig.width=6,fig.height=4}
 s <- sensitivity(o)
+s
 summary(s)
 boxplot(s)
 ```
+
+## Summary
+
+Parametric estimation of SigmaK involves the following steps:
+
+1. non-parametric estimation of mean form and SigmaKstar using the `edma_fit` function,
+2. constructing of a pattern matrix based on biology of landmarks and respecting statistical constraints,
+3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix,
+4. make sure the results are estimable by running `sensitivity` analysis.
