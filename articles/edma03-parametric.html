@@ -203,15 +203,15 @@
 <p>We can compare the estimates with our known parameters, because we used simulation, thus we know the truth. This is not the case for real cases, but this way we can check if our methods work. These are the individual parameters that make up the SigmaK matrix:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">true=</span>parm, <span class="dt">est=</span>o<span class="op">$</span>results<span class="op">$</span>par)</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt;   true       est</span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; a 0.25 0.2545125</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; b 0.35 0.3216170</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt; a 0.25 0.2539084</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; b 0.35 0.3209651</span></a></code></pre></div>
 <p>And this is our estimated SigmaK matrix:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">SigmaK</a></span>(o)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt;           L1        L2       L3       L4</span></a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; L1 0.2545125 0.0000000 0.000000 0.000000</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; L2 0.0000000 0.2545125 0.000000 0.000000</span></a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; L3 0.0000000 0.0000000 0.321617 0.000000</span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; L4 0.0000000 0.0000000 0.000000 0.321617</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">#&gt;           L1        L2        L3        L4</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; L1 0.2539084 0.0000000 0.0000000 0.0000000</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; L2 0.0000000 0.2539084 0.0000000 0.0000000</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; L3 0.0000000 0.0000000 0.3209651 0.0000000</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; L4 0.0000000 0.0000000 0.0000000 0.3209651</span></a></code></pre></div>
 </div>
 <div id="sensitivity-analysis" class="section level2">
 <h2 class="hasAnchor">
@@ -220,27 +220,27 @@
 <p>To check the sensitivity using the aptly named <code>sensitivity</code> function. This function re-estimates the SigmaK matrix multiple times with random starting values for numerical optimization. The result is a matrix with estimates of each parameter as columns. The last column contains the value of the loss function (used in the optimization) evaluated at the parameter values in that row. The rows represent the original estimates and the 10 re-estimated sets of values. The number of replicates can be increased further:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">s &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">sensitivity</a></span>(o, <span class="dv">10</span>)</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2">s</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt;           par_a     par_b    value</span></a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt;  [1,] 0.2545125 0.3216170 1.064001</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt;  [2,] 0.2545119 0.3216142 1.064062</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt;  [3,] 0.2545122 0.3216162 1.064002</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt;  [4,] 0.2545123 0.3216167 1.063986</span></a>
-<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt;  [5,] 0.2545122 0.3216163 1.063999</span></a>
-<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt;  [6,] 0.2545116 0.3216151 1.064047</span></a>
-<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt;  [7,] 0.2545116 0.3216150 1.064049</span></a>
-<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="co">#&gt;  [8,] 0.2545114 0.3216167 1.064008</span></a>
-<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="co">#&gt;  [9,] 0.2545121 0.3216168 1.063997</span></a>
-<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="co">#&gt; [10,] 0.2545122 0.3216167 1.063989</span></a>
-<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="co">#&gt; [11,] 0.2545129 0.3216173 1.064020</span></a></code></pre></div>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="co">#&gt;           par_a     par_b        value</span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt;  [1,] 0.2539084 0.3209651 0.0007728197</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt;  [2,] 0.2538729 0.3210012 0.0007728189</span></a>
+<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt;  [3,] 0.2538583 0.3209854 0.0007728177</span></a>
+<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt;  [4,] 0.2538704 0.3209634 0.0007728175</span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt;  [5,] 0.2538549 0.3209625 0.0007728176</span></a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt;  [6,] 0.2538258 0.3209865 0.0007728194</span></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt;  [7,] 0.2538159 0.3209421 0.0007728220</span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="co">#&gt;  [8,] 0.2538349 0.3209740 0.0007728185</span></a>
+<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="co">#&gt;  [9,] 0.2538266 0.3209903 0.0007728194</span></a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="co">#&gt; [10,] 0.2538954 0.3209989 0.0007728202</span></a>
+<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="co">#&gt; [11,] 0.2538312 0.3210041 0.0007728198</span></a></code></pre></div>
 <p>When we look at the results and see that the estimates are very similar (5th digit differences), this indicates that the parameters are identifiable. We can do this via the <code>summary</code> function or by looking at the <code>boxplot</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(s)</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt;      par_a            par_b            value      </span></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt;  Min.   :0.2545   Min.   :0.3216   Min.   :1.064  </span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt;  1st Qu.:0.2545   1st Qu.:0.3216   1st Qu.:1.064  </span></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt;  Median :0.2545   Median :0.3216   Median :1.064  </span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt;  Mean   :0.2545   Mean   :0.3216   Mean   :1.064  </span></a>
-<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt;  3rd Qu.:0.2545   3rd Qu.:0.3216   3rd Qu.:1.064  </span></a>
-<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt;  Max.   :0.2545   Max.   :0.3216   Max.   :1.064</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt;      par_a            par_b            value          </span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt;  Min.   :0.2538   Min.   :0.3209   Min.   :0.0007728  </span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt;  1st Qu.:0.2538   1st Qu.:0.3210   1st Qu.:0.0007728  </span></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt;  Median :0.2539   Median :0.3210   Median :0.0007728  </span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt;  Mean   :0.2539   Mean   :0.3210   Mean   :0.0007728  </span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt;  3rd Qu.:0.2539   3rd Qu.:0.3210   3rd Qu.:0.0007728  </span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt;  Max.   :0.2539   Max.   :0.3210   Max.   :0.0007728</span></a>
 <a class="sourceLine" id="cb12-9" data-line-number="9"><span class="kw"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span>(s)</a></code></pre></div>
 <p><img src="edma03-parametric_files/figure-html/unnamed-chunk-12-1.png" width="576"></p>
 </div>
@@ -282,37 +282,37 @@
 <p>The estimates are pretty far off from the true values:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">true=</span>parm, <span class="dt">est=</span>o<span class="op">$</span>results<span class="op">$</span>par)</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2"><span class="co">#&gt;   true       est</span></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt; a 0.25 0.2923992</span></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt; b 0.07 0.1156618</span></a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt; a 0.25 0.2871702</span></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt; b 0.07 0.1096243</span></a>
 <a class="sourceLine" id="cb17-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">SigmaK</a></span>(o)</a>
 <a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co">#&gt;           L1        L2        L3        L4</span></a>
-<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="co">#&gt; L1 0.2923992 0.1156618 0.1156618 0.1156618</span></a>
-<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="co">#&gt; L2 0.1156618 0.2923992 0.1156618 0.1156618</span></a>
-<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co">#&gt; L3 0.1156618 0.1156618 0.2923992 0.1156618</span></a>
-<a class="sourceLine" id="cb17-10" data-line-number="10"><span class="co">#&gt; L4 0.1156618 0.1156618 0.1156618 0.2923992</span></a></code></pre></div>
+<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="co">#&gt; L1 0.2871702 0.1096243 0.1096243 0.1096243</span></a>
+<a class="sourceLine" id="cb17-8" data-line-number="8"><span class="co">#&gt; L2 0.1096243 0.2871702 0.1096243 0.1096243</span></a>
+<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co">#&gt; L3 0.1096243 0.1096243 0.2871702 0.1096243</span></a>
+<a class="sourceLine" id="cb17-10" data-line-number="10"><span class="co">#&gt; L4 0.1096243 0.1096243 0.1096243 0.2871702</span></a></code></pre></div>
 <p>If we now do the sensitivity analysis, we see all kinds of estimates while all leading to the same loss function value. This a clear indication of non-estimability:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">s &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">sensitivity</a></span>(o)</a>
 <a class="sourceLine" id="cb18-2" data-line-number="2">s</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co">#&gt;           par_a       par_b     value</span></a>
-<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co">#&gt;  [1,] 0.2923992  0.11566176 0.6358414</span></a>
-<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#&gt;  [2,] 0.4636409  0.28690340 0.6358328</span></a>
-<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#&gt;  [3,] 0.1419210 -0.03481663 0.6358236</span></a>
-<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co">#&gt;  [4,] 0.1885673  0.01182971 0.6358236</span></a>
-<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co">#&gt;  [5,] 0.1964769  0.01973927 0.6358236</span></a>
-<a class="sourceLine" id="cb18-9" data-line-number="9"><span class="co">#&gt;  [6,] 0.1943816  0.01764399 0.6358236</span></a>
-<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="co">#&gt;  [7,] 0.1203786 -0.05635896 0.6358249</span></a>
-<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="co">#&gt;  [8,] 0.2623074  0.08556985 0.6358276</span></a>
-<a class="sourceLine" id="cb18-12" data-line-number="12"><span class="co">#&gt;  [9,] 0.3679950  0.19125757 0.6358373</span></a>
-<a class="sourceLine" id="cb18-13" data-line-number="13"><span class="co">#&gt; [10,] 0.1174071 -0.05933051 0.6358244</span></a>
-<a class="sourceLine" id="cb18-14" data-line-number="14"><span class="co">#&gt; [11,] 0.5896452  0.41290750 0.6358323</span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co">#&gt;           par_a       par_b        value</span></a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co">#&gt;  [1,] 0.2871702  0.10962428 0.0003358588</span></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#&gt;  [2,] 0.4668093  0.28925612 0.0003358596</span></a>
+<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#&gt;  [3,] 0.1430023 -0.03452708 0.0003358583</span></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co">#&gt;  [4,] 0.1883117  0.01077916 0.0003358582</span></a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co">#&gt;  [5,] 0.1958401  0.01830934 0.0003358582</span></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9"><span class="co">#&gt;  [6,] 0.1949330  0.01739788 0.0003358583</span></a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="co">#&gt;  [7,] 0.1184738 -0.05903101 0.0003358604</span></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="co">#&gt;  [8,] 0.2589918  0.08146353 0.0003358583</span></a>
+<a class="sourceLine" id="cb18-12" data-line-number="12"><span class="co">#&gt;  [9,] 0.3590700  0.18152654 0.0003358586</span></a>
+<a class="sourceLine" id="cb18-13" data-line-number="13"><span class="co">#&gt; [10,] 0.1187325 -0.05879193 0.0003358584</span></a>
+<a class="sourceLine" id="cb18-14" data-line-number="14"><span class="co">#&gt; [11,] 0.5828245  0.40531593 0.0003358599</span></a>
 <a class="sourceLine" id="cb18-15" data-line-number="15"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(s)</a>
-<a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co">#&gt;      par_a            par_b              value       </span></a>
-<a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co">#&gt;  Min.   :0.1174   Min.   :-0.05933   Min.   :0.6358  </span></a>
-<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co">#&gt;  1st Qu.:0.1652   1st Qu.:-0.01149   1st Qu.:0.6358  </span></a>
-<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co">#&gt;  Median :0.1965   Median : 0.01974   Median :0.6358  </span></a>
-<a class="sourceLine" id="cb18-20" data-line-number="20"><span class="co">#&gt;  Mean   :0.2668   Mean   : 0.09009   Mean   :0.6358  </span></a>
-<a class="sourceLine" id="cb18-21" data-line-number="21"><span class="co">#&gt;  3rd Qu.:0.3302   3rd Qu.: 0.15346   3rd Qu.:0.6358  </span></a>
-<a class="sourceLine" id="cb18-22" data-line-number="22"><span class="co">#&gt;  Max.   :0.5896   Max.   : 0.41291   Max.   :0.6358</span></a>
+<a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co">#&gt;      par_a            par_b              value          </span></a>
+<a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co">#&gt;  Min.   :0.1185   Min.   :-0.05903   Min.   :0.0003359  </span></a>
+<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co">#&gt;  1st Qu.:0.1657   1st Qu.:-0.01187   1st Qu.:0.0003359  </span></a>
+<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co">#&gt;  Median :0.1958   Median : 0.01831   Median :0.0003359  </span></a>
+<a class="sourceLine" id="cb18-20" data-line-number="20"><span class="co">#&gt;  Mean   :0.2649   Mean   : 0.08739   Mean   :0.0003359  </span></a>
+<a class="sourceLine" id="cb18-21" data-line-number="21"><span class="co">#&gt;  3rd Qu.:0.3231   3rd Qu.: 0.14558   3rd Qu.:0.0003359  </span></a>
+<a class="sourceLine" id="cb18-22" data-line-number="22"><span class="co">#&gt;  Max.   :0.5828   Max.   : 0.40532   Max.   :0.0003359</span></a>
 <a class="sourceLine" id="cb18-23" data-line-number="23"><span class="kw"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span>(s)</a></code></pre></div>
 <p><img src="edma03-parametric_files/figure-html/unnamed-chunk-18-1.png" width="576"></p>
 </div>
@@ -326,6 +326,73 @@
 <li>use the <code>SigmaK_fit</code> to estimate SigmaK using the non-parametric fit and the pattern matrix,</li>
 <li>make sure the results are estimable by running <code>sensitivity</code> analysis.</li>
 </ol>
+</div>
+<div id="more-examples" class="section level2">
+<h2 class="hasAnchor">
+<a href="#more-examples" class="anchor"></a>More examples</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">parm &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">a=</span><span class="fl">0.25</span>, <span class="dt">b=</span><span class="fl">0.07</span>, <span class="dt">c=</span><span class="fl">0.1</span>, <span class="dt">d=</span><span class="fl">0.15</span>)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">m &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">    <span class="st">"a"</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">    <span class="ot">NA</span>, <span class="st">"b"</span>, <span class="ot">NA</span>, <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">    <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="st">"c"</span>, <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">    <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="st">"d"</span></a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">), <span class="dv">4</span>, <span class="dv">4</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb19-9" data-line-number="9">parm &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">a=</span><span class="fl">0.25</span>)</a>
+<a class="sourceLine" id="cb19-10" data-line-number="10">m &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
+<a class="sourceLine" id="cb19-11" data-line-number="11">    <span class="st">"a"</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb19-12" data-line-number="12">    <span class="ot">NA</span>, <span class="st">"a"</span>, <span class="ot">NA</span>, <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb19-13" data-line-number="13">    <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="st">"a"</span>, <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb19-14" data-line-number="14">    <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="st">"a"</span></a>
+<a class="sourceLine" id="cb19-15" data-line-number="15">), <span class="dv">4</span>, <span class="dv">4</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb19-16" data-line-number="16">SigmaK &lt;-<span class="st"> </span>EDMAinR<span class="op">:::</span><span class="kw">.vec2mat</span>(parm, EDMAinR<span class="op">:::</span><span class="kw">.mat2fac</span>(m))</a>
+<a class="sourceLine" id="cb19-17" data-line-number="17">SigmaK</a>
+<a class="sourceLine" id="cb19-18" data-line-number="18"><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></a>
+<a class="sourceLine" id="cb19-19" data-line-number="19"><span class="co">#&gt; [1,] 0.25 0.00 0.00 0.00</span></a>
+<a class="sourceLine" id="cb19-20" data-line-number="20"><span class="co">#&gt; [2,] 0.00 0.25 0.00 0.00</span></a>
+<a class="sourceLine" id="cb19-21" data-line-number="21"><span class="co">#&gt; [3,] 0.00 0.00 0.25 0.00</span></a>
+<a class="sourceLine" id="cb19-22" data-line-number="22"><span class="co">#&gt; [4,] 0.00 0.00 0.00 0.25</span></a>
+<a class="sourceLine" id="cb19-23" data-line-number="23">sim &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/edma_data.html">edma_simulate_data</a></span>(<span class="dt">n=</span><span class="dv">500</span>, M, SigmaK)</a>
+<a class="sourceLine" id="cb19-24" data-line-number="24"><span class="kw"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(M) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(sim<span class="op">$</span>data[[1L]])</a>
+<a class="sourceLine" id="cb19-25" data-line-number="25"><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(SigmaK) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(m) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(sim<span class="op">$</span>data[[1L]])</a>
+<a class="sourceLine" id="cb19-26" data-line-number="26"><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(SigmaK) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(m) &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(sim<span class="op">$</span>data[[1L]])</a>
+<a class="sourceLine" id="cb19-27" data-line-number="27">fit &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/edma_fit.html">edma_fit</a></span>(sim)</a>
+<a class="sourceLine" id="cb19-28" data-line-number="28"><span class="kw"><a href="https://rdrr.io/r/base/try.html">try</a></span>(<span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">SigmaK_fit</a></span>(fit, m))</a>
+<a class="sourceLine" id="cb19-29" data-line-number="29"><span class="co">#&gt; EDMA parametric fit: Simulated landmark data</span></a>
+<a class="sourceLine" id="cb19-30" data-line-number="30"><span class="co">#&gt; Call: SigmaK_fit(object = fit, pattern = m)</span></a>
+<a class="sourceLine" id="cb19-31" data-line-number="31"><span class="co">#&gt; 2 dimensions, 4 landmarks, 500 replicates, no bootstrap</span></a>
+<a class="sourceLine" id="cb19-32" data-line-number="32">o &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">SigmaK_fit</a></span>(fit, m, <span class="dt">check_pattern=</span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb19-33" data-line-number="33"><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="dt">true=</span>parm, <span class="dt">est=</span>o<span class="op">$</span>results<span class="op">$</span>par)</a>
+<a class="sourceLine" id="cb19-34" data-line-number="34"><span class="co">#&gt;   true       est</span></a>
+<a class="sourceLine" id="cb19-35" data-line-number="35"><span class="co">#&gt; a 0.25 0.2621552</span></a>
+<a class="sourceLine" id="cb19-36" data-line-number="36"><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">SigmaK</a></span>(o)</a>
+<a class="sourceLine" id="cb19-37" data-line-number="37"><span class="co">#&gt;           L1        L2        L3        L4</span></a>
+<a class="sourceLine" id="cb19-38" data-line-number="38"><span class="co">#&gt; L1 0.2621552 0.0000000 0.0000000 0.0000000</span></a>
+<a class="sourceLine" id="cb19-39" data-line-number="39"><span class="co">#&gt; L2 0.0000000 0.2621552 0.0000000 0.0000000</span></a>
+<a class="sourceLine" id="cb19-40" data-line-number="40"><span class="co">#&gt; L3 0.0000000 0.0000000 0.2621552 0.0000000</span></a>
+<a class="sourceLine" id="cb19-41" data-line-number="41"><span class="co">#&gt; L4 0.0000000 0.0000000 0.0000000 0.2621552</span></a>
+<a class="sourceLine" id="cb19-42" data-line-number="42">s &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/EDMAinR/man/SigmaK_fit.html">sensitivity</a></span>(o)</a>
+<a class="sourceLine" id="cb19-43" data-line-number="43">s</a>
+<a class="sourceLine" id="cb19-44" data-line-number="44"><span class="co">#&gt;           par_a        value</span></a>
+<a class="sourceLine" id="cb19-45" data-line-number="45"><span class="co">#&gt;  [1,] 0.2621552 0.0009197113</span></a>
+<a class="sourceLine" id="cb19-46" data-line-number="46"><span class="co">#&gt;  [2,] 0.2621652 0.0009197113</span></a>
+<a class="sourceLine" id="cb19-47" data-line-number="47"><span class="co">#&gt;  [3,] 0.2620782 0.0009197311</span></a>
+<a class="sourceLine" id="cb19-48" data-line-number="48"><span class="co">#&gt;  [4,] 0.2621649 0.0009197113</span></a>
+<a class="sourceLine" id="cb19-49" data-line-number="49"><span class="co">#&gt;  [5,] 0.2621224 0.0009197154</span></a>
+<a class="sourceLine" id="cb19-50" data-line-number="50"><span class="co">#&gt;  [6,] 0.2621621 0.0009197112</span></a>
+<a class="sourceLine" id="cb19-51" data-line-number="51"><span class="co">#&gt;  [7,] 0.2615984 0.0009206560</span></a>
+<a class="sourceLine" id="cb19-52" data-line-number="52"><span class="co">#&gt;  [8,] 0.2621012 0.0009197214</span></a>
+<a class="sourceLine" id="cb19-53" data-line-number="53"><span class="co">#&gt;  [9,] 0.2622331 0.0009197274</span></a>
+<a class="sourceLine" id="cb19-54" data-line-number="54"><span class="co">#&gt; [10,] 0.2621519 0.0009197114</span></a>
+<a class="sourceLine" id="cb19-55" data-line-number="55"><span class="co">#&gt; [11,] 0.2621334 0.0009197133</span></a>
+<a class="sourceLine" id="cb19-56" data-line-number="56"><span class="kw"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(s)</a>
+<a class="sourceLine" id="cb19-57" data-line-number="57"><span class="co">#&gt;      par_a            value          </span></a>
+<a class="sourceLine" id="cb19-58" data-line-number="58"><span class="co">#&gt;  Min.   :0.2616   Min.   :0.0009197  </span></a>
+<a class="sourceLine" id="cb19-59" data-line-number="59"><span class="co">#&gt;  1st Qu.:0.2621   1st Qu.:0.0009197  </span></a>
+<a class="sourceLine" id="cb19-60" data-line-number="60"><span class="co">#&gt;  Median :0.2622   Median :0.0009197  </span></a>
+<a class="sourceLine" id="cb19-61" data-line-number="61"><span class="co">#&gt;  Mean   :0.2621   Mean   :0.0009198  </span></a>
+<a class="sourceLine" id="cb19-62" data-line-number="62"><span class="co">#&gt;  3rd Qu.:0.2622   3rd Qu.:0.0009197  </span></a>
+<a class="sourceLine" id="cb19-63" data-line-number="63"><span class="co">#&gt;  Max.   :0.2622   Max.   :0.0009207</span></a></code></pre></div>
 </div>
   </div>
 
@@ -342,6 +409,7 @@
       <li><a href="#sensitivity-analysis">Sensitivity analysis</a></li>
       <li><a href="#non-estimability">Non-estimability</a></li>
       <li><a href="#summary">Summary</a></li>
+      <li><a href="#more-examples">More examples</a></li>
       </ul>
 </div>
       </div>
