@@ -50,7 +50,8 @@ method = "Nelder-Mead", control = list()) {
         SigmaK <- .vec2mat(parms, fac)
         if (any(diag(SigmaK) <= 0))
             return(num_max)
-        10^4 * max((SigmaKstar - (H %*% SigmaK %*% H))^2)
+        #10^4 * max((SigmaKstar - (H %*% SigmaK %*% H))^2)
+        sum((SigmaKstar - (H %*% SigmaK %*% H))^2)
     }
     if (!is.null(control$fnscale) && control$fnscale < 0)
         stop("control$fnscale can not be negative")
