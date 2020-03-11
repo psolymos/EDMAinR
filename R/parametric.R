@@ -90,14 +90,6 @@ method = "Nelder-Mead", control = list()) {
         stop("dimnames of patterm must match landmark names")
     pattern <- pattern[rownames(object$SigmaKstar),
         colnames(object$SigmaKstar)]
-    ## check spareness
-    #UNK <- nlevels(factor(pattern))
-    UNK <- sum(!is.na(pattern))
-    MAX <- nrow(object$SigmaKstar)*(nrow(object$SigmaKstar)-1)/2
-    if (UNK > MAX)
-        stop(sprintf(
-            "number of nonzero cells (%s) in pattern matrix must be <= %s",
-            UNK, MAX))
     invisible(pattern)
 }
 
@@ -118,9 +110,8 @@ read_pattern <- function(file, ...) {
     x
 }
 
-SigmaK_fit <- function(object, pattern, check_pattern=TRUE, ...) {
-    if (check_pattern)
-        pattern <- .check_pattern(object, pattern)
+SigmaK_fit <- function(object, pattern, ...) {
+    pattern <- .check_pattern(object, pattern)
     o <- .SigmaK_fit(object$SigmaKstar, object$H, pattern, ...)
     object$SigmaK <- o$SigmaK
     o$SigmaK <- NULL

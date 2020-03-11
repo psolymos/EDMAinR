@@ -18,7 +18,7 @@ partly based on Hu (2007).
 read_pattern(file, ...)
 
 ## estimation
-SigmaK_fit(object, pattern, check_pattern = TRUE, ...)
+SigmaK_fit(object, pattern, ...)
 
 ## methods
 SigmaK(object, ...)
@@ -40,9 +40,6 @@ numeric, number of characters to print for the object title.
 }
   \item{pattern}{
 a pattern matrix, see Details.
-}
-  \item{check_pattern}{
-logical, if pattern should be checked for identifiability.
 }
   \item{m}{
 positive integer, number of times SigmaK estimation

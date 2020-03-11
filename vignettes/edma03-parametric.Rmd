@@ -216,21 +216,11 @@ rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
 colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
 ```
 
-Now let's try to estimate SigmaK for a non identifiable pattern.
-The `SigmaK_fit` function is pretty smart to let us know when
-the pattern matrix has too many non-zero values, and thus
-is non-estimate:
+Now let's try to estimate SigmaK for a non identifiable pattern:
 
 ```{r}
 fit <- edma_fit(sim)
-try(SigmaK_fit(fit, m))
-```
-
-For the sake of understanding the consequences of non-estimability,
-let's no disable this check and see what we get:
-
-```{r}
-o <- SigmaK_fit(fit, m, check_pattern=FALSE)
+o <- SigmaK_fit(fit, m)
 o
 ```
 
@@ -305,7 +295,7 @@ rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
 colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
 fit <- edma_fit(sim)
 try(SigmaK_fit(fit, m))
-o <- SigmaK_fit(fit, m, check_pattern=FALSE, method="SANN")
+o <- SigmaK_fit(fit, m, method="SANN")
 cbind(true=parm, est=o$results$par)
 SigmaK(o)
 s <- sensitivity(o)
