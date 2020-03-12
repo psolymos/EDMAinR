@@ -9,6 +9,8 @@ plot_ci <- function (x,...) UseMethod("plot_ci")
 
 ## diagnostics plot for xyz objects
 
+## issue when only one specimen is present:
+## rowMeans(sapply(fm[-which], ...) gives error
 .plot_edma_data <- function(x, which=NULL,
 col_chull="#44444444", col_spec=2, ...) {
     n <- length(x$data)
@@ -67,7 +69,7 @@ ask = dev.interactive(), ...) {
         title(main="All specimens")
         for (i in seq_len(n)) {
             .plot_edma_data(x, i, ...)
-            title(main=paste("Specimen", i))
+            title(main=paste("Specimen", specimens(x)[i]))
         }
     }
     invisible(x)
