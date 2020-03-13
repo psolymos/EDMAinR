@@ -13,23 +13,109 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-set.seed(429)
+set.seed(123)
+library(EDMAinR)
 ```
 
 ## Introduction
 
-This section describes how to assess if SigmaK is estimable.
-We use a non-parametric model fit to begin with
-that has the estimate of the form matrix and the SigmaKstar matrix.
-The parametric estimation requires a pattern matrix
-that describes the unknowns in the SigmaK matrix.
-This SigmaK matrix is the variance covariance matrix
-describing the variances (diagonal) associated with each landmark,
-and the covariances (off-diagonal) among the landmarks.
+This tutorial describes how to estimate SigmaK and assess if it is estimable.
+Parametric estimation of SigmaK involves the following steps:
+
+1. non-parametric estimation of mean form and SigmaKstar using the `edma_fit` function,
+2. constructing of a pattern matrix based on biology of landmarks and respecting statistical constraints,
+3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix,
+4. make sure the results are estimable by running `sensitivity` analysis.
+
+## Simulated landmark data
+
+To demonstrate the workflow, let us simulate some data.
+Simulation is useful for checking the limits of the estimating procedure.
+We know what the 'true' input are, because we are controlling those
+through the simulation. We can then compare the outputs (our estimates),
+to the known imputs, and this is how we evaluate the utility 
+and limitations of our methods.
+
+Let us begin with the following set of 6 landmarks in 2-dimensions:
+
+```{r}
+(M <- array(
+  c(82, 21, 22, -50, -37, -37, 
+  0,  17, -17, 0,  41,  -41), 
+  dim=c(6, 2),
+  dimnames=list(paste0("L", 1:6), c("X", "Y"))))
+plot(M, pch=3, asp=1, axes=FALSE, ann=FALSE, type="n")
+text(M, labels=rownames(M), col=4)
+```
+
+The simplest SigmaK variance-covariance matrix is $\sigma^2 I$, that is
+constant variance ($\sigma^2$) in the diagonal of the $6\times6$ square
+matrix and 0's in all the off-diagonal cells:
+
+```{r}
+sigma <- 2
+SigmaK <- diag(sigma^2, 6, 6)
+dimnames(SigmaK) <- list(rownames(M), rownames(M))
+SigmaK
+```
+
+We can use the `edma_simulate_data` function to simulate `n`
+specimen given form matrix `M` and covariance matrix `SigmaK`:
+
+```{r}
+n <- 1000
+sim <- edma_simulate_data(n=n, M, SigmaK)
+
+EDMAinR:::.plot_edma_data(sim, NULL, asp=1,
+  xlim=c(-80, 100), ylim=c(-60, 60))
+text(-M[,1]-15, M[,2], labels=paste0("L", 1:6), cex=0.6, col=4)
+```
+
+We can see from the figure that the constant variance stranslates to
+roughly circle shaped convex hulls around the landmarks
+(the hull bounds the landmarks form the `n` specimens),
+and the size of these patches is similar (equal variances).
+
+## Nonparametruc estimation
+
+We use the non-parametric EDMA algorithm to estimate
+the form matrix and the SigmaKstar matrix:
+
+```{r}
+fit <- edma_fit(sim)
+```
+
+Because we used simulations, we can compare the known `M` matrix
+with the estimated mean form:
+
+```{r}
+M                       # true
+round(Meanform(fit), 2) # estimate
+```
+
+The 'true' `SigmaKstar` matrix is stored in our simulation object:
+
+```{r}
+tmp <- attr(sim, "simulation_settings")$SigmaKstar
+dimnames(tmp) <- list(rownames(M), rownames(M))
+round(tmp, 2)
+round(SigmaKstar(fit), 2)
+```
 
 ## Pattern matrix
 
-The pattern matrix describes the unknowns in the SigmaK matrix:
+The parametric estimation requires a pattern matrix
+that describes the unknowns in the `SigmaK` matrix.
+This `SigmaK` matrix is the variance covariance matrix
+describing the variances (diagonal) associated with each landmark,
+and the covariances (off-diagonal) among the landmarks.
+
+The pattern matrix can be constructed in R, but when the number
+of landmarks is high and variances are expected to differ among
+the landmarks, it might be easier to construct the pattern matrix
+in a spreadsheet editor (Excel). Here is how the file should be
+constructed (the package contains example files, see
+`?read_pattern`):
 
 - the 1st row describes the landmarks starting from the 2nd column,
 - the 1st column describes the landmarks in the same order as the column headers,
@@ -39,266 +125,157 @@ The pattern matrix describes the unknowns in the SigmaK matrix:
 - there cannot be blank cells in the diagonal of the matrix,
 - values below and above the diagonal must be symmetric (value in row 2/column 3 must be the same as row 3/column 2), either unique names or numbers, or blank.
 
-The construction of the pattern matrix should be dome using biological
-reasoning. E.g. structural zeros can indicate that groups of landmarks
-might be correlated within the group, but not correlated among the groups.
-
-This file can be created in R,
-or loaded as a csv or Excel (xls, xlsx) file:
+The pattern matrix for the equal variance case looks like this:
 
 ```{r}
-library(EDMAinR)
-
-matrix(
-  c("1", "2", NA,             # row 1
-    "2", "1", NA,             # row 2
-    NA,  NA,  "1"),           # row 3
-  nrow=3, ncol=3, byrow=TRUE, # dimensions
-  dimnames=list(
-    c("a", "b", "c"),         # row names
-    c("a", "b", "c")          # column names
-  ))
-
-## read in csv
-read_pattern(system.file("extdata/example.csv", package="EDMAinR"))
-
-## read in xlsx
-read_pattern(system.file("extdata/example.xlsx", package="EDMAinR"))
+p <- matrix(
+  c("1", NA, NA, NA,  NA,  NA,
+    NA, "1", NA, NA,  NA,  NA,
+    NA, NA, "1", NA,  NA,  NA,
+    NA,  NA,  NA, "1", NA, NA,
+    NA,  NA,  NA, NA, "1", NA,
+    NA,  NA,  NA, NA, NA, "1"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(p) <- list(rownames(M), rownames(M))
+p
 ```
-
-## Simulated example
-
-This example has 4 landmarks, a corresponding form matrix (`M`)
-
-```{r}
-M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
-    .Dim = c(4L, 2L))
-M
-```
-
-The true `SigmaK` matrix will have no covariance terms (`NA`s),
-we will set the variances for the first two the same (`"a"`),
-and the and the variances for the other two the same too (`"b"`),
-the values for the parameters are stored in the `parm` vector
-($a = 0.25$, $b = 0.35$):
-
-```{r}
-parm <- c(a=0.25, b=0.35)
-m <- matrix(c(
-    "a", NA, NA, NA,
-    NA, "a", NA, NA,
-    NA,  NA, "b", NA,
-    NA,  NA, NA, "b"
-), 4, 4, byrow=TRUE)
-```
-
-Finally, the `SigmaK` matrix based on the parameter values and the pattern matrix:
-
-```{r}
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
-SigmaK
-```
-
-We can use `M` and `SigmaK` matrix to simulate 500 specimens:
-
-```{r}
-sim <- edma_simulate_data(n=500, M, SigmaK)
-sim
-```
-
-The following few lines set the dimension names for `M` and `SigmaK`:
-
-```{r}
-dimnames(M) <- dimnames(sim$data[[1L]])
-rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
-colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
-```
-
-Now we have everything we need to estimate
-the form matrix, SigmaKstar, and SigmaK.
 
 ## Parametric estimation
 
-The first step is to use the data set from our 500 simulated specimens
-and estimate mean form and SigmaKstar using the non-parametric
-estimation function `edma_fit`:
+The parametric estimation requires the fitted object from
+the previous step of nonparamatric estimation
+(that gave us the estimate of the mean form and SigmaKstar),
+and the pattern matrix, so that the program knows what parameters
+to estimate and where those are placed in the SigmaK matrix:
 
 ```{r}
-fit <- edma_fit(sim)
-fit
+(o <- SigmaK_fit(fit, p))
 ```
 
-Now we estimate SigmaK using `fit` and the pattern matrix `m`
-as arguments for the `SigmaK_fit` function:
+Now let us compare the 'true' SigmaK matrix with the estimated one:
+
 
 ```{r}
-o <- SigmaK_fit(fit, m)
-o
-```
-
-We can compare the estimates with our known parameters, because
-we used simulation, thus we know the truth. This is not the case
-for real cases, but this way we can check if our methods work.
-These are the individual parameters that make up the SigmaK matrix:
-
-```{r}
-cbind(true=parm, est=o$results$par)
-```
-
-And this is our estimated SigmaK matrix:
-
-```{r}
-SigmaK(o)
+SigmaK              # true
+round(SigmaK(o), 2) # estimate
 ```
 
 ## Sensitivity analysis
 
-We use sensitivity analysis to check how well we can estimate SigmaK.
-We need to do this, because we want to make sure the optimization
-routine is finding the same solutions no matter what initial
-values we use. This indicates that the estimates are in fact
-identifiable.
-
-To check the sensitivity using the aptly named `sensitivity` function. 
-This function re-estimates the SigmaK matrix
-multiple times with random starting values for numerical
-optimization. The result is a matrix with estimates of each
-parameter as columns. The last column contains the value of the
-loss function (used in the optimization) evaluated at the parameter values
-in that row. The rows represent the original estimates and the
-10 re-estimated sets of values. The number of replicates can be increased
-further:
+The parametric estimate is based on an optimization algorithm.
+This algorithm requires starting values for the unknown parameters.
+If a given parametric model's parameters are estimable,
+we end up with the exact same estimates no matter what starting values
+we use. This can be used to check the estimability of our parameters.
+The `sensitivity` function repeats the parametric estimation
+multiple times using different starting values:
 
 ```{r}
-s <- sensitivity(o, 10)
-s
+(s <- sensitivity(o))
 ```
 
-When we look at the results and see that the estimates are very similar
-(5th digit differences), this indicates that the parameters are identifiable.
-We can do this via the `summary` function or by looking at the `boxplot`:
+The `par_1` column shows the parameter estimates for the variance,
+the `value` column shows the value of the loss function evaluated
+at `par_1`. Both these values are constant, which is a sign of estimability.
 
-```{r fig.width=6,fig.height=4}
-summary(s)
-boxplot(s)
-```
+## Unequal variance case
 
-## Non-estimability
-
-When estimates vary while the loss function
-value is the same, it is usually a sign of non-identifiability.
-Let's see an example for this situation.
-
-The simulation is very similar to the previous example.
-The only difference is that the pattern matrix has
-the `"a"` parameter describing the diagonal variance elements,
-the `"b"` parameter is put in all the off-diagonal cells,
-thus we have constant covariances:
+In the unequal variance case we can have different variances for the
+different landmarks. Here is the corresponding pattern matrix:
 
 ```{r}
-parm <- c(a=0.25, b=0.07)
-m <- matrix(c(
-    "a", "b", "b", "b",
-    "b", "a", "b", "b",
-    "b", "b", "a", "b",
-    "b", "b", "b", "a"
-), 4, 4, byrow=TRUE)
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
+p <- matrix(
+  c("1", NA,  NA, NA,  NA,  NA,
+    NA, "2", NA, NA,  NA,  NA,
+    NA,  NA, "3", NA,  NA,  NA,
+    NA,  NA,  NA, "4", NA,  NA,
+    NA,  NA,  NA, NA, "5", NA,
+    NA,  NA,  NA, NA,  NA, "6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(p) <- list(rownames(M), rownames(M))
+p
+```
+
+The SigmaK matrix looks like this:
+
+```{r}
+parm <- c("1"=12, "2"=1, "3"=1.1, "4"=2, "5"=8, "6"=7.9)
+SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(p))
 SigmaK
 ```
 
-The rest of the simulation is the same as before:
+The unequal variances translate to the following simulated data:
 
 ```{r}
-sim <- edma_simulate_data(n=500, M, SigmaK)
-dimnames(M) <- dimnames(sim$data[[1L]])
-rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
-colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
+sim <- edma_simulate_data(n=n, M, SigmaK)
+
+EDMAinR:::.plot_edma_data(sim, NULL, asp=1,
+  xlim=c(-80, 100), ylim=c(-60, 60))
+text(-M[,1]-15, M[,2], labels=paste0("L", 1:6), cex=0.6, col=4)
 ```
 
-Now let's try to estimate SigmaK for a non identifiable pattern:
+We can see the different sizes of the convex hulls corresponding to the
+variances for each landmark.
+
+For the estimation, we use `edma_fit` and `SigmaK_fit` as before,
+but instead of the default optimization algorithm (Nelder-Mead simplex),
+we use simulated annealing (SANN) that works better for this
+parametrization:
 
 ```{r}
 fit <- edma_fit(sim)
-o <- SigmaK_fit(fit, m)
-o
+o <- SigmaK_fit(fit, p, method="SANN")
+SigmaK              # true
+round(SigmaK(o), 2) # estimate
+round(s <- sensitivity(o), 3)
 ```
 
-The estimates are pretty far off from the true values:
+## Non-estimable case
+
+The following parametrization is non identifiable:
 
 ```{r}
-cbind(true=parm, est=o$results$par)
-SigmaK(o)
+p <- matrix(
+  c("1", "2", "2", "2", "2", "2",
+    "2", "1", "2", "2", "2", "2",
+    "2", "2", "1", "2", "2", "2",
+    "2", "2", "2", "1", "2", "2",
+    "2", "2", "2", "2", "1", "2",
+    "2", "2", "2", "2", "2", "1"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(p) <- list(rownames(M), rownames(M))
+p
 ```
 
-If we now do the sensitivity analysis,
-we see all kinds of estimates while all leading to the same
-loss function value. This a clear indication of non-estimability:
-
-```{r fig.width=6,fig.height=4}
-s <- sensitivity(o)
-s
-summary(s)
-boxplot(s)
-```
-
-## Summary
-
-Parametric estimation of SigmaK involves the following steps:
-
-1. non-parametric estimation of mean form and SigmaKstar using the `edma_fit` function,
-2. constructing of a pattern matrix based on biology of landmarks and respecting statistical constraints,
-3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix,
-4. make sure the results are estimable by running `sensitivity` analysis.
-
-## More examples
-
+The diagonal elements are $\sigma^2$ (equal variance), the off diagonal
+elements are $\sigma^2\rho$ where $\rho$ is the correlation:
 
 ```{r}
-parm <- c(a=0.25, b=0.07, c=0.1, d=0.15)
-m <- matrix(c(
-    "a", NA, NA, NA,
-    NA, "b", NA, NA,
-    NA, NA, "c", NA,
-    NA, NA, NA, "d"
-), 4, 4, byrow=TRUE)
-
-parm <- c(a=0.25)
-m <- matrix(c(
-    "a", NA, NA, NA,
-    NA, "a", NA, NA,
-    NA, NA, "a", NA,
-    NA, NA, NA, "a"
-), 4, 4, byrow=TRUE)
-
-parm <- c(a=0.25, b=0.01, c=0.1)
-m <- matrix(c(
-    "a", "b", NA, NA,
-    "b", "a", NA, NA,
-    NA, NA, "c", "b",
-    NA, NA, "b", "c"
-), 4, 4, byrow=TRUE)
-
-parm <- c(a=0.25, b=0.07)
-m <- matrix(c(
-    "a", "b", "b", "b",
-    "b", "a", "b", "b",
-    "b", "b", "a", "b",
-    "b", "b", "b", "a"
-), 4, 4, byrow=TRUE)
-
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
+parm <- c("1"=10, "2"=2)
+SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(p))
 SigmaK
-sim <- edma_simulate_data(n=500, M, SigmaK)
-dimnames(M) <- dimnames(sim$data[[1L]])
-rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
-colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
-fit <- edma_fit(sim)
-try(SigmaK_fit(fit, m))
-o <- SigmaK_fit(fit, m, method="SANN")
-cbind(true=parm, est=o$results$par)
-SigmaK(o)
-s <- sensitivity(o)
-s
-summary(s)
 ```
+
+The correlation lead to more ellipsoid shapes for the simulated landmarks:
+
+```{r}
+sim <- edma_simulate_data(n=n, M, SigmaK)
+
+EDMAinR:::.plot_edma_data(sim, NULL, asp=1,
+  xlim=c(-80, 100), ylim=c(-60, 60))
+text(M[,1]-15, M[,2], labels=paste0("L", 1:6), cex=0.6, col=4)
+```
+
+```{r}
+fit <- edma_fit(sim)
+o <- SigmaK_fit(fit, p, method="SANN")
+SigmaK              # true
+round(SigmaK(o), 2) # estimate
+(s <- sensitivity(o))
+```
+
+The sensitivity analysis reveals that we get different estimates
+when using different starting values. Although the estimates differ
+greatly, the loss function values are identical.
+Therefore, we cannot decide which estimate is the best,
+these are equally bad, i.e. non-estimable.
