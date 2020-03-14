@@ -20,6 +20,9 @@
     x
 }
 
+.isPD <- function(x)
+    !inherits(try(chol(SigmaK), silent=TRUE), "try-error")
+
 .SigmaK_fit <- function(SigmaKstar, H, pattern, init,
 method = "Nelder-Mead", control = list()) {
     K <- nrow(SigmaKstar)
@@ -48,10 +51,7 @@ method = "Nelder-Mead", control = list()) {
     num_max <- .Machine$double.xmax^(1/3)
     fun <- function(parms){
         SigmaK <- .vec2mat(parms, fac)
-        if (any(diag(SigmaK) <= 0))
-            return(num_max)
-        SigmaK <- try(as.matrix(Matrix::nearPD(x)$mat), silent=TRUE)
-        if (inherits(SigmaK, "try-error"))
+        if (!.isPD(SigmaK))
             return(num_max)
         sum((SigmaKstar - (H %*% SigmaK %*% H))^2)
     }
