@@ -68,7 +68,7 @@ sim <- edma_simulate_data(n=n, M, SigmaK)
 
 EDMAinR:::.plot_edma_data(sim, NULL, asp=1,
   xlim=c(-80, 100), ylim=c(-60, 60))
-text(-M[,1]-15, M[,2], labels=paste0("L", 1:6), cex=0.6, col=4)
+text(M[,1]-15, M[,2], labels=paste0("L", 1:6), cex=0.6, col=4)
 ```
 
 We can see from the figure that the constant variance stranslates to
@@ -211,7 +211,7 @@ sim <- edma_simulate_data(n=n, M, SigmaK)
 
 EDMAinR:::.plot_edma_data(sim, NULL, asp=1,
   xlim=c(-80, 100), ylim=c(-60, 60))
-text(-M[,1]-15, M[,2], labels=paste0("L", 1:6), cex=0.6, col=4)
+text(M[,1]-15, M[,2], labels=paste0("L", 1:6), cex=0.6, col=4)
 ```
 
 We can see the different sizes of the convex hulls corresponding to the
