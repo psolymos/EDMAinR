@@ -50,6 +50,8 @@ importFrom("grDevices",
     "chull", "dev.interactive", "devAskNewPage", "colorRampPalette")
 importFrom("readxl",
     "read_excel")
+importFrom("Matrix",
+    "nearPD")
 importFrom("ape",
     "as.phylo")
 importFrom("rgl",
