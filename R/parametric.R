@@ -50,7 +50,9 @@ method = "Nelder-Mead", control = list()) {
         SigmaK <- .vec2mat(parms, fac)
         if (any(diag(SigmaK) <= 0))
             return(num_max)
-        #10^4 * max((SigmaKstar - (H %*% SigmaK %*% H))^2)
+        SigmaK <- try(as.matrix(Matrix::nearPD(x)$mat), silent=TRUE)
+        if (inherits(SigmaK, "try-error"))
+            return(num_max)
         sum((SigmaKstar - (H %*% SigmaK %*% H))^2)
     }
     if (!is.null(control$fnscale) && control$fnscale < 0)
