@@ -1,3 +1,7 @@
+# Version 0.1-2, 2020-04-30
+
+* Parametric estimation tested.
+
 # Version 0.1-1, 2020-02-16
 
 * Global test p-values updated.
