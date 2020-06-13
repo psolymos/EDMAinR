@@ -1,5 +1,13 @@
+#remotes::install_github("psolymos/EDMAinR")
+
 set.seed(123)
 library(EDMAinR)
+
+M <- array(
+  c(82, 21, 22, -50, -37, -37,
+  0,  17, -17, 0,  41,  -41),
+  dim=c(6, 2),
+  dimnames=list(paste0("L", 1:6), c("X", "Y")))
 
 S1 <- matrix(
   c("s", NA,  NA, NA,  NA,  NA,
@@ -95,12 +103,6 @@ n <- 1000
 m <- 200
 method <- "Nelder-Mead"
 
-M <- array(
-  c(82, 21, 22, -50, -37, -37,
-  0,  17, -17, 0,  41,  -41),
-  dim=c(6, 2),
-  dimnames=list(paste0("L", 1:6), c("X", "Y")))
-
 res1 <- sim_fun(n, m, M, S1, parm1, method=method)
 res2 <- sim_fun(n, m, M, S2, parm2, method=method)
 res3 <- sim_fun(n, m, M, S3, parm3, method=method)
@@ -109,7 +111,7 @@ res5 <- sim_fun(n, m, M, S5, parm5, method=method)
 res6 <- sim_fun(n, m, M, S6, parm6, method=method)
 
 
-plot.sim_res <- function(res, q=1, main="", hull=TRUE) {
+plot.sim_res <- function(res, q=1, main="", hull=TRUE, bias=FALSE) {
 
   sm <- res$sensitivity
   sm <- sm[order(sm[,"value"]),,drop=FALSE]
@@ -118,6 +120,13 @@ plot.sim_res <- function(res, q=1, main="", hull=TRUE) {
   ss <- sm[,-ncol(sm),drop=FALSE]
   colnames(ss) <- gsub("par_", "", colnames(ss))
   ss <- ss[,names(res$parm),drop=FALSE]
+
+  parm <- res$parm
+  if (bias) {
+#    ss <- t((t(ss) / parm)) - 1
+    ss <- t((t(ss) - parm))
+    parm[] <- 0
+  }
 
   vv <- sm[,ncol(sm)]
 
@@ -136,11 +145,15 @@ plot.sim_res <- function(res, q=1, main="", hull=TRUE) {
 
   boxplot(ss,
     border="darkgrey", col="lightgrey",
-    ylab="Value", ylim=range(ss, res$parm))
+    ylab="Value", ylim=range(ss, parm))
   if (ncol(ss) < 2)
     axis(1,at=1,label=colnames(ss))
-  points(seq_along(res$parm), res$parm, col=2, pch=4, cex=2)
-  points(seq_along(res$parm), ss[1,], col=1, pch=21, cex=2)
+  if (bias) {
+    abline(h=0, col=2)
+  } else {
+    points(seq_along(res$parm), parm, col=2, pch=3, cex=2)
+  }
+  points(seq_along(res$parm), ss[1,], col=1, pch=4, cex=2)
 
   hist(vv,
     border="darkgrey", col="lightgrey",
