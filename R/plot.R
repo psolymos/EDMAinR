@@ -26,6 +26,7 @@ col_chull="#44444444", col_spec=2, ...) {
         ii <- ii[-which]
     }
     pca <- cmdscale(fma, k=2)
+    colnames(pca) <- c("X", "Y")
     pci <- lapply(seq_len(n), function(i) {
         pci <- cmdscale(fm[[i]], k=2)
         tmp1 <- apply(abs(pca-pci), 2, max)
@@ -49,27 +50,32 @@ col_chull="#44444444", col_spec=2, ...) {
         points(pci[[which]][,1], pci[[which]][,2],
             pch=19, cex=0.5, col=col_spec)
     }
+    attr(x, "coordinates") <- pca
     invisible(x)
 }
 
 plot_2d.edma_data <- function(x, which=NULL,
 ask = dev.interactive(), ...) {
     n <- length(x$data)
-    if (!is.null(which)) {
-        if (which < 1 || which > n)
-            stop(sprintf("which must be <= %s", n))
-        .plot_edma_data(x, which, ...)
-        title(main=paste("Specimen", which))
+    if (is.na(ask)) {
+        x <- .plot_edma_data(x, NULL,  ...)
     } else {
-        if (ask) {
-            oask <- devAskNewPage(TRUE)
-            on.exit(devAskNewPage(oask))
-        }
-        .plot_edma_data(x, NULL,  ...)
-        title(main="All specimens")
-        for (i in seq_len(n)) {
-            .plot_edma_data(x, i, ...)
-            title(main=paste("Specimen", specimens(x)[i]))
+        if (!is.null(which)) {
+            if (which < 1 || which > n)
+                stop(sprintf("which must be <= %s", n))
+            x <- .plot_edma_data(x, which, ...)
+            title(main=paste("Specimen", which))
+        } else {
+            if (ask) {
+                oask <- devAskNewPage(TRUE)
+                on.exit(devAskNewPage(oask))
+            }
+            x <- .plot_edma_data(x, NULL,  ...)
+            title(main="All specimens")
+            for (i in seq_len(n)) {
+                .plot_edma_data(x, i, ...)
+                title(main=paste("Specimen", specimens(x)[i]))
+            }
         }
     }
     invisible(x)
@@ -362,4 +368,56 @@ plot_3d.edma_dm <- function(x, ...) .plot_d_dm(x, d3=TRUE, ...)
 plot.edma_data <- plot_2d.edma_data
 plot.edma_fit <- plot_2d.edma_fit
 plot.edma_dm <- plot_2d.edma_dm
+
+## this is SigmaK plotting
+
+print_tb <- function(x, ...) {
+    m <- nrow(x)
+    if (ncol(x) != m)
+        stop("tb can only be used for square matrices")
+    if (!identical(rownames(x), colnames(x)))
+        stop("row and col names must be identical")
+    print(as.table(x), quote = FALSE,
+      na.print = ".", zero.print = ".", ...)
+}
+
+plot_tb <- function(x, mar=c(1,1,1,4), ...) {
+    m <- nrow(x)
+    if (ncol(x) != m)
+        stop("tb can only be used for square matrices")
+    if (!identical(rownames(x), colnames(x)))
+        stop("row and col names must be identical")
+    z <- !is.na(x)
+    z[!is.na(x) & x == 0] <- FALSE
+    i <- row(x)[z]
+    j <- col(x)[z]
+    v <- x[z]
+    u <- unique(v)
+    q <- match(v, u)
+    col <- hcl.colors(length(u), "Pastel 1")
+    op <- par(mar=mar)
+    on.exit(par(op))
+    plot(0, type="n", ann=FALSE, axes=FALSE, asp=1,
+        xlim=c(0, m+1), ylim=c(m+1, 0))
+    polygon(
+        c(0.5, 0.5, m+0.5, m+0.5),
+        c(0.5, m+0.5, m+0.5, 0.5), border=NA, col="lightgrey")
+    for (ii in seq_len(m)) {
+        for (jj in seq_len(m)) {
+            polygon(
+                rep(ii, 4)+c(-0.5, -0.5, 0.5, 0.5),
+                rep(jj, 4)+c(-0.5, 0.5, 0.5, -0.5),
+                col="lightgrey", border="white")
+        }
+    }
+    for (k in seq_len(sum(z))) {
+        polygon(
+            rep(i[k], 4)+c(-0.5, -0.5, 0.5, 0.5),
+            rep(j[k], 4)+c(-0.5, 0.5, 0.5, -0.5),
+            col=col[q[k]], border="white")
+        text(i[k], j[k], v[k])
+    }
+    text(rep(m+1, m), seq_len(m), rownames(x))
+    invisible(x)
+}
 
