@@ -3,7 +3,7 @@
 ## other unique values will be factor levels
 .mat2fac <- function(m) {
     K <- nrow(m)
-    m[upper.tri(m)] <- m[lower.tri(m)]
+    m[upper.tri(m)] <- t(m)[upper.tri(m)]
     m <- factor(as.character(m))
     attr(m, "K") <- K
     m
