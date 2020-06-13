@@ -163,18 +163,20 @@ as.array.edma_data <- function (x, ...) {
 edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     z <- .edma_simulate_data(n, M, SigmaK, H)
     DATA <- list()
+    LM <- paste0("L", seq_len(z$K))
     for (i in seq_len(z$n)) {
         DATA[[paste0("S", i)]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,
                                                 drop=FALSE])
-        dimnames(DATA[[i]]) <- list(
-            paste0("L", seq_len(z$K)),
-            c("X", "Y", "Z")[seq_len(z$D)])
+        dimnames(DATA[[i]]) <- list(LM, c("X", "Y", "Z")[seq_len(z$D)])
     }
     out <- list(
         name="Simulated landmark data",
         data=DATA
     )
     class(out) <- c("edma_data")
+    dimnames(z$M) <- dimnames(DATA[[1L]])
+    dimnames(z$SigmaK) <- dimnames(z$SigmaKstar) <-
+        dimnames(z$H) <- list(LM, LM)
     attr(out, "simulation_settings") <- list(M=z$M, SigmaK=z$SigmaK,
         SigmaKstar=z$SigmaKstar, H=z$H)
     out
