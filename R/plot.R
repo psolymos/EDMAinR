@@ -9,10 +9,30 @@ plot_ci <- function (x,...) UseMethod("plot_ci")
 
 ## diagnostics plot for xyz objects
 
+.data_ellipse <- function (x, y, level=0.95, segments = 51, ...) {
+    if (missing(y)) {
+      y <- x[,2L]
+      x <- x[,1L]
+    }
+    dfn <- 2
+    dfd <- length(x) - 1
+    v <- cov.wt(cbind(x, y))
+    shape <- v$cov
+    center <- v$center
+    radius <- sqrt(dfn * qf(level, dfn, dfd))
+    angles <- (0:segments) * 2 * pi/segments
+    unit.circle <- cbind(cos(angles), sin(angles))
+    Q <- chol(shape, pivot = TRUE)
+    order <- order(attr(Q, "pivot"))
+    ell <- t(center + radius * t(unit.circle %*% Q[, order]))
+    colnames(ell) <- c("x", "y")
+    ell
+}
+
 ## issue when only one specimen is present:
 ## rowMeans(sapply(fm[-which], ...) gives error
 .plot_edma_data <- function(x, which=NULL,
-col_chull="#44444444", col_spec=2, ...) {
+col_chull="#44444444", col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
     n <- length(x$data)
     K <- nrow(x$data[[1]])
     fm <- lapply(x$data, dist)
@@ -42,7 +62,12 @@ col_chull="#44444444", col_spec=2, ...) {
     plot(pca, pch=3, axes=FALSE, ann=FALSE, ...)
     for (j in seq_len(K)) {
         ll <- t(sapply(pci[ii], function(z) z[j,]))
-        polygon(ll[chull(ll),], col=col_chull, border=NA)
+        if (hull) {
+          polygon(ll[chull(ll),], col=col_chull, border=NA)
+        } else {
+          polygon(.data_ellipse(ll, level=level, segments=segments),
+            col=col_chull, border=NA)
+        }
     }
     if (!is.null(which)) {
         segments(pca[,1], pca[,2],
