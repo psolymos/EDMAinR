@@ -29,7 +29,8 @@ sensitivity(object, ...)
 \method{SigmaK}{edma_fit_p}(object, ...)
 \method{sensitivity}{edma_fit_p}(object, m=10, ...)
 
-print_tb(x)
+print_tb(x, ...)
+plot_tb(x, mar = c(1, 1, 1, 4), ...)
 }
 \arguments{
   \item{object, x}{
@@ -49,6 +50,9 @@ a pattern matrix, see Details.
   \item{m}{
 positive integer, number of times SigmaK estimation
 is to be replicated to assess sensitivity.
+}
+  \item{mar}{
+plot margins, see \code{\link{par}}.
 }
   \item{\dots}{
 other arguments passed to methods.
