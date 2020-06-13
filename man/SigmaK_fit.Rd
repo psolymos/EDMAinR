@@ -6,6 +6,8 @@
 \alias{SigmaK.edma_fit_p}
 \alias{sensitivity.edma_fit_p}
 \alias{read_pattern}
+\alias{print_tb}
+\alias{plot_tb}
 \title{
 Parametric EDMA fit
 }
@@ -26,10 +28,13 @@ sensitivity(object, ...)
 \method{print}{edma_fit_p}(x, truncate = 40, ...)
 \method{SigmaK}{edma_fit_p}(object, ...)
 \method{sensitivity}{edma_fit_p}(object, m=10, ...)
+
+print_tb(x)
 }
 \arguments{
   \item{object, x}{
-EDMA fit object.
+EDMA fit object. For \code{print_tb} and \code{plot_tb} it
+is a symmetric square matrix.
 }
   \item{file}{
 the name of the file which the data are to be read from
@@ -106,7 +111,8 @@ m <- matrix(c(
     NA,  NA, NA, "b"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.35)
-m
+print_tb(m)
+plot_tb(m)
 
 ## simulate data, so we know what the true values were
 M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),

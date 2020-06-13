@@ -10,6 +10,11 @@ export(
     "read_pattern"
 )
 
+## export misc functions
+export(
+    "print_tb",
+    "plot_tb")
+
 ## export new generics, non visual
 export(
     "landmarks",
