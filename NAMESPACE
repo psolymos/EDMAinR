@@ -29,7 +29,8 @@ export(
     "specimens",
     "dimensions",
     "sensitivity",
-    "get_influence"
+    "get_influence",
+    "as.edma_data"
 )
 
 ## export new generics for visualization
@@ -77,6 +78,7 @@ S3method("as.matrix", "edma_data")
 S3method("as.data.frame", "edma_data")
 S3method("as.array", "edma_data")
 S3method("as.dist", "edma_data")
+S3method("as.edma_data", "array")
 ## plot methods
 S3method("plot", "edma_data")
 S3method("plot_2d", "edma_data")

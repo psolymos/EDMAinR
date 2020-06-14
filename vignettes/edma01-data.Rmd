@@ -107,6 +107,11 @@ Alternatively, we can store the data as an array
 str(as.array(x))
 ```
 
+The `as.edma_data` function turns a 3D array to an EDMA data object.
+This is useful to handle 3D array objects returned by many
+functions of the [**geomorph**](https://cran.r-project.org/package=geomorph) 
+package (i.e. after reding Morphologika, NTS, TPS files).
+
 Data sets can be checked using the `plot` function. 
 The function steps through all the specimens to check
 for any surprises.
