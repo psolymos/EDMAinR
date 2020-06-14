@@ -15,3 +15,6 @@ appveyor.yml
 ^inst/tmp$
 ^_build\.sh$
 ^docs$
+^\.ccache$
+^\.github$
+^tic\.R$
