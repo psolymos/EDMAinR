@@ -7,6 +7,8 @@
 \alias{landmarks}
 \alias{specimens}
 \alias{dimensions}
+\alias{as.edma_data}
+\alias{as.edma_data.array}
 \alias{landmarks.edma_data}
 \alias{specimens.edma_data}
 \alias{dimensions.edma_data}
@@ -59,6 +61,8 @@ specimens(x, ...)
 \method{as.matrix}{edma_data}(x, ...)
 \method{as.data.frame}{edma_data}(x, ...)
 \method{as.array}{edma_data}(x, ...)
+as.edma_data(x, ...)
+\method{as.edma_data}{array}(x, ...)
 
 ## plot methods
 plot_2d(x, ...)
@@ -133,6 +137,13 @@ this part is also used to get specimen IDs.
 After reading in or simulating and EDMA data object,
 the methods help extracting info, or manipulate these objects.
 See Values and Examples.
+
+The EDMA data object (class 'edma_data') is a list with two
+elements: \code{$name} is the data set name (header information from
+the .xyz file), \code{$data} is a list of n matrices (the list can be
+named if speciemen information is present),
+each matrix is of dimension K x D, dimension names for the
+matrices describing landmark names and coordinate names.
 }
 \value{
 \code{edma_simulate_data} returns an EDMA data object of
@@ -152,6 +163,10 @@ The methods \code{stack} and \code{as.matrix} return a stacked
 2D array (K*n x D) with the landmark coordinates,
 \code{as.data.frame} turns the same 2D stacked array into a data frame,
 \code{as.array} returns a 3D array (K x D x n).
+\code{as.edma_data} turns a 3D array to an EDMA data object,
+this is useful to handle 3D array objects returned by many
+functions of the geomorph package (i.e. after reding
+Morphologika, NTS, TPS files).
 
 \code{as.dist} calculates the dissimilarity matrix (n x n, object
 of class 'dist', see \code{\link{dist}}) containing
@@ -225,6 +240,7 @@ str(as.matrix(x))
 str(as.data.frame(x))
 str(stack(x))
 str(as.array(x))
+as.edma_data(as.array(x))
 
 ## simulate data
 K <- 3 # number of landmarks
