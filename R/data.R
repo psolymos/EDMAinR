@@ -184,7 +184,7 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
 
 ## combines 2 xyz data sets into 1 object
 ## for plotting etc.
-.combine_data <- function(a, b, ga="G1", gb="G2") {
+combine_data <- function(a, b, ga="G1", gb="G2") {
     ls <- intersect(landmarks(a), landmarks(b))
     if (!all(ls %in% union(landmarks(a), landmarks(b))))
         stop("landmarks must be the same in the 2 objects")
@@ -205,7 +205,7 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
 }
 ## combines 4 xyz data sets into 1 object
 ## for plotting etc.
-.combine_data4 <- function(a1, a2, b1, b2,
+combine_data4 <- function(a1, a2, b1, b2,
 ga1="A1", ga2="A2", gb1="B1", gb2="B2") {
     ls <- intersect(landmarks(a1), landmarks(a2))
     if (!all(ls %in% union(landmarks(a1), landmarks(a2))))

@@ -124,9 +124,10 @@ ask = dev.interactive(), ...) {
     invisible(mds)
 }
 
-.plot_specimens_clust1 <- function (x, cex.label=0.6, plot=TRUE, ...) {
+.plot_specimens_clust1 <- function (x, cex.label=0.6,
+    plot=TRUE, method="ward.D2", ...) {
     d <- as.dist(.get_data(x))
-    h <- hclust(d, method="ward.D2")
+    h <- hclust(d, method=method)
     if (plot) {
         plot(as.phylo(h), font=1,
             main="Dendrogram", cex=cex.label, ...)
@@ -135,7 +136,7 @@ ask = dev.interactive(), ...) {
 }
 
 .plot_specimens_ord2 <- function (x, cex.label=0.6, plot=TRUE, ...) {
-    xx <- .combine_data(
+    xx <- combine_data(
         .get_data(x$numerator),
         .get_data(x$denominator))
     g <- c(2, 4)[xx$groups]
@@ -156,13 +157,14 @@ ask = dev.interactive(), ...) {
     invisible(list(mds=mds, data=xx))
 }
 
-.plot_specimens_clust2 <- function (x, cex.label=0.6, plot=TRUE, ...) {
-    xx <- .combine_data(
+.plot_specimens_clust2 <- function (x, cex.label=0.6,
+    plot=TRUE, method="ward.D2", ...) {
+    xx <- combine_data(
         .get_data(x$numerator),
         .get_data(x$denominator))
     g <- c(2, 4)[xx$groups]
     d <- as.dist(xx)
-    h <- hclust(d, method="ward.D2")
+    h <- hclust(d, method=method)
     if (plot) {
         plot(as.phylo(h), font=1,
             main="Dendrogram", tip.color=g, cex=cex.label, ...)
@@ -171,7 +173,7 @@ ask = dev.interactive(), ...) {
 }
 
 .plot_specimens_ord4 <- function (x, cex.label=0.6, plot=TRUE, ...) {
-    xx <- .combine_data4(
+    xx <- combine_data4(
         .get_data(x$a1),
         .get_data(x$a2),
         .get_data(x$b1),
@@ -194,15 +196,16 @@ ask = dev.interactive(), ...) {
     invisible(list(mds=mds, data=xx))
 }
 
-.plot_specimens_clust4 <- function (x, cex.label=0.6, plot=TRUE, ...) {
-    xx <- .combine_data4(
+.plot_specimens_clust4 <- function (x, cex.label=0.6,
+    plot=TRUE, method="ward.D2", ...) {
+    xx <- combine_data4(
         .get_data(x$a1),
         .get_data(x$a2),
         .get_data(x$b1),
         .get_data(x$b2))
     g <- xx$groups
     d <- as.dist(xx)
-    h <- hclust(d, method="ward.D2")
+    h <- hclust(d, method=method)
     if (plot) {
         plot(as.phylo(h), font=1,
             main="Dendrogram", tip.color=g, cex=cex.label, ...)

@@ -13,7 +13,9 @@ export(
 ## export misc functions
 export(
     "print_tb",
-    "plot_tb")
+    "plot_tb",
+    "combine_data",
+    "combine_data4")
 
 ## export new generics, non visual
 export(

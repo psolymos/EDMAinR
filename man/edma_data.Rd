@@ -26,6 +26,8 @@
 \alias{plot_2d.edma_data}
 \alias{plot_ord.edma_data}
 \alias{plot_clust.edma_data}
+\alias{combine_data}
+\alias{combine_data4}
 \title{
 Functions for EDMA data objects
 }
@@ -63,6 +65,11 @@ specimens(x, ...)
 \method{as.array}{edma_data}(x, ...)
 as.edma_data(x, ...)
 \method{as.edma_data}{array}(x, ...)
+
+combine_data(a, b,
+    ga="G1", gb="G2")
+combine_data4(a1, a2, b1, b2,
+    ga1="A1", ga2="A2", gb1="B1", gb2="B2")
 
 ## plot methods
 plot_2d(x, ...)
@@ -108,6 +115,14 @@ numeric, number of characters to print for the object title.
 logical, indicating whether the diagonal
 and the upper triangle of the distance matrix should be printed.
 See \code{\link{as.dist}}.
+}
+  \item{a, b, a1, a2, b1, b2}{
+EDMA data objects to be combined together. Landmarks must be
+homologous (determined by dimension names).
+}
+  \item{ga, gb, ga1, ga2, gb1, gb2}{
+character, group names that are prepended to the specimen names
+to differentiate the groups.
 }
   \item{\dots}{
 other arguments passed to methods.
@@ -167,6 +182,9 @@ The methods \code{stack} and \code{as.matrix} return a stacked
 this is useful to handle 3D array objects returned by many
 functions of the geomorph package (i.e. after reding
 Morphologika, NTS, TPS files).
+
+\code{combine_data} and \code{combine_data4} combines
+2 or 4 EDMA data sets together, landmarks must be homologous.
 
 \code{as.dist} calculates the dissimilarity matrix (n x n, object
 of class 'dist', see \code{\link{dist}}) containing

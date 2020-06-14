@@ -30,3 +30,23 @@ plotAllSpecimens(Y.gpa$coords,links=plethodon$links)
 
 plot(as.edma_data(plethodon$land), which=NULL, ask=NA, hull=TRUE,
      xlim=c(-15,10), ylim=c(-3,3))
+
+
+library(Morpho)
+
+f <- "~/Dropbox/consulting/2020/edma/data/HlavUSNM143565LAND.txt"
+Hlav <- ply2mesh(f, adnormals = TRUE, readnormals = FALSE, readcol = FALSE, silent = FALSE)
+
+Hlav.mesh <- tps3d(Hlav, ref, lsmeans[,,"Hlar"])
+
+shade3d(Hlav.mesh, col="green")
+
+ref <- mshape(Y$coords)
+
+avg.mesh1 <- tps3d(Hlav, F[,,"HlavM6_USNM143565"], ref)
+
+shade3d(avg.mesh1, col="navy")
+
+shade3d(Hlav.mesh, col="darkturquoise")
+
+

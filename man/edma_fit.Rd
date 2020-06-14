@@ -77,7 +77,10 @@ and the upper triangle of the distance matrix should be printed.
 See \code{\link{as.dist}}.
 }
   \item{\dots}{
-other arguments passed to methods.
+other arguments passed to methods. E.g.
+for \code{plot_clust}, the \code{method}
+describing the clustering agglomeration method to be used
+by the \code{link{hclust}} function (default is \code{"ward.D2"}).
 }
 }
 \details{

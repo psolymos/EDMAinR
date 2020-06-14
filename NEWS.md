@@ -2,6 +2,10 @@
 
 * Small fixes to parametric test helper functions.
 * Miscellaneous function to print/visualize pattern matrices.
+* Exposed `combine_data` and `combine_data4` functions.
+* Clustering method now can be changed by the user.
+* `as.edma_data` method added to turn 2D array (a common
+  morphometrics data format) to EDMA data objects.
 
 # Version 0.1-2, 2020-04-30
 
