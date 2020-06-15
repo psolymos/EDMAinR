@@ -35,7 +35,7 @@ plot_ci <- function (x,...) UseMethod("plot_ci")
 col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
     c3 <- hcl.colors(3, getOption("edma_options")$diverging)
     if (is.na(col_chull))
-        col_chull <- paste0(c3[2L], "44")
+        col_chull <- c3[2L]
     if (is.na(col_spec))
         col_spec <- c3[3L]
     n <- length(x$data)
@@ -68,10 +68,11 @@ col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
     for (j in seq_len(K)) {
         ll <- t(sapply(pci[ii], function(z) z[j,]))
         if (hull) {
-          polygon(ll[chull(ll),], col=col_chull, border=NA)
+            polygon(ll[chull(ll),],
+                col=paste0(col_chull, "88"), border=col_chull)
         } else {
-          polygon(.data_ellipse(ll, level=level, segments=segments),
-            col=col_chull, border=NA)
+            polygon(.data_ellipse(ll, level=level, segments=segments),
+                col=paste0(col_chull, "88"), border=col_chull)
         }
     }
     if (!is.null(which)) {
