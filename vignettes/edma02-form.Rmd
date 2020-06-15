@@ -33,7 +33,12 @@ str(Meanform(fit))
 str(SigmaKstar(fit))
 ```
 
-We can extract stacked Euclidean distances with the `get_fm` function:
+The `B` argument determines the number of bootstrap resamples
+to use (resampling specimens with replacement, keeping size $n$ the same).
+
+We can extract stacked Euclidean distances (the stacked form matrix $FM$)
+with the `get_fm` function. The functions allows to sort
+the table based on decreasing or increasing order by distance:
 
 ```{r stackeddist}
 head(get_fm(fit))
@@ -41,8 +46,10 @@ head(get_fm(fit, sort=TRUE, decreasing=TRUE))
 head(get_fm(fit, sort=TRUE, decreasing=FALSE))
 ```
 
-The 2D plot gives the projection of the mean form,
-dot size proportional to SigmaKstar diagonal elements:
+The 2D plot gives the projection of the mean form
+using multidimensional scaling (it uses $FM$ based on $\hat{M}$)
+dot size proportional to `SigmaKstar(fit)` diagonal elements
+(scaling can be scaled by the `cex` argument):
 
 ```{r fig.width=7,fig.height=5,out.width='60%'}
 plot_2d(fit)
@@ -50,7 +57,10 @@ plot_2d(fit)
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 library(rgl)
-plot_3d(fit)
+plot_3d(fit, col=4)
+decorate3d()
 rglwidget(width = 600, height = 600, reuse = FALSE)
 ```
+
+See `?rgl::plot3d` for options to modify the 3D plot.
 

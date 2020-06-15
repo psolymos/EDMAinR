@@ -329,18 +329,21 @@ plot_ci.edma_gdm <- function(x, ...)
         xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
         xyz[,3L] <- 0
     }
-    if (is.na(cex)) {
-        V <- sqrt(diag(SigmaKstar(proto)))
-        V <- 0.2 + 0.8 * V/max(V)
-    } else {
-        V <- cex
+    V <- sqrt(diag(SigmaKstar(proto)))
+    V <- 0.2 + 0.8 * V/max(V)
+    if (!is.na(cex)) {
+        if (length(cex) > 1L) {
+            V <- cex
+        } else {
+            V <- V * cex
+        }
     }
     if (d3) {
         plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
             type="s",
             ann=FALSE, axes=FALSE,
             xlab="", ylab="", zlab="",
-            radius=V*diff(range(xyz))/50)
+            radius=V*diff(range(xyz))/50, ...)
     } else {
         plot(xyz[,1:2], type="p", axes=FALSE, ann=FALSE,
             cex=V, ...)

@@ -213,11 +213,12 @@ using pairwise distances between specimens.
 These distances are based on the T-statistic and can be calculated as
 `as.dist(x)`. The calculation involves the following steps:
 
-- calculate the form difference matrix (FDM) for speciem $i$ and $j$: $FDM_{ij} = FM_{i} / FM_{j}$ ($i, j = 1, \dots, n$ ),
-- calculate the T-statistic on the log scale (so that a max/min ration of 1, that is 0 distance, becomes log(1)=0): $log(max(FDM_{ij}) / min(FDM_{ij}))$.
+- calculate Euclidean distances ($ED_{i}$) between all pairs of landmarks for specimen $i$ ($i = 1, \dots, n$)
+- calculate Euclidean distances ($ED_{j}$) between all pairs of landmarks for specimen $j$ ($j = 1, \dots, n$)
+- calculate the ratio $DM_{i} / DM_{j}$,
+- calculate the T-statistic on the log scale (so that a max/min ratio of 1, that is 0 distance, becomes log(1)=0): $d_{ij}=log(max[DM_{i} / DM_{j}] / min[DM_{i} / DM_{j}])$.
 
-The multidimensional scaling uses the square root transformed log-T distances to make
-distances more Euclidean.
+The multidimensional scaling uses the square root transformed log-T distances to make distances more Euclidean.
 
 The error shows up nicely in the ordination plot (colored red):
 
