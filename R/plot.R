@@ -85,7 +85,7 @@ col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
     invisible(x)
 }
 
-plot_2d.edma_data <- function(x, which=NULL,
+plot.edma_data <- function(x, which=NULL,
 ask = dev.interactive(), ...) {
     n <- length(x$data)
     if (is.na(ask)) {
@@ -111,6 +111,8 @@ ask = dev.interactive(), ...) {
     }
     invisible(x)
 }
+plot_2d.edma_data <- function(x, ...)
+    plot.edma_data(x, which=NULL, ask=NA, ...)
 
 ## ordination and cluster plots
 
@@ -321,14 +323,18 @@ plot_ci.edma_gdm <- function(x, ...)
 
 ## 2D and 3D plots
 
-.plot_d_data <- function(proto, d3=TRUE, ...) {
+.plot_d_data <- function(proto, d3=TRUE, cex=NA, ...) {
     xyz <- Meanform(proto)
     if (!d3) {
         xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
         xyz[,3L] <- 0
     }
-    V <- sqrt(diag(SigmaKstar(proto)))
-    V <- 0.2 + 0.8 * V/max(V)
+    if (is.na(cex)) {
+        V <- sqrt(diag(SigmaKstar(proto)))
+        V <- 0.2 + 0.8 * V/max(V)
+    } else {
+        V <- cex
+    }
     if (d3) {
         plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
             type="s",
@@ -344,7 +350,7 @@ plot_ci.edma_gdm <- function(x, ...)
 plot_2d.edma_fit <- function(x, ...) .plot_d_data(x, d3=FALSE, ...)
 plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
 
-.plot_d_dm <- function(x, d3=TRUE, pal=NULL, ...) {
+.plot_d_dm <- function(x, d3=TRUE, pal=NULL, pch=19, ...) {
     if (inherits(x, "edma_fdm")) {
         proto <- if (x$ref_denom)
             x$denominator else x$numerator
@@ -375,15 +381,12 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
     if (is.null(pal))
         pal <- hcl.colors(length(v)-1,
             getOption("edma_options")$diverging)
-#        pal <- colorRampPalette(
-#            getOption("edma_options")$palette
-#            )(length(v)-1)
     if (d3) {
         plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
             type="s",
             ann=FALSE, axes=FALSE,
             xlab="", ylab="", zlab="",
-            col=c5[c(3L, 5L)][iSig+1], radius=0.1)
+            col=c5[c(3L, 5L)][iSig+1L], radius=0.1)
         for (j in which(fSig & f$cut != 5)) {
             xyz1 <- rbind(xyz[as.character(f$row[j]),],
                 xyz[as.character(f$col[j]),])
@@ -391,7 +394,6 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
                 col=as.character(pal[f$cut[j]]),
                 lwd= 2)
         }
-
     } else {
         plot(xyz[,1:2], type="n", axes=FALSE, ann=FALSE)
         for (j in which(fSig)) {
@@ -401,7 +403,7 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
                 col=paste0(pal[f$cut[j]], "ff"),
                 lwd=if (f$cut[j] == 5) 0.5 else 2)
         }
-        points(xyz[iSig,1:2], pch=19, col=2)
+        points(xyz[iSig,1:2], pch=pch, col=2)
         points(xyz[,1:2])
     }
     invisible(x)
@@ -413,7 +415,7 @@ plot_3d.edma_dm <- function(x, ...) .plot_d_dm(x, d3=TRUE, ...)
 
 ## default plot methods
 
-plot.edma_data <- plot_2d.edma_data
+#plot.edma_data <- plot_2d.edma_data
 plot.edma_fit <- plot_2d.edma_fit
 plot.edma_dm <- plot_2d.edma_dm
 
