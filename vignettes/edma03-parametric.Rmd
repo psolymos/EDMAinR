@@ -66,8 +66,7 @@ specimen given form matrix `M` and covariance matrix `SigmaK`:
 n <- 1000
 sim <- edma_simulate_data(n=n, M, SigmaK)
 
-tmp <- plot_2d(sim, which=NULL, ask=NA,
-  xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
 xy <- attr(tmp, "coordinates")
 text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 ```
@@ -210,8 +209,7 @@ The unequal variances translate to the following simulated data:
 ```{r}
 sim <- edma_simulate_data(n=n, M, SigmaK)
 
-tmp <- plot_2d(sim, which=NULL, ask=NA,
-  xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
 xy <- attr(tmp, "coordinates")
 text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 ```
@@ -261,8 +259,7 @@ The unequal variances translate to the following simulated data:
 ```{r}
 sim <- edma_simulate_data(n=n, M, SigmaK)
 
-tmp <- plot_2d(sim, which=NULL, ask=NA,
-  xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
 xy <- attr(tmp, "coordinates")
 text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 ```
@@ -309,8 +306,7 @@ The correlation lead to more ellipsoid shapes for the simulated landmarks:
 ```{r}
 sim <- edma_simulate_data(n=n, M, SigmaK)
 
-tmp <- plot_2d(sim, which=NULL, ask=NA,
-  xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
 xy <- attr(tmp, "coordinates")
 text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 ```
@@ -361,8 +357,7 @@ The unequal variances translate to the following simulated data:
 ```{r}
 sim <- edma_simulate_data(n=n, M, SigmaK)
 
-tmp <- plot_2d(sim, which=NULL, ask=NA,
-  xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
 xy <- attr(tmp, "coordinates")
 text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 ```
