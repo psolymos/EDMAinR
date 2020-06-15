@@ -39,7 +39,9 @@ library(EDMAinR)
 
 ## Landmark data
 
-Use the `read_xyz` function to read 2 or 3 D landmark data from `*.xyz` files.
+### Reading data from xyz files
+
+Use the `read_xyz` function to read 2D or 3D landmark data from `*.xyz` files.
 First we specify the paths to two xyz files:
 
 ```{r filexyz}
@@ -47,10 +49,20 @@ file <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
     package="EDMAinR")
 ```
 
-Note: we use the `system.file()` function to access example files
-from the package. When defining your own files,
-you will either set the working directory using `setwd()` or
-a path like `c:/Users/<user>/<etc>`.
+> *Note*: we use the `system.file()` function to access example files
+> from the package. When defining your own files,
+> you will either set the working directory using `setwd()` or use
+> a path like `c:/Users/<user>/<etc>`.
+
+The xyz landmark data has the following structure:
+
+- Header: this is the description of the data.
+- `XYZ`: indicates dimensions, XYZ means 3D landmark data.
+- `42L 3 9`: dimensions, e.g. 42 landmarks ($K$), 3 dimensions ($D$), 9 specimens ($n$).
+- Landmark names, separated by space.
+- The stacked data of landmark coordinates, e.g. 3 columns, space separated numeric values with $K \times n$ rows, the $K$ landmarks per individuals stacked $n$ times.
+- Blank line.
+- Date on of scans for each specimen ($n$ rows), this part is also used to get specimen IDs.
 
 Now we can read in these text files:
 
@@ -59,27 +71,46 @@ x <- read_xyz(file)
 x
 ```
 
-The data objects are lists with 2 elements: 
+### The EDMA data format
 
-- `$name` contains info about the file from its header
-- `$data` contains the landmark data
+The printout of `x` told us the most important facts about the data:
+the header information and the dimensions.
 
-Here are the methods that we can use to learn more about the data sets.
+The EDMA data object (class 'edma_data') is a list with two
+elements: 
+
+- `$name` is the data set name (header information from
+the `.xyz` file), 
+- `$data` is a list of $n$ matrices (the list can be named if speciemen information is present), each matrix is of dimension $K \times D$, dimension names for the matrices describing landmark names and coordinate names.
+
+### EDMA data accessor functions
+
+The following methods are used to retrieve useful information
+contained in EDMA data sets.
 
 Access dimensions (landmarks, $K$; dimensions, $D$; replicates, $n$) 
-and dimension names (`landmark_names` returns the landmark labels):
+and dimension names (`landmarks` returns the landmark labels):
 
 ```{r datamethods}
-dim(x)
-dimnames(x)
-landmarks(x)
-dimensions(x)
-specimens(x)
+dim(x) # dimensions
+dimnames(x) # dimension names
+landmarks(x) # landmark names
+dimensions(x) # the names of the coordinate dimensions
+specimens(x) # specimen IDs
 ```
+
+When the dimension names are missing from the input data file,
+we use `L` to denote landmarks and `S` to denote specimens. These are
+prepended to numeric landmark and specimen IDs. The coordinate dimensions
+are `"X"`, `"Y"`, and optionally `"Z"` for 3D landmark data. 
+
+### Selecting subsets of EDMA data objects
 
 Subsetting the data comes handy sometimes. The most general way to subset
 the data sets is via the `[` function, the 3 indices inside the brackets
-refer to the landmarks, dimensions, and specimens:
+refer to the landmarks, dimensions, and specimens.
+Imagine the data as a 3D data cube and the square brackets allow us to
+slice the cube from 3 different directions.
 
 ```{r datasubset}
 x[1:10, , ]  # select the 1st 10 landmarks
@@ -87,6 +118,11 @@ x[ , 1:2, ]  # select 2 of the 2 dimensions
 x[ , , 1:20] # select the 1st 20 individuals
 x[1:10, , 1:20] # combine multiple indices
 ```
+
+Read more about how to use square brackets to extract
+parts of the data object: `?Extract` (see section 'Matrices and arrays').
+
+### Coercing EDMA data into other formats
 
 The data (`$data`) format inside the object `x` is list of the $K \times D$
 matrices for each individual. Sometimes it is handy to stack these
@@ -97,8 +133,8 @@ with $n \times K$ rows and $D$ columns):
 str(as.matrix(x))
 ```
 
-Note: we are using `str` to show the structure of these objects,
-this is not necessary when exploring the data.
+> *Note*: we are using `str` to show the structure of these objects,
+> this is not necessary when exploring the data.
 
 Alternatively, we can store the data as an array
 ($K \times D \times n$):
@@ -107,18 +143,59 @@ Alternatively, we can store the data as an array
 str(as.array(x))
 ```
 
+### Turning 3D arrays into EDMA data objects
+
 The `as.edma_data` function turns a 3D array to an EDMA data object.
-This is useful to handle 3D array objects returned by many
+This is useful when handling 3D array objects returned by many
 functions of the [**geomorph**](https://cran.r-project.org/package=geomorph) 
 package (i.e. after reding Morphologika, NTS, TPS files).
 
-Data sets can be checked using the `plot` function. 
-The function steps through all the specimens to check
-for any surprises.
-The grey areas shows the convex hull for the landmark
-leaving the specimen out, while red dots show the
-actual specimen.
-We will insert an error to show how it can be helpful:
+The header information gets lost in this way, but we can set it quite easily:
+
+```{r arraytoedma}
+xnew <- as.edma_data(as.array(x))
+xnew
+xnew$name <- "This is the same data as before"
+xnew
+```
+
+## Visual inspection of the data
+
+The `plot_2d` function shows the convex hulls or confidence ellipses 
+for the landmarks based on all the specimens.
+The plot is showing the first two axes of multidimensional scaling 
+based on the form matrices (FM; pairwise Eiclidean distances):
+
+```{r allspec}
+plot_2d(x)
+```
+
+The images by default show the convex hull for each landmark
+enclosing all specimens.
+It is also possible to use 95% confidence ellipses:
+
+```{r allspec2}
+plot_2d(x, hull=FALSE)
+```
+
+### Spotting data errors
+
+Data sets can be checked using the `plot` function.
+By default, this function steps through all the specimens to check for any surprises.
+The blue areas shows the convex hull for the landmark
+leaving a single specimen out, while red dots show the actual specimen.
+
+Using the `which` argument we can specify which specimen we want to
+display (it is not possible to select multiple specimen, use the `[` method
+to take a subset of the data that is being plotted):
+
+```{r onespec}
+plot(x, which=1)
+```
+
+We will insert an error to show how the `plot` function can help identify problems.
+We change the coordinates for the 1st landmark of the 1st specimen.
+The error is showing up as an outlier (long red line):
 
 ```{r fig.width=7,fig.height=5,out.width='45%',fig.show='hold'}
 ## original values for specimen 1
@@ -129,15 +206,54 @@ xwrong$data[[1]][1,1:2] <- c(2, 2)
 plot(xwrong, which=1)
 ```
 
-The ordination and cluster dendrogram
+### Ordination and clustering
+
+The ordination plot shows the specimens based on multidimensional scaling
+using pairwise distances between specimens.
+These distances are based on the T-statistic and can be calculated as
+`as.dist(x)`. The calculation involves the following steps:
+
+- calculate the form difference matrix (FDM) for speciem $i$ and $j$: $FDM_{ij} = FM_{i} / FM_{j}$ ($i, j = 1, \dots, n$ ),
+- calculate the T-statistic on the log scale (so that a max/min ration of 1, that is 0 distance, becomes log(1)=0): $log(max(FDM_{ij}) / min(FDM_{ij}))$.
+
+The multidimensional scaling uses the square root transformed log-T distances to make
+distances more Euclidean.
+
+The error shows up nicely in the ordination plot (colored red):
 
 ```{r fig.width=7,fig.height=5,out.width='45%',fig.show='hold'}
-plot_ord(x)
-plot_ord(xwrong)
+plot_ord(x, col=c(2, rep(1, dim(x)[3])))
+plot_ord(xwrong, col=c(2, rep(1, dim(xwrong)[3])))
 ```
+
+The cluster dendrogram is based on the same log-T distance matrix described above.
+The agglomeration algorithm is set to the Ward's minimum variance method (`"ward.D2")
+which is using the square root of the log-T distances.
 
 ```{r fig.width=7,fig.height=7,out.width='45%',fig.show='hold'}
 plot_clust(x)
 plot_clust(xwrong)
+```
+
+Other agglomeration methods can be set by passing a different `method` argument,
+e.g. single linkage (see `?hclust` for a list of options):
+
+```{r fig.width=7,fig.height=7,out.width='45%',fig.show='hold'}
+plot_clust(x, method = "single")
+plot_clust(xwrong, method = "single")
+```
+
+Both the ordination and clustering functions return the ordination/cluster
+results, so that plots can be forther customized (see `?ape::plot.phylo`):
+
+```{r}
+mds <- plot_ord(x, plot=FALSE)
+str(mds)
+plot(mds$points, pch=4)
+
+h <- plot_clust(x, plot=FALSE)
+h
+plot(h)
+plot(ape::as.phylo(h), type="cladogram", font=1, cex=0.6)
 ```
 
