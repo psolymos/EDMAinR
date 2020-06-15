@@ -236,10 +236,11 @@ plot_clust.edma_gdm <- function(x, ...) .plot_specimens_clust4(x, ...)
 ## global T-test plots
 
 plot_Ttest.edma_dm <- function(x, ...) {
+    c5 <- hcl.colors(5, getOption("edma_options")$diverging)
     z <- .T_test(x)
-    hist(z$Tvals, xlab="T-values", ...)
-    abline(v=z$statistic, lwd=2,
-        col=hcl.colors(2, getOption("edma_options")$diverging)[2L])
+    hist(z$Tvals, xlab="T-values", main="",
+        col=c5[2L], border=c5[1L], ...)
+    abline(v=z$statistic, lwd=2, col=c5[5L])
     invisible(x)
 }
 
