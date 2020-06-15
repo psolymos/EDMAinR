@@ -14,11 +14,13 @@
         nout = 100L,
         min_time = 2))
     options("edma_options" = list(
-        palette = c("#2c7bb6", "#abd9e9", "#eeeeee", "#fdae61", "#d7191c")
+        diverging = "Blue-Red",
+        qualitative = "Set 2"
     ))
     invisible(NULL)
 }
 
 .onUnload <- function(libpath){
+    options("edma_options" = NULL)
     invisible(NULL)
 }
