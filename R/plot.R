@@ -111,7 +111,7 @@ ask = dev.interactive(), ...) {
     }
     invisible(x)
 }
-plot_2d.edma_data <- function(x, which=NULL...)
+plot_2d.edma_data <- function(x, which=NULL, ...)
     plot.edma_data(x, which=which, ask=NA, ...)
 
 ## ordination and cluster plots
@@ -339,7 +339,8 @@ plot_ci.edma_gdm <- function(x, ...)
         }
     }
     if (d3) {
-        plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
+        requireNamespace("rgl")
+        rgl::plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
             type="s",
             ann=FALSE, axes=FALSE,
             xlab="", ylab="", zlab="",
@@ -385,7 +386,8 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
         pal <- hcl.colors(length(v)-1,
             getOption("edma_options")$diverging)
     if (d3) {
-        plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
+        requireNamespace("rgl")
+        rgl::plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
             type="s",
             ann=FALSE, axes=FALSE,
             xlab="", ylab="", zlab="",
@@ -393,7 +395,7 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
         for (j in which(fSig & f$cut != 5)) {
             xyz1 <- rbind(xyz[as.character(f$row[j]),],
                 xyz[as.character(f$col[j]),])
-            lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+            rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
                 col=as.character(pal[f$cut[j]]),
                 lwd= 2)
         }

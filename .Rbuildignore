@@ -1,8 +1,8 @@
 .git*
 .DS_Store
 .*~
-.travis.yml
-appveyor.yml
+^\.travis\.yml$
+^appveyor\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^_pkgdown\.yml$
@@ -13,8 +13,5 @@ appveyor.yml
 .png
 .gif
 ^inst/tmp$
-^_build\.sh$
 ^docs$
-^\.ccache$
-^\.github$
-^tic\.R$
+^_pkgdown\.yml$

@@ -61,8 +61,8 @@ importFrom("readxl",
     "read_excel")
 importFrom("ape",
     "as.phylo")
-importFrom("rgl",
-    "plot3d", "lines3d")
+#importFrom("rgl",
+#    "plot3d", "lines3d")
 importFrom("grDevices",
     "hcl.colors")
 
