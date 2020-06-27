@@ -111,8 +111,8 @@ ask = dev.interactive(), ...) {
     }
     invisible(x)
 }
-plot_2d.edma_data <- function(x, ...)
-    plot.edma_data(x, which=NULL, ask=NA, ...)
+plot_2d.edma_data <- function(x, which=NULL...)
+    plot.edma_data(x, which=which, ask=NA, ...)
 
 ## ordination and cluster plots
 

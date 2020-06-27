@@ -77,7 +77,7 @@ plot_ord(x, ...)
 plot_clust(x, ...)
 \method{plot}{edma_data}(x, which=NULL,
     ask = dev.interactive(), ...)
-\method{plot_2d}{edma_data}(x, ...)
+\method{plot_2d}{edma_data}(x, which=NULL, ...)
 \method{plot_ord}{edma_data}(x, ...)
 \method{plot_clust}{edma_data}(x, ...)
 

@@ -41,7 +41,7 @@ Feedback and contributions are welcome:
 
 ``` r
 library(EDMAinR)
-#> EDMAinR 0.0-4     2019-12-21
+#> EDMAinR 0.1-3     2020-06-12
 
 file1 <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
     package="EDMAinR")
