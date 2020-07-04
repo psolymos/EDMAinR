@@ -42,7 +42,7 @@ read_xyz(file, ...)
 edma_simulate_data(n, M, SigmaK, H=NULL)
 
 ## print
-\method{print}{edma_data}(x, truncate = 40, ...)
+\method{print}{edma_data}(x, truncate=40, ...)
 
 ## accessors
 landmarks(x, ...)
@@ -76,13 +76,13 @@ plot_2d(x, ...)
 plot_ord(x, ...)
 plot_clust(x, ...)
 \method{plot}{edma_data}(x, which=NULL,
-    ask = dev.interactive(), ...)
+    ask=dev.interactive(), ...)
 \method{plot_2d}{edma_data}(x, which=NULL, ...)
 \method{plot_ord}{edma_data}(x, ...)
 \method{plot_clust}{edma_data}(x, ...)
 
 ## dissimilarities
-\method{as.dist}{edma_data}(m, diag = FALSE, upper = FALSE)
+\method{as.dist}{edma_data}(m, diag=FALSE, upper=FALSE)
 }
 \arguments{
   \item{file}{

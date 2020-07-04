@@ -25,12 +25,12 @@ SigmaK_fit(object, pattern, ...)
 ## methods
 SigmaK(object, ...)
 sensitivity(object, ...)
-\method{print}{edma_fit_p}(x, truncate = 40, ...)
+\method{print}{edma_fit_p}(x, truncate=40, ...)
 \method{SigmaK}{edma_fit_p}(object, ...)
 \method{sensitivity}{edma_fit_p}(object, m=10, ...)
 
 print_tb(x, ...)
-plot_tb(x, mar = c(1, 1, 1, 4), ...)
+plot_tb(x, mar=c(1, 1, 1, 4), ...)
 }
 \arguments{
   \item{object, x}{
@@ -120,7 +120,7 @@ plot_tb(m)
 
 ## simulate data, so we know what the true values were
 M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
-    .Dim = c(4L, 2L))
+    .Dim=c(4L, 2L))
 SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
 sim <- edma_simulate_data(n=500, M, SigmaK)
 dimnames(M) <- dimnames(sim$data[[1L]])

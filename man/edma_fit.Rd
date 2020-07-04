@@ -24,7 +24,7 @@ Estimate mean form and SigmaKstar matrix based on
 Lele (1991), Lele and Richtsmeier (1991) and Hu (2007).
 }
 \usage{
-edma_fit(x, B = 0)
+edma_fit(x, B=0)
 
 ## generics
 Meanform(object, ...)
@@ -32,10 +32,10 @@ SigmaKstar(object, ...)
 get_fm(object, ...)
 
 ## methods
-\method{print}{edma_fit_np}(x, truncate = 40, ...)
+\method{print}{edma_fit_np}(x, truncate=40, ...)
 \method{Meanform}{edma_fit}(object, ...)
 \method{SigmaKstar}{edma_fit}(object, ...)
-\method{get_fm}{edma_fit}(object, sort = FALSE, level=0.95, ...)
+\method{get_fm}{edma_fit}(object, sort=FALSE, level=0.95, ...)
 \method{confint}{edma_fit}(object, parm, level=0.95, ...)
 
 ## plot methods
@@ -47,7 +47,7 @@ plot_3d(x, ...)
 \method{plot_clust}{edma_fit}(x, ...)
 
 ## distance manipulation
-\method{as.dist}{edma_fit}(m, diag = FALSE, upper = FALSE)
+\method{as.dist}{edma_fit}(m, diag=FALSE, upper=FALSE)
 \method{stack}{dist}(x, ...)
 }
 \arguments{

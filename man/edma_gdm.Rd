@@ -25,11 +25,11 @@ Lele and Richtsmeier (1992, 1995).
 \usage{
 edma_gm(a1, a2, ...)
 get_gm(object, ...)
-\method{get_gm}{edma_gm}(object, sort=FALSE, level = 0.95, ...)
+\method{get_gm}{edma_gm}(object, sort=FALSE, level=0.95, ...)
 
 edma_gdm(a1, a2, b1, b2, ...)
 get_gdm(object, ...)
-\method{get_gdm}{edma_gdm}(object, sort=FALSE, level = 0.95, ...)
+\method{get_gdm}{edma_gdm}(object, sort=FALSE, level=0.95, ...)
 
 \method{print}{edma_gm}(x, ...)
 \method{print}{edma_gdm}(x, ...)

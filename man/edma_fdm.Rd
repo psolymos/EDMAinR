@@ -36,7 +36,7 @@ get_influence(object, ...)
 \method{plot}{edma_influence}(x, ...)
 
 get_fdm(object, ...)
-\method{get_fdm}{edma_fdm}(object, sort=FALSE, level = 0.95, ...)
+\method{get_fdm}{edma_fdm}(object, sort=FALSE, level=0.95, ...)
 T_test(object, ...)
 \method{T_test}{edma_fdm}(object, ...)
 \method{confint}{edma_dm}(object, parm, level=0.95, ...)
@@ -179,7 +179,7 @@ numerator <- edma_fit(x1, B=10)
 denominator <- edma_fit(x2)
 
 fdm <- edma_fdm(numerator, denominator, B=10)
-fdm2 <- edma_fdm(numerator, denominator, B=10, ref_denom = FALSE)
+fdm2 <- edma_fdm(numerator, denominator, B=10, ref_denom=FALSE)
 fdm
 fdm2
 
