@@ -19,7 +19,6 @@ export(
 
 ## export new generics, non visual
 export(
-    "landmarks",
     "Meanform",
     "SigmaKstar",
     "SigmaK",
@@ -28,11 +27,15 @@ export(
     "get_gm",
     "get_gdm",
     "T_test",
-    "specimens",
-    "dimensions",
     "sensitivity",
     "get_influence",
-    "as.edma_data"
+    "as.edma_data",
+    "landmarks",
+    "specimens",
+    "dimensions",
+    "landmarks<-",
+    "specimens<-",
+    "dimensions<-"
 )
 
 ## export new generics for visualization
@@ -74,6 +77,9 @@ S3method("[", "edma_data")
 S3method("landmarks", "edma_data")
 S3method("specimens", "edma_data")
 S3method("dimensions", "edma_data")
+S3method("landmarks<-", "edma_data")
+S3method("specimens<-", "edma_data")
+S3method("dimensions<-", "edma_data")
 S3method("dim", "edma_data")
 S3method("dimnames", "edma_data")
 S3method("as.matrix", "edma_data")

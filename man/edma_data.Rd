@@ -4,14 +4,17 @@
 \alias{stack.edma_data}
 \alias{subset.edma_data}
 \alias{[.edma_data}
+\alias{as.edma_data}
+\alias{as.edma_data.array}
 \alias{landmarks}
 \alias{specimens}
 \alias{dimensions}
-\alias{as.edma_data}
-\alias{as.edma_data.array}
 \alias{landmarks.edma_data}
 \alias{specimens.edma_data}
 \alias{dimensions.edma_data}
+\alias{landmarks<-}
+\alias{specimens<-}
+\alias{dimensions<-}
 \alias{dim.edma_data}
 \alias{dimnames.edma_data}
 \alias{as.array.edma_data}
@@ -45,14 +48,17 @@ edma_simulate_data(n, M, SigmaK, H=NULL)
 \method{print}{edma_data}(x, truncate=40, ...)
 
 ## accessors
+\method{dim}{edma_data}(x)
+\method{dimnames}{edma_data}(x)
 landmarks(x, ...)
 dimensions(x, ...)
 specimens(x, ...)
 \method{landmarks}{edma_data}(x, ...)
 \method{dimensions}{edma_data}(x, ...)
 \method{specimens}{edma_data}(x, ...)
-\method{dimnames}{edma_data}(x)
-\method{dim}{edma_data}(x)
+landmarks(x) <- value
+dimensions(x) <- value
+specimens(x) <- value
 
 ## subsetting
 \method{subset}{edma_data}(x, subset, ...)
@@ -94,6 +100,9 @@ an EDMA data object of class 'edma_data'.
 }
 \item{which}{
 if a subset of the specimens is required.
+}
+\item{value}{
+a possible value for \code{dimnames(x)}.
 }
 \item{ask}{
 logical, if \code{TRUE}, the user is asked before each plot.
@@ -163,13 +172,16 @@ matrices describing landmark names and coordinate names.
 \code{edma_simulate_data} returns an EDMA data object of
 class 'edma_data'.
 
+The \code{dim} returns the number of landmarks (K), dimensions (D),
+and specimens (n) in a data object.
+
 \code{landmarks}, \code{dimensions}, and \code{specimens}
 are dimensions names, \code{dimnames} returns these as a list.
 Landmark names and dimensions are used to check
 if landmarks are homogeneous among objects.
-
-The \code{dim} returns the number of landmarks (K), dimensions (D),
-and specimens (n) in a data object.
+It is possible to set the dimansion names as
+\code{dimnames(x) <- value} where \code{value} is the
+new value for the name.
 
 The \code{print} method prints info about the data object.
 
@@ -197,7 +209,7 @@ with the desired dimensions or permutations. See Examples.
 
 \code{plot} and \code{plot_2d} produces a series of plots
 as a side effect, returning the data object invisibly.
-The function provides diagnostics for each specimen
+The functions provide diagnostics for each specimen
 or just the specimen selected by the \code{which} argument.
 The 2D projection is used in case of 3D landmark data.
 The convex hull of the specimens (excluding the one being
@@ -236,7 +248,8 @@ cat(l[1:10], sep="\n")
 cat(l[(length(l)-10):length(l)], sep="\n")
 
 ## plots
-plot(x) # same as plot_2d()
+plot(x[,,1:5]) # steps through all individuals
+plot_2d(x) # all speciemns in 1 plot
 plot_2d(x, which=2) # show specimen #2
 plot_ord(x)
 plot_clust(x)

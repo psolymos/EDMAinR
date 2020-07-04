@@ -123,6 +123,34 @@ dimensions.edma_data <- function(x, ...) colnames(x$data[[1L]])
 specimens <- function (x, ...) UseMethod("specimens")
 specimens.edma_data <- function(x, ...) names(x$data)
 
+`dimnames<-.edma_data` <- function(x, value) {
+    names(x$data) <- value[[3L]]
+    for (i in seq_along(x$data))
+        dimnames(x$data[[i]]) <- value[1:2]
+    x
+}
+`landmarks<-` <- function (x, value) UseMethod("landmarks<-")
+`dimensions<-` <- function (x, value) UseMethod("dimensions<-")
+`specimens<-` <- function (x, value) UseMethod("specimens<-")
+`landmarks<-.edma_data` <- function(x, value) {
+    dn <- dimnames(x)
+    dn[[1L]] <- value
+    dimnames(x) <- dn
+    x
+}
+`dimensions<-.edma_data` <- function(x, value) {
+    dn <- dimnames(x)
+    dn[[2L]] <- value
+    dimnames(x) <- dn
+    x
+}
+`specimens<-.edma_data` <- function(x, value) {
+    dn <- dimnames(x)
+    dn[[3L]] <- value
+    dimnames(x) <- dn
+    x
+}
+
 
 ## coercion methods
 as.matrix.edma_data <- function(x, ...) stack(x, ...)

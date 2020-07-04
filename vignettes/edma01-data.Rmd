@@ -16,12 +16,12 @@ knitr::opts_chunk$set(
 set.seed(429)
 ```
 
-## Introduction
+# Introduction
 
 **EDMAinR** is an R package for Euclidean Distance Matrix Analysis (EDMA).
 EDMA is a coordinate‐free approach for comparing biological shapes using landmark data.
 
-We can install the package from GitHub as:
+We can install the package from GitHub as with the help of the **remotes** R package:
 
 ```{r install,eval=FALSE}
 if (!require(EDMAinR)) {
@@ -31,15 +31,15 @@ if (!require(EDMAinR)) {
 }
 ```
 
-We can now load the package:
+We can now load the **EDMAinR** package:
 
 ```{r load}
 library(EDMAinR)
 ```
 
-## Landmark data
+# Landmark data
 
-### Reading data from xyz files
+## Reading data from xyz files
 
 Use the `read_xyz` function to read 2D or 3D landmark data from `*.xyz` files.
 First we specify the paths to two xyz files:
@@ -71,7 +71,10 @@ x <- read_xyz(file)
 x
 ```
 
-### The EDMA data format
+> *Note*: find more information [below](#turning-3d-arrays-into-edma-data-objects) 
+> about reading in other morphometrics file formats.
+
+## The EDMA data format
 
 The printout of `x` told us the most important facts about the data:
 the header information and the dimensions.
@@ -81,15 +84,17 @@ elements:
 
 - `$name` is the data set name (header information from
 the `.xyz` file), 
-- `$data` is a list of $n$ matrices (the list can be named if speciemen information is present), each matrix is of dimension $K \times D$, dimension names for the matrices describing landmark names and coordinate names.
+- `$data` is a list of $n$ matrices (the list can be named if speciemen information is present), each matrix is of dimension $K \times D$, dimension names for the matrices describing landmark names (rows) and coordinate names (columns).
 
-### EDMA data accessor functions
+## EDMA data accessor functions
 
 The following methods are used to retrieve useful information
 contained in EDMA data sets.
 
 Access dimensions (landmarks, $K$; dimensions, $D$; replicates, $n$) 
-and dimension names (`landmarks` returns the landmark labels):
+and dimension names. `landmarks`, `dimansions`, and `specimens` return 
+the landmark, dimension, and specimen names, respectively; 
+`dimnames` returns all three in a list:
 
 ```{r datamethods}
 dim(x) # dimensions
@@ -104,7 +109,7 @@ we use `L` to denote landmarks and `S` to denote specimens. These are
 prepended to numeric landmark and specimen IDs. The coordinate dimensions
 are `"X"`, `"Y"`, and optionally `"Z"` for 3D landmark data. 
 
-### Selecting subsets of EDMA data objects
+## Selecting subsets of EDMA data objects
 
 Subsetting the data comes handy sometimes. The most general way to subset
 the data sets is via the `[` function, the 3 indices inside the brackets
@@ -122,7 +127,7 @@ x[1:10, , 1:20] # combine multiple indices
 Read more about how to use square brackets to extract
 parts of the data object: `?Extract` (see section 'Matrices and arrays').
 
-### Coercing EDMA data into other formats
+## Coercing EDMA data into other formats
 
 The data (`$data`) format inside the object `x` is list of the $K \times D$
 matrices for each individual. Sometimes it is handy to stack these
@@ -143,7 +148,7 @@ Alternatively, we can store the data as an array
 str(as.array(x))
 ```
 
-### Turning 3D arrays into EDMA data objects
+## Turning 3D arrays into EDMA data objects
 
 The `as.edma_data` function turns a 3D array to an EDMA data object.
 This is useful when handling 3D array objects returned by many
@@ -159,7 +164,7 @@ xnew$name <- "This is the same data as before"
 xnew
 ```
 
-## Visual inspection of the data
+# Visual inspection of the data
 
 The `plot_2d` function shows the convex hulls or confidence ellipses 
 for the landmarks based on all the specimens.
@@ -178,7 +183,7 @@ It is also possible to use 95% confidence ellipses:
 plot_2d(x, hull=FALSE)
 ```
 
-### Spotting data errors
+## Spotting data errors
 
 Data sets can be checked using the `plot` function.
 By default, this function steps through all the specimens to check for any surprises.
@@ -206,7 +211,7 @@ xwrong$data[[1]][1,1:2] <- c(2, 2)
 plot(xwrong, which=1)
 ```
 
-### Ordination and clustering
+## Ordination and clustering
 
 The ordination plot shows the specimens based on multidimensional scaling
 using pairwise distances between specimens.
