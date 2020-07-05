@@ -331,7 +331,10 @@ cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
         xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
         xyz <- xyz[,1:2]
     }
-    V <- sqrt(diag(SigmaKstar(proto)))
+    V <- diag(SigmaKstar(proto))
+    if (any(V < 0)) # diag can have negative values
+      V <- V + abs(min(V))
+    V <- sqrt(V)
     V <- V - min(V)
     V <- V / max(V)
     V <- 0.25 + 1.75 * V
