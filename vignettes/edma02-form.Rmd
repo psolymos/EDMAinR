@@ -24,7 +24,7 @@ the mean form.
 
 Let's load the package and read in an example data set:
 
-```{r fit}
+```{r}
 library(EDMAinR)
 file <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz", 
     package="EDMAinR")
@@ -39,7 +39,7 @@ The `B` argument is the number of bootstrap replicates to take
 We chose a small number here, but `B` is ideally much higher
 (i.e. `B=99`):
 
-```{r fit}
+```{r}
 fit <- edma_fit(x, B=9)
 fit
 ```
@@ -48,7 +48,7 @@ The nonparametric estimator gives the mean form matrix ($\hat{M}$)
 and $\hat{\Sigma}_{K}^\ast$. We can extract these from the fitted
 model object (`fit`) using the `Meanform` and `SigmaKstar` functions:
 
-```{r fit}
+```{r}
 str(Meanform(fit))
 str(SigmaKstar(fit))
 ```
