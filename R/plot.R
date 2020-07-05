@@ -324,20 +324,28 @@ plot_ci.edma_gdm <- function(x, ...)
 
 ## 2D and 3D plots
 
-.plot_d_data <- function(proto, d3=TRUE, cex=NA, ...) {
+.plot_d_data <- function(proto, d3=TRUE,
+cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
     xyz <- Meanform(proto)
     if (!d3) {
         xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
-        xyz[,3L] <- 0
+        xyz <- xyz[,1:2]
     }
     V <- sqrt(diag(SigmaKstar(proto)))
-    V <- 0.2 + 0.8 * V/max(V)
-    if (!is.na(cex)) {
+    V <- V - min(V)
+    V <- V / max(V)
+    V <- 0.25 + 1.75 * V
+    if (!is.null(cex)) {
         if (length(cex) > 1L) {
             V <- cex
         } else {
             V <- V * cex
         }
+    }
+    if (is.null(col)) {
+        pal <- hcl.colors(9, getOption("edma_options")$diverging, alpha=alpha)[5:9]
+        coli <- cut(V, length(pal)-1L, labels=FALSE, include.lowest=TRUE)
+        col <- pal[coli]
     }
     if (d3) {
         requireNamespace("rgl")
@@ -345,12 +353,12 @@ plot_ci.edma_gdm <- function(x, ...)
             type="s",
             ann=FALSE, axes=FALSE,
             xlab="", ylab="", zlab="",
-            radius=V*diff(range(xyz))/50, ...)
+            radius=V*diff(range(xyz))/50, col=col, ...)
     } else {
         plot(xyz[,1:2], type="p", axes=FALSE, ann=FALSE,
-            cex=V, ...)
+            cex=V, pch=pch, col=col, ...)
     }
-    invisible(proto)
+    invisible(xyz)
 }
 plot_2d.edma_fit <- function(x, ...) .plot_d_data(x, d3=FALSE, ...)
 plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
