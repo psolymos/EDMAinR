@@ -116,7 +116,7 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
 
 ## ordination and cluster plots
 
-.plot_specimens_ord1 <- function (x, cex.label=0.6, plot=TRUE, ...) {
+.plot_specimens_ord1 <- function (x, cex.label=0.6, col=1, plot=TRUE, ...) {
     d <- as.dist(.get_data(x))
     mds <- cmdscale(sqrt(d), k=2, add=TRUE)
     if (plot) {
@@ -126,9 +126,10 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
         ylim <- ylim + c(-0.1, 0.1) * diff(ylim)
         plot(mds$points, type="p",
             ylim=ylim, xlim=xlim,
-            xlab="Axis 1", ylab="Axis 2", main="Ordination", ...)
-        text(mds$points, labels=specimens(x), cex=cex.label, pos=1)
+            xlab="Axis 1", ylab="Axis 2", main="Ordination", col=col, ...)
+        text(mds$points, labels=specimens(x), cex=cex.label, pos=1, col=col)
     }
+    colnames(mds$points) <- c("Axis 1", "Axis 2")
     invisible(mds)
 }
 

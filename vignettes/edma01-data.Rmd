@@ -84,16 +84,16 @@ elements:
 
 - `$name` is the data set name (header information from
 the `.xyz` file), 
-- `$data` is a list of $n$ matrices (the list can be named if speciemen information is present), each matrix is of dimension $K \times D$, dimension names for the matrices describing landmark names (rows) and coordinate names (columns).
+- `$data` is a list of $n$ matrices (the list can be named if specimen information is present), each matrix is of dimension $K \times D$, dimension names for the matrices describing landmark names (rows) and coordinate names (columns).
 
-## EDMA data accessor functions
+## EDMA data dimensions and names
 
 The following methods are used to retrieve useful information
-contained in EDMA data sets.
+from EDMA data objects.
 
-Access dimensions (landmarks, $K$; dimensions, $D$; replicates, $n$) 
-and dimension names. `landmarks`, `dimansions`, and `specimens` return 
-the landmark, dimension, and specimen names, respectively; 
+Use `dim` to access dimensions (landmarks, $K$; dimensions, $D$; replicates, $n$). 
+`landmarks`, `dimansions`, and `specimens` return 
+the landmark, dimension, and specimen names, respectively,
 `dimnames` returns all three in a list:
 
 ```{r datamethods}
@@ -109,28 +109,72 @@ we use `L` to denote landmarks and `S` to denote specimens. These are
 prepended to numeric landmark and specimen IDs. The coordinate dimensions
 are `"X"`, `"Y"`, and optionally `"Z"` for 3D landmark data. 
 
+It is also possible to manipulate dimension names.
+This is useful when different files have the same landmarks
+with slight changes (lower/upper case differences, etc.):
+
+
+```{r datamethods2}
+lm <- landmarks(x) # copy original names
+landmarks(x) <- toupper(lm)
+landmarks(x) # new landmark names
+landmarks(x) <- lm # reset names to original
+```
+
+
 ## Selecting subsets of EDMA data objects
 
-Subsetting the data comes handy sometimes. The most general way to subset
-the data sets is via the `[` function, the 3 indices inside the brackets
-refer to the landmarks, dimensions, and specimens.
+Subsetting the data comes handy sometimes, i.e. we might want to
+select only a few of the landmarks to get a simplified picture
+of the relationships, or because different input files
+list different landmarks and we want to select the ones that are
+present in both data set.
+Or we need to filter some specimens, because we want
+to select only specimens of certain ages, gender, etc.
+Often we need to draw a random sample of the specimens (for
+randomization and bootstrap).
+
+The most general way to subset
+the data sets is *via* the `[` function (i.e. `x[i, j, k]`), 
+the 3 indices inside the brackets
+refer to the landmarks (`i`), dimensions (`j`), and specimens (`k`).
 Imagine the data as a 3D data cube and the square brackets allow us to
 slice the cube from 3 different directions.
 
 ```{r datasubset}
 x[1:10, , ]  # select the 1st 10 landmarks
 x[ , 1:2, ]  # select 2 of the 2 dimensions
-x[ , , 1:20] # select the 1st 20 individuals
+x[ , , 11:20] # select individuals from 11 to 20
 x[1:10, , 1:20] # combine multiple indices
 ```
 
 Read more about how to use square brackets to extract
 parts of the data object: `?Extract` (see section 'Matrices and arrays').
+The most important thing to keep in mind is that the empty
+index (e.g. `x[,,]`) means 'select everything'.
 
-## Coercing EDMA data into other formats
+We can take subsets using:
+
+- numeric indices (like as we saw above),
+- logical indices,
+- and by character names.
+
+Logical indices might be handy if, e.g., we have ancillary data about
+the specimens. If we have `age` of each specimens (values in ages matching
+the order of specimens in the EDMA data object),
+we can use it as `x[,,age < 1]`.
+
+Character based subsets are useful if we want to select homologous
+landmarks for multiple objects, or we want to make sure
+that the landmarks' order is identical among multiple objects.
+The same `[` function can be used not only to take a subset
+but also to reorder landmarks or specimens. Character indices
+are most suitable for this purpose.
+
+## Coercing EDMA data into other object types
 
 The data (`$data`) format inside the object `x` is list of the $K \times D$
-matrices for each individual. Sometimes it is handy to stack these
+matrices, one for each individual. Sometimes it is handy to stack these
 matrices and create a rectangular data (either as a matrix, or data frame,
 with $n \times K$ rows and $D$ columns):
 
@@ -140,6 +184,8 @@ str(as.matrix(x))
 
 > *Note*: we are using `str` to show the structure of these objects,
 > this is not necessary when exploring the data.
+> `str` here tells us the dimensions (`r nrow(as.matrix(x))` rows and
+> `r ncol(as.matrix(x))` columns, the first few values, and the dimension names).
 
 Alternatively, we can store the data as an array
 ($K \times D \times n$):
@@ -153,7 +199,7 @@ str(as.array(x))
 The `as.edma_data` function turns a 3D array to an EDMA data object.
 This is useful when handling 3D array objects returned by many
 functions of the [**geomorph**](https://cran.r-project.org/package=geomorph) 
-package (i.e. after reding Morphologika, NTS, TPS files).
+package (i.e. after reading Morphologika, NTS, TPS files).
 
 The header information gets lost in this way, but we can set it quite easily:
 
@@ -164,12 +210,15 @@ xnew$name <- "This is the same data as before"
 xnew
 ```
 
+> *Note*: the **geomorph** package needs to be installed separately
+> using `install.packages("geomorph")`.
+
 # Visual inspection of the data
 
 The `plot_2d` function shows the convex hulls or confidence ellipses 
 for the landmarks based on all the specimens.
 The plot is showing the first two axes of multidimensional scaling 
-based on the form matrices (FM; pairwise Eiclidean distances):
+based on the form matrices (FM; pairwise Euclidean distances):
 
 ```{r allspec}
 plot_2d(x)
@@ -187,12 +236,14 @@ plot_2d(x, hull=FALSE)
 
 Data sets can be checked using the `plot` function.
 By default, this function steps through all the specimens to check for any surprises.
-The blue areas shows the convex hull for the landmark
+The blue areas show the convex hull for the landmark
 leaving a single specimen out, while red dots show the actual specimen.
+It is a sign of problem when a dot for a specimen is located far outside of 
+the convex hull.
 
 Using the `which` argument we can specify which specimen we want to
 display (it is not possible to select multiple specimen, use the `[` method
-to take a subset of the data that is being plotted):
+to take a subset of the data that and plot it with `plot_2d`):
 
 ```{r onespec}
 plot(x, which=1)
@@ -218,23 +269,24 @@ using pairwise distances between specimens.
 These distances are based on the T-statistic and can be calculated as
 `as.dist(x)`. The calculation involves the following steps:
 
-- calculate Euclidean distances ($ED_{i}$) between all pairs of landmarks for specimen $i$ ($i = 1, \dots, n$)
-- calculate Euclidean distances ($ED_{j}$) between all pairs of landmarks for specimen $j$ ($j = 1, \dots, n$)
-- calculate the ratio $DM_{i} / DM_{j}$,
-- calculate the T-statistic on the log scale (so that a max/min ratio of 1, that is 0 distance, becomes log(1)=0): $d_{ij}=log(max[DM_{i} / DM_{j}] / min[DM_{i} / DM_{j}])$.
+- calculate Euclidean distances ($ED_{i}$) between all pairs of landmarks for specimen $i$ ($i = 1, \dots, n$) based on the coordinates,
+- calculate Euclidean distances ($ED_{j}$) between all pairs of landmarks for specimen $j$ ($j = 1, \dots, n$) based on the coordinates,
+- calculate the ratio $ED_{i} / ED_{j}$,
+- calculate the T-statistic on the log scale (so that a max/min ratio of 1, that is 0 distance, becomes log(1)=0): $d_{ij}=log(max[ED_{i} / ED_{j}] / min[ED_{i} / ED_{j}])$.
 
-The multidimensional scaling uses the square root transformed log-T distances to make distances more Euclidean.
+The multidimensional scaling uses the square root transformed log-T distances.
 
 The error shows up nicely in the ordination plot (colored red):
 
 ```{r fig.width=7,fig.height=5,out.width='45%',fig.show='hold'}
 plot_ord(x, col=c(2, rep(1, dim(x)[3])))
-plot_ord(xwrong, col=c(2, rep(1, dim(xwrong)[3])))
+plot_ord(xwrong, col=c("red", rep("black", dim(xwrong)[3])))
 ```
 
 The cluster dendrogram is based on the same log-T distance matrix described above.
-The agglomeration algorithm is set to the Ward's minimum variance method (`"ward.D2")
-which is using the square root of the log-T distances.
+The default agglomeration algorithm is set to the 
+Ward's minimum variance method (`"ward.D2"`)
+which is using the square root of the log-T distances too.
 
 ```{r fig.width=7,fig.height=7,out.width='45%',fig.show='hold'}
 plot_clust(x)
@@ -250,16 +302,45 @@ plot_clust(xwrong, method = "single")
 ```
 
 Both the ordination and clustering functions return the ordination/cluster
-results, so that plots can be forther customized (see `?ape::plot.phylo`):
+results, so that plots can be further customized.
+Here is an example to create a plot
 
 ```{r}
 mds <- plot_ord(x, plot=FALSE)
 str(mds)
-plot(mds$points, pch=4)
+plot(mds$points, pch=4, col="darkgreen",
+  main="Ordination diagram")
+abline(h=0, v=0, lty=2, col="grey")
+text(mds$points, labels=specimens(x), pos=1, cex=0.6, col="tan")
+```
 
+[**ggplot2**](https://ggplot2-book.org/) is a popular alternative for
+R's base graphics. Here is how to create plots with it:
+
+```{r}
+library(ggplot2)
+df <- as.data.frame(mds$points)
+p <- ggplot(data=df, aes(x=`Axis 1`, y=`Axis 2`, label=rownames(df))) +
+  geom_label() +
+  geom_vline(xintercept=0, lty=2) +
+  geom_hline(yintercept=0, lty=2)
+p
+```
+
+See `?ape::plot.phylo` for how to customize dendrograms:
+
+```{r}
 h <- plot_clust(x, plot=FALSE)
 h
 plot(h)
 plot(ape::as.phylo(h), type="cladogram", font=1, cex=0.6)
 ```
 
+[**ggdendro**](https://CRAN.R-project.org/package=ggdendro) is a package
+that can plot tree-like data structures with **ggplot2**.
+Here is an example:
+
+```{r}
+library(ggdendro)
+ggdendrogram(h, rotate = TRUE, size = 2)
+```

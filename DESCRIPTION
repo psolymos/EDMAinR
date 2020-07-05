@@ -28,5 +28,5 @@ License: GPL-2
 LazyLoad: yes
 LazyData: true
 Imports: pbapply, readxl, ape
-Suggests: knitr, rmarkdown, rgl
+Suggests: knitr, rmarkdown, rgl, ggplot2, ggdendro
 VignetteBuilder: knitr
