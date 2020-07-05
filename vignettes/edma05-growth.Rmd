@@ -1,0 +1,156 @@
+---
+title: "EDMA growth matrix"
+author: "Peter Solymos"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{EDMA growth matrix}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup,include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+set.seed(429)
+```
+
+# Introduction
+
+This tutorial explains how to calculate growth matrix based
+on 2 EDMA data objects with homologous landmarks.
+We will use data sets where landmarks were measured on specimens
+of 2 different ages:
+
+```{r}
+library(EDMAinR)
+
+file_a1 <- system.file("extdata/purplebook/cebusage1.xyz",
+    package="EDMAinR")
+a1 <- read_xyz(file_a1)
+file_a2 <- system.file("extdata/purplebook/cebusage6.xyz",
+    package="EDMAinR")
+a2 <- read_xyz(file_a2)
+a1
+a2
+```
+
+# Estimating the growth matrices
+
+We first estimate the mean forms (no bootstrap replicates are necessary).
+
+```{r}
+fit_a1 <- edma_fit(a1)
+fit_a2 <- edma_fit(a2)
+```
+
+Growth matrices ($GM$) are formed as pairwise Euclidean distances
+between landmarks from EDMA fit objects using the estimated mean forms
+from objects `a1` and `a2`.
+
+The growth matrix is calculated as the ratio of form matrices
+($FM$) from the numerator and denominator objects: $FDM(a1,a2) = FM(a2)/FM(a1)$.
+
+
+```{r}
+gm <- edma_gm(a1=fit_a1, a2=fit_a2, B=10)
+gm
+```
+
+## Global T-test
+
+The global T-test is based on the pairwise distances in the $FM$s, 
+taking the max/min ratio of the distances.
+This is then done for all the `B` replicates, which provides the null
+distribution. The $p$ value for the T-test is calculated
+as the number of replicates where the bootstrap T value was higher than 
+or equal to the observed T value, divided by `B`.
+
+`T_test` provides a summary of the test, `plot_Ttest` helps to visualize
+the null distribution (histogram) and the observed T statistic
+(vertical line):
+
+```{r fig.width=7,fig.height=5,out.width='100%'}
+T_test(gm)
+plot_Ttest(gm)
+```
+
+## Local testing
+
+The local testing is done based on the
+confidence intervals using the stacked $GM$s from the bootstrap.
+Here the distribution charactersizes the $GM$ and not the $FM$.
+The confidence level can be changed through the `level` argument.
+
+```{r}
+head(confint(gm))
+head(get_gm(gm))
+head(get_gm(gm, sort=TRUE, decreasing=TRUE))
+head(get_gm(gm, sort=TRUE, decreasing=FALSE))
+```
+
+The `plot_ci` function shows the pairwise differences and confidence intervals:
+
+```{r fig.width=7,fig.height=7,out.width='100%'}
+plot_ci(gm)
+```
+
+
+# Influential landmarks
+
+Influence is calculated similarly to $FDM$:
+
+```{r}
+get_influence(gm)
+plot(get_influence(gm))
+```
+
+# Ordination and clustering for specimens
+
+
+```{r fig.width=7,fig.height=7,out.width='100%'}
+plot_ord(gm)
+```
+
+The dendrogram leaves (speciemn labels) are also colored by groups:
+
+```{r fig.width=7,fig.height=7,out.width='100%'}
+plot_clust(gm)
+```
+
+
+# Visualizing landmarks
+
+The 2D and 3D plots produce a plot of the mean form
+from the reference object ('prototype').
+The color intensity for the landmarks (dots) is associated with the `Tdrop`
+influence value (larger the difference, the more intensive the color;
+red by default).
+Lines between the landmarks represent distances.
+We use the diverging palettes:
+<1 differences are colored blue (1st half of the palette), >1 differences 
+are colored red (2st half of the palette).
+
+```{r fig.width=7,fig.height=5,out.width='100%'}
+plot_2d(gm, cex=2)
+```
+
+
+
+```{r fig.width=7,fig.height=5,out.width='100%'}
+library(rgl)
+xyz <- plot_3d(gm)
+text3d(xyz, texts=rownames(xyz), pos=1) # this adds names
+decorate3d() # this adds the axes
+rglwidget(width = 600, height = 600, reuse = FALSE)
+```
+
+# Growth difference matrix
+
+Growth difference matrix ($GDM$) is calculated as 
+$GDM(A1,A2,B1,B2) = GM(B1,B2) / GM(A1,A2)$.
+
+To be added later: example data set needed.
+
+
