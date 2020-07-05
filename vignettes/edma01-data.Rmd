@@ -218,7 +218,7 @@ xnew
 The `plot_2d` function shows the convex hulls or confidence ellipses 
 for the landmarks based on all the specimens.
 The plot is showing the first two axes of multidimensional scaling 
-based on the form matrices (FM; pairwise Euclidean distances):
+based on the form matrices ($FM$; pairwise Euclidean distances):
 
 ```{r allspec}
 plot_2d(x)
