@@ -151,22 +151,25 @@ edma_simulate_data(n, M, SigmaK, H=NULL)
 
 ## print
 # S3 method for edma_data
-print(x, truncate = 40, ...)
+print(x, truncate=40, ...)
 
 ## accessors
-landmarks(x, ...)
-dimensions(x, ...)
-specimens(x, ...)
-# S3 method for edma_data
-landmarks(x, ...)
-# S3 method for edma_data
-dimensions(x, ...)
-# S3 method for edma_data
-specimens(x, ...)
-# S3 method for edma_data
-dimnames(x)
 # S3 method for edma_data
 dim(x)
+# S3 method for edma_data
+dimnames(x)
+landmarks(x, ...)
+dimensions(x, ...)
+specimens(x, ...)
+# S3 method for edma_data
+landmarks(x, ...)
+# S3 method for edma_data
+dimensions(x, ...)
+# S3 method for edma_data
+specimens(x, ...)
+landmarks(x) <- value
+dimensions(x) <- value
+specimens(x) <- value
 
 ## subsetting
 # S3 method for edma_data
@@ -198,7 +201,7 @@ plot_ord(x, ...)
 plot_clust(x, ...)
 # S3 method for edma_data
 plot(x, which=NULL,
-    ask = dev.interactive(), ...)
+    ask=dev.interactive(), ...)
 # S3 method for edma_data
 plot_2d(x, which=NULL, ...)
 # S3 method for edma_data
@@ -208,7 +211,7 @@ plot_clust(x, ...)
 
 ## dissimilarities
 # S3 method for edma_data
-as.dist(m, diag = FALSE, upper = FALSE)</pre>
+as.dist(m, diag=FALSE, upper=FALSE)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -225,6 +228,10 @@ see <code><a href='https://rdrr.io/r/utils/read.table.html'>read.table</a></code
     <tr>
       <th>which</th>
       <td><p>if a subset of the specimens is required.</p></td>
+    </tr>
+    <tr>
+      <th>value</th>
+      <td><p>a possible value for <code><a href='https://rdrr.io/r/base/dimnames.html'>dimnames(x)</a></code>.</p></td>
     </tr>
     <tr>
       <th>ask</th>
@@ -294,12 +301,15 @@ matrices describing landmark names and coordinate names.</p>
 
     <p><code>edma_simulate_data</code> returns an EDMA data object of
 class 'edma_data'.</p>
+<p>The <code>dim</code> returns the number of landmarks (K), dimensions (D),
+and specimens (n) in a data object.</p>
 <p><code>landmarks</code>, <code>dimensions</code>, and <code>specimens</code>
 are dimensions names, <code>dimnames</code> returns these as a list.
 Landmark names and dimensions are used to check
-if landmarks are homogeneous among objects.</p>
-<p>The <code>dim</code> returns the number of landmarks (K), dimensions (D),
-and specimens (n) in a data object.</p>
+if landmarks are homogeneous among objects.
+It is possible to set the dimansion names as
+<code>dimnames(x) &lt;- value</code> where <code>value</code> is the
+new value for the name.</p>
 <p>The <code>print</code> method prints info about the data object.</p>
 <p>The methods <code>stack</code> and <code>as.matrix</code> return a stacked
 2D array (K*n x D) with the landmark coordinates,
@@ -321,7 +331,7 @@ averaged (so that it is symmetric) and on the log scale
 with the desired dimensions or permutations. See Examples.</p>
 <p><code>plot</code> and <code>plot_2d</code> produces a series of plots
 as a side effect, returning the data object invisibly.
-The function provides diagnostics for each specimen
+The functions provide diagnostics for each specimen
 or just the specimen selected by the <code>which</code> argument.
 The 2D projection is used in case of 3D landmark data.
 The convex hull of the specimens (excluding the one being
@@ -371,7 +381,7 @@ function with Ward's clustering method).</p>
 #&gt; CZCD1_72 Scanned on 010311
 #&gt; CZCD1_73 Scanned on 010311</div><div class='input'>
 <span class='co'>## plots</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>) <span class='co'># same as plot_2d()</span></div><div class='img'><img src='edma_data-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-2.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-4.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-5.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-6.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-7.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-8.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-9.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-10.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-11.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-12.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-13.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-14.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-15.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-16.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-17.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-18.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-19.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-20.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-21.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-22.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-23.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-24.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-25.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-26.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-27.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-28.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-29.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_2d</span>(<span class='no'>x</span>, <span class='kw'>which</span><span class='kw'>=</span><span class='fl'>2</span>) <span class='co'># show specimen #2</span></div><div class='img'><img src='edma_data-30.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_ord</span>(<span class='no'>x</span>)</div><div class='img'><img src='edma_data-31.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_clust</span>(<span class='no'>x</span>)</div><div class='img'><img src='edma_data-32.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>[,,<span class='fl'>1</span>:<span class='fl'>5</span>]) <span class='co'># steps through all individuals</span></div><div class='img'><img src='edma_data-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-2.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-4.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-5.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_2d</span>(<span class='no'>x</span>) <span class='co'># all speciemns in 1 plot</span></div><div class='input'><span class='fu'>plot_2d</span>(<span class='no'>x</span>, <span class='kw'>which</span><span class='kw'>=</span><span class='fl'>2</span>) <span class='co'># show specimen #2</span></div><div class='img'><img src='edma_data-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_ord</span>(<span class='no'>x</span>)</div><div class='img'><img src='edma_data-8.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_clust</span>(<span class='no'>x</span>)</div><div class='img'><img src='edma_data-9.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## dimensions and names</span>
 <span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] 47  3 28</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt;  [1] "amsph" "bas"   "cpsh"  "ethma" "ethmp" "laalf" "lasph" "lflac" "lnsla"

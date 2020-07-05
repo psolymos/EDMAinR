@@ -155,14 +155,14 @@ partly based on Hu (2007).</p>
 <span class='fu'>SigmaK</span>(<span class='no'>object</span>, <span class='no'>...</span>)
 <span class='fu'>sensitivity</span>(<span class='no'>object</span>, <span class='no'>...</span>)
 <span class='co'># S3 method for edma_fit_p</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='kw'>truncate</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='kw'>truncate</span><span class='kw'>=</span><span class='fl'>40</span>, <span class='no'>...</span>)
 <span class='co'># S3 method for edma_fit_p</span>
 <span class='fu'>SigmaK</span>(<span class='no'>object</span>, <span class='no'>...</span>)
 <span class='co'># S3 method for edma_fit_p</span>
 <span class='fu'>sensitivity</span>(<span class='no'>object</span>, <span class='kw'>m</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='no'>...</span>)
 
 <span class='fu'>print_tb</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-<span class='fu'>plot_tb</span>(<span class='no'>x</span>, <span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>4</span>), <span class='no'>...</span>)</pre>
+<span class='fu'>plot_tb</span>(<span class='no'>x</span>, <span class='kw'>mar</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>4</span>), <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -260,7 +260,7 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
 #&gt; D . . . b</div><div class='input'><span class='fu'>plot_tb</span>(<span class='no'>m</span>)</div><div class='img'><img src='SigmaK_fit-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## simulate data, so we know what the true values were</span>
 <span class='no'>M</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>2.5</span>, <span class='fl'>7.5</span>, -<span class='fl'>2.5</span>, -<span class='fl'>2.5</span>, -<span class='fl'>7.5</span>, <span class='fl'>2.5</span>, <span class='fl'>2.5</span>, <span class='fl'>4.5</span>),
-    <span class='kw'>.Dim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4L</span>, <span class='fl'>2L</span>))
+    <span class='kw'>.Dim</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4L</span>, <span class='fl'>2L</span>))
 <span class='no'>SigmaK</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>EDMAinR</span><span class='kw ns'>:::</span><span class='fu'>.vec2mat</span>(<span class='no'>parm</span>, <span class='kw pkg'>EDMAinR</span><span class='kw ns'>:::</span><span class='fu'>.mat2fac</span>(<span class='no'>m</span>))
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_data.html'>edma_simulate_data</a></span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='no'>M</span>, <span class='no'>SigmaK</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>M</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>sim</span>$<span class='no'>data</span><span class='kw'>[[</span><span class='fl'>1L</span>]])

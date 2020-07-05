@@ -156,7 +156,7 @@ Lele and Richtsmeier (1992, 1995).</p>
 
 <span class='fu'>get_fdm</span>(<span class='no'>object</span>, <span class='no'>...</span>)
 <span class='co'># S3 method for edma_fdm</span>
-<span class='fu'>get_fdm</span>(<span class='no'>object</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>, <span class='no'>...</span>)
+<span class='fu'>get_fdm</span>(<span class='no'>object</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.95</span>, <span class='no'>...</span>)
 <span class='fu'>T_test</span>(<span class='no'>object</span>, <span class='no'>...</span>)
 <span class='co'># S3 method for edma_fdm</span>
 <span class='fu'>T_test</span>(<span class='no'>object</span>, <span class='no'>...</span>)
@@ -307,7 +307,7 @@ American Journal of Physical Anthropology 98:73--86.
 <span class='no'>denominator</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>x2</span>)
 
 <span class='no'>fdm</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_fdm</span>(<span class='no'>numerator</span>, <span class='no'>denominator</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
-<span class='no'>fdm2</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_fdm</span>(<span class='no'>numerator</span>, <span class='no'>denominator</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>ref_denom</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='no'>fdm2</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_fdm</span>(<span class='no'>numerator</span>, <span class='no'>denominator</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>ref_denom</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
 <span class='no'>fdm</span></div><div class='output co'>#&gt; EDMA form difference matrix
 #&gt; Call: edma_fdm(numerator = numerator, denominator = denominator, B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
