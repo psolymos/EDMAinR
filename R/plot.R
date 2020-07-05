@@ -568,7 +568,7 @@ plot_tb <- function(x, mar=c(1,1,1,4), ...) {
     op <- par(mar=mar)
     on.exit(par(op))
     #lg <- hcl.colors(3, getOption("edma_options")$diverging)[2L]
-    lg <- edma_colors(3, "qualitative")[2L]
+    lg <- edma_colors(3, "diverging")[2L]
     plot(0, type="n", ann=FALSE, axes=FALSE, asp=1,
         xlim=c(0, m+1), ylim=c(m+1, 0))
     polygon(

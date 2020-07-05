@@ -92,7 +92,7 @@ text(xy, labels=rownames(xy), pos=1)
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 library(rgl)
-xyz <- plot_3d(fit, aplha=0.5)
+xyz <- plot_3d(fit)
 text3d(xyz, texts=rownames(xyz), pos=1) # this adds names
 decorate3d() # this adds the axes
 rglwidget(width = 600, height = 600, reuse = FALSE)
@@ -110,6 +110,11 @@ col <- rainbow(nrow(xy))
 plot_2d(fit, col=col, cex=2)
 ```
 
+```{r fig.width=7,fig.height=5,out.width='100%'}
+plot_3d(fit, col=col)
+rglwidget(width = 600, height = 600, reuse = FALSE)
+```
+
 An easier way, however, is to provide a color palette
 from the choices listed on the help page of the function
 `?hcl.colors`. The available diverging color palettes are:
@@ -125,22 +130,10 @@ The **EDMAinR** default palettes are stored as 'options'.
 getOption("edma_options")
 ```
 
-The `r getOption("edma_options")$diverging` diverging palette
-produces these colors:
+The default palettes produces these colors:
 
-```{r echo=FALSE,fig.width=4,fig.height=0.2,out.width='500%'}
-f <- function(pal) {
-    op <- par(mar=c(0,0,0,0))
-    on.exit(par(op))
-    n <- 9
-    col <- hcl.colors(n, pal)
-    plot(0, ann=FALSE, axes=FALSE, ylim=c(0,1), xlim=c(0, n))
-    for (i in seq_len(n))
-      polygon(c(i-1, i-1, i, i), c(0, 1, 1, 0),
-              border=col[i], col=col[i])
-    invisible(NULL)
-}
-f(getOption("edma_options")$diverging)
+```{r fig.width=4,fig.height=2,out.width='50%'}
+plot_edma_colors(101)
 ```
 
 Here is how to change the default palette:
@@ -148,18 +141,23 @@ Here is how to change the default palette:
 ```{r}
 op <- options("edma_options" = list(
     diverging = "Green-Orange",
-    qualitative = "Set 2"))
+    qualitative = "Dark 2"))
 op
 ```
 
-This produces the following `r getOption("edma_options")$diverging` palette:
+This produces the following palettes:
 
-```{r echo=FALSE,fig.width=4,fig.height=0.2,out.width='500%'}
-f(getOption("edma_options")$diverging)
+```{r echo=FALSE,fig.width=4,fig.height=2,out.width='50%'}
+plot_edma_colors(101)
 ```
 
-```{r fig.width=5,fig.height=3,out.width='60%'}
+```{r fig.width=7,fig.height=5,out.width='60%'}
 plot_2d(fit, cex=2)
+```
+
+```{r fig.width=7,fig.height=5,out.width='100%'}
+plot_3d(fit)
+rglwidget(width = 600, height = 600, reuse = FALSE)
 ```
 
 > *Note*: we are only using the 'high' end of the palette
