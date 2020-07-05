@@ -68,6 +68,14 @@ head(get_fm(fit, sort=TRUE, decreasing=TRUE))
 head(get_fm(fit, sort=TRUE, decreasing=FALSE))
 ```
 
+The columns `row` and `col` refer to the landmark pairs.
+`dist` gives the Euclidean distance between the mean form corrdinates
+for the two landmarks. `lower` and `upper` indicates
+the 95% confidence limits based on the bootstrap distribution
+of the pairwise distances (from `B` replicates).
+The confidence `level` can be changed as
+`get_fm(fit, level=0.9)`.
+
 # Visualizing the mean form
 
 The 2D plot gives the projection of the mean form
