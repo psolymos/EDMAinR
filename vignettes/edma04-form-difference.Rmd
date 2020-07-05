@@ -16,17 +16,12 @@ knitr::opts_chunk$set(
 set.seed(429)
 ```
 
-Form difference (FDM) is calculated as the ratio of form matrices
-(FM) from the numerator and denominator objects following
-Lele and Richtsmeier (1992, 1995): FDM(A,B) = FM(B)/FM(A).
-Form matrices are formed as pairwise Euclidean distances
-between landmarks from EDMA fit objects using the estimated mean forms.
+# Introduction
 
-Bootstrap distribution is based on fixing the
-reference FM and taking the ration between the reference FM
-and the bootstrap FMs from the other object.
-The `ref_denom` argument can be used to control which object
-is the reference:
+This tutorial explains how to calculate form difference based
+on 2 EDMA data objects with homologous landmarks.
+We will use 2 data sets: one with and the other without the
+mutation responsible for Crouzon syndrom.
 
 ```{r}
 library(EDMAinR)
@@ -38,24 +33,61 @@ x1 <- read_xyz(file1)
 file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz",
     package="EDMAinR")
 x2 <- read_xyz(file2)
+```
 
+# Estimating the form matrices
+
+We first estimate the mean forms (no bootstrap replicates are necessary).
+
+```{r}
 numerator <- edma_fit(x1)
 denominator <- edma_fit(x2)
+```
 
+Form matrices ($FM$) are formed as pairwise Euclidean distances
+between landmarks from EDMA fit objects using the estimated mean forms
+from objects $A$ and $B$.
+
+# Form difference
+
+Form difference ($FDM$) is calculated as the ratio of form matrices
+($FM$) from the numerator and denominator objects following
+Lele and Richtsmeier (1992, 1995): $FDM(A,B) = FM(B)/FM(A)$.
+
+Bootstrap distribution is based on fixing the
+reference FM and taking the ratio between the reference $FM$
+and the bootstrap $FM$s from the other object.
+The `ref_denom` argument can be used to control which object
+is the reference (it is the denominator by default),
+`B` is the number of replicates drawn from this distribution:
+
+```{r}
 fdm <- edma_fdm(numerator, denominator, B=25)
 fdm
 ```
 
-Here is how to do the global T-test: the T-statistic is based on the pairwise distanced in the FM,
-taking the max/min.
+## Global T-test
+
+Here is how to do the global T-test: the T-statistic is based on the pairwise distances in the $FM$s, taking the max/min ratio of the distances.
+This is then done for all the `B` replicates, which provides the null
+distribution. The $p$ value for the T-test is calculated
+and the number of cases when the bootstrap T value was higher than the
+observed T value.
+
+`T_test` provides a summary of the test, `plot_Ttest` helps to visualize
+the null distribution and the observed T statistic:
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 T_test(fdm)
 plot_Ttest(fdm)
 ```
 
-The local CI base test is done via the stacked FDM 
-and the confidence intervals (landmark labels get really busy):
+## Local testing
+
+The local testing is done based on the
+confidence intervals using the stacked $FDM$s from the bootstrap
+(output is similar to the output of the `get_fm` function).
+The confidence level can be changed through the `level` argument:
 
 ```{r}
 head(get_fdm(fdm))
@@ -63,19 +95,48 @@ head(get_fdm(fdm, sort=TRUE, decreasing=TRUE))
 head(get_fdm(fdm, sort=TRUE, decreasing=FALSE))
 ```
 
+Differences below or above the confidence limits
+indicate distances that significantly deviate from the bootstrap
+based random expectation, and thus are related to landmarks
+that drive tha differences. Inspecting the highest and lowest
+differences (using `sort`) can help revealing these landmarks.
+
+The `plot_ci` function shows the pairwise differences and confidence intervals.
+The x-axis label shows the landmark pairs, and gets really busy.
+Use the `xshow=FALSE` argument to remove labels.
+
 ```{r fig.width=7,fig.height=7,out.width='100%'}
-plot_ci(fdm)
+plot_ci(fdm, xshow=FALSE)
 ```
+
+# Influential landmarks
 
 Influential landmarks are identified by leaving one landmark out,
 then comparing the T-statistic with the value based on all the
 landmarks. The existing bootstrap distribution of
-the mean form is used (i.e. no re-estimation of the mean form):
+the mean form is used (i.e. no re-estimation of the mean form).
+The most influential landmark is the one with the largest drop in T value.
+
+If we remove, e.g., a non-influential landmark, we expect the T value not to 
+change a lot, because T value is driven by the distances associated with the
+influential landmarks. However, if we remove and influential landmark, and 
+there are no other influential landmarks, we expect the T value to drop and 
+not be significant any more.
+`Tdrop` is the T value after leaving out one landmark.
+
+```{r}
+infl <- get_influence(fdm)
+infl[order(infl$Tdrop),]
+```
+
+The `plot` function shows the landmarks ordered by `Tdrop`
+with the influential landmarks on the left side of the plot:
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
-head(infl <- get_influence(fdm))
 plot(infl)
 ```
+
+# Ordination and clustering
 
 The ordination and cluster dendrogram shows the two sets
 of specimens from the 2 objects:
