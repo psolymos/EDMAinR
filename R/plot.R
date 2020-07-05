@@ -424,8 +424,10 @@ plot_ci.edma_gdm <- function(x, ...)
 cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
     xyz <- Meanform(proto)
     if (!d3) {
-        xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
-        xyz <- xyz[,1:2]
+        if (ncol(xyz) > 2L) {
+            xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
+            xyz <- xyz[,1:2]
+        }
     }
     V <- diag(SigmaKstar(proto))
     if (any(V < 0)) # diag can have negative values

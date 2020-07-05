@@ -112,7 +112,7 @@ for the distances based on bootstrap and the \code{confint} method.
 2D projection is used in case of 3D landmark data based on
 metric multidimensional scaling.
 \code{plot_3d} use the {rgl} package to make a 3D plot.
-The size of the dots corresponds to
+The sizes of the dots correspond to
 square root of the SigmaKstar diagonal elements.
 
 The \code{plot_ord} and \code{plot_clust}

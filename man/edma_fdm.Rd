@@ -102,7 +102,7 @@ reference FM and taking the ration between the reference FM
 and the bootstrap FMs from the other object.
 
 The T-statistic is based on the pairwise distanced in the FM,
-taking the max/min. Confidence intervals for local testing
+taking the max/min of the distances. Confidence intervals for local testing
 (via \code{confint}, \code{get_fdm}, and \code{plot_ci})
 and T-test for global testing
 (via \code{T_test}, and \code{plot_Ttest})
