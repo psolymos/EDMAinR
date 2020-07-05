@@ -7,6 +7,94 @@ plot_clust <- function (x,...) UseMethod("plot_clust")
 plot_Ttest <- function (x,...) UseMethod("plot_Ttest")
 plot_ci <- function (x,...) UseMethod("plot_ci")
 
+## color options
+
+edma_colors <- function(n,
+type=c("diverging", "sequential", "qualitative"), alpha=1, rev=FALSE) {
+    if (n < 1L)
+        stop("Number of colors must be > 0")
+    type <- match.arg(type)
+    op <- getOption("edma_options")
+    ## avoid surprises
+    opq <- op$qualitative
+    if (is.null(opq) || any(is.na(opq)))
+        opq <- "Set 2"
+    opd <- op$diverging
+    if (is.null(opd) || any(is.na(opd)))
+        opd <- "Blue-Red"
+    ## qualitative
+    if (type == "qualitative") {
+        pals <- hcl.pals("qualitative")
+        if (length(opq) == 1L && opq %in% pals) {
+            col <- hcl.colors(n, opq)
+        } else {
+            cols <- opq
+            if (n > length(cols))
+                cols <- rep(cols, n)
+            col <- cols[seq_len(n)]
+        }
+    } else {
+        palsd <- hcl.pals("diverging")
+        palss <- hcl.pals("sequential")
+        if (type == "diverging") {
+            if (length(opd) == 1L && opd %in% palsd) {
+                col <- hcl.colors(n, opd)
+            } else {
+                col <- colorRampPalette(opd)(n)
+            }
+        }
+        if (type == "sequential") {
+            if (length(opd) == 1L && opd %in% palss) {
+                col <- hcl.colors(n, opd)
+            } else {
+                if (length(opd) == 1L && opd %in% palsd) {
+                    m <- n+(n-1L)
+                    col <- hcl.colors(m, opd)[n:m]
+                } else {
+                    col <- colorRampPalette(opd)(n)
+                }
+            }
+        }
+    }
+    ## alpha
+    if (is.null(alpha) || any(is.na(alpha)))
+        alpha <- 1
+    alpha <- max(0, min(1, alpha[1L]))
+    rgba <- col2rgb(col, alpha=TRUE)
+    rgba["alpha",] <- round(alpha * 255)
+    col <- rgb(rgba["red",], rgba["green",], rgba["blue",],
+        rgba["alpha",], maxColorValue=255)
+    ## reverse
+    if (rev)
+        rev(col) else col
+}
+
+plot_edma_colors <- function(n=9, maxq=9) {
+    op <- par(mar=c(0,0,0,0)+0.1)
+    on.exit(par(op))
+    cold <- edma_colors(n, "diverging")
+    cols <- edma_colors(n, "sequential")
+    nq <- min(n, maxq)
+    colq <- edma_colors(nq, "qualitative")
+    plot(0, ann=FALSE, axes=FALSE, ylim=c(3,0), xlim=c(0, n), type="n")
+    for (i in seq_len(n)) {
+        polygon(c(i-1, i-1, i, i), c(0.1, 0.9, 0.9, 0.1),
+                border=cold[i], col=cold[i])
+        polygon(c(i-1, i-1, i, i), c(1.1, 1.9, 1.9, 1.1),
+                border=cols[i], col=cols[i])
+    }
+    u <- n/nq
+    for (i in seq_len(nq)) {
+        polygon(c((i-1)*u, (i-1)*u, i*u, i*u),
+                c(2.1, 2.9, 2.9, 2.1),
+                border=colq[i], col=colq[i])
+    }
+    text(n/2, 0.5, "diverging")
+    text(n/2, 1.5, "sequential")
+    text(n/2, 2.5, "qualitative")
+    invisible(list(diverging=cold, sequential=cols, qualitative=colq))
+}
+
 ## diagnostics plot for xyz objects
 
 .data_ellipse <- function (x, y, level=0.95, segments = 51, ...) {
@@ -33,7 +121,8 @@ plot_ci <- function (x,...) UseMethod("plot_ci")
 ## rowMeans(sapply(fm[-which], ...) gives error
 .plot_edma_data <- function(x, which=NULL,
 col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
-    c3 <- hcl.colors(3, getOption("edma_options")$diverging)
+    #c3 <- hcl.colors(3, getOption("edma_options")$diverging)
+    c3 <- edma_colors(3, "diverging")
     if (is.na(col_chull))
         col_chull <- c3[1L]
     if (is.na(col_spec))
@@ -69,10 +158,10 @@ col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
         ll <- t(sapply(pci[ii], function(z) z[j,]))
         if (hull) {
             polygon(ll[chull(ll),],
-                col=paste0(col_chull, "44"), border=col_chull)
+                col=paste0(substr(col_chull, 1, 7), "44"), border=col_chull)
         } else {
             polygon(.data_ellipse(ll, level=level, segments=segments),
-                col=paste0(col_chull, "44"), border=col_chull)
+                col=paste0(substr(col_chull, 1, 7), "44"), border=col_chull)
         }
     }
     if (!is.null(which)) {
@@ -148,7 +237,8 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
     xx <- combine_data(
         .get_data(x$numerator),
         .get_data(x$denominator))
-    c2 <- hcl.colors(2, getOption("edma_options")$qualitative)
+    #c2 <- hcl.colors(2, getOption("edma_options")$qualitative)
+    c2 <- edma_colors(2, "qualitative")
     g <- c2[xx$groups]
     d <- as.dist(xx)
     mds <- cmdscale(sqrt(d), k=2, add=TRUE)
@@ -172,7 +262,8 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
     xx <- combine_data(
         .get_data(x$numerator),
         .get_data(x$denominator))
-    c2 <- hcl.colors(2, getOption("edma_options")$qualitative)
+    #c2 <- hcl.colors(2, getOption("edma_options")$qualitative)
+    c2 <- edma_colors(2, "qualitative")
     g <- c2[xx$groups]
     d <- as.dist(xx)
     h <- hclust(d, method=method)
@@ -189,7 +280,8 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
         .get_data(x$a2),
         .get_data(x$b1),
         .get_data(x$b2))
-    c4 <- hcl.colors(4, getOption("edma_options")$qualitative)
+    #c4 <- hcl.colors(4, getOption("edma_options")$qualitative)
+    c4 <- edma_colors(4, "qualitative")
     g <- c4[xx$groups]
     d <- as.dist(xx)
     mds <- cmdscale(sqrt(d), k=2, add=TRUE)
@@ -215,7 +307,8 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
         .get_data(x$a2),
         .get_data(x$b1),
         .get_data(x$b2))
-    c4 <- hcl.colors(4, getOption("edma_options")$qualitative)
+    #c4 <- hcl.colors(4, getOption("edma_options")$qualitative)
+    c4 <- edma_colors(4, "qualitative")
     g <- c4[xx$groups]
     d <- as.dist(xx)
     h <- hclust(d, method=method)
@@ -239,7 +332,8 @@ plot_clust.edma_gdm <- function(x, ...) .plot_specimens_clust4(x, ...)
 ## global T-test plots
 
 plot_Ttest.edma_dm <- function(x, ...) {
-    c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    #c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    c5 <- edma_colors(5, "diverging")
     z <- .T_test(x)
     hist(z$Tvals, xlab="T-values", main="",
         col=c5[2L], border=c5[1L], ...)
@@ -257,7 +351,8 @@ plot_Ttest.edma_dm <- function(x, ...) {
     r <- range(x$Tdrop, x$lower, x$upper, 1, na.rm=TRUE)
     op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
-    c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    #c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    c5 <- edma_colors(5, "diverging")
     plot(xv, x$Tdrop, ylim=r, type="n",
         xlab=xlab, ylab=ylab, axes=FALSE)
     polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), border=NA,
@@ -294,7 +389,8 @@ plot.edma_influence <- function(x, ...) {
     r <- range(x$dist, x$lower, x$upper, 1, na.rm=TRUE)
     op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
-    c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    #c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    c5 <- edma_colors(5, "diverging")
     plot(xv, x$dist, ylim=r, type="n",
         xlab=xlab, ylab=ylab, axes=FALSE)
     polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), border=NA,
@@ -346,7 +442,8 @@ cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
         }
     }
     if (is.null(col)) {
-        pal <- hcl.colors(9, getOption("edma_options")$diverging, alpha=alpha)[5:9]
+        #pal <- hcl.colors(9, getOption("edma_options")$diverging, alpha=alpha)[5:9]
+        pal <- edma_colors(5, "sequential", alpha=alpha)
         coli <- cut(V, length(pal)-1L, labels=FALSE, include.lowest=TRUE)
         if (length(unique(coli)) < 2L)
           coli[] <- 1L
@@ -395,10 +492,12 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
     v <- (Max-1) * c(0, 0.1, 0.25, 0.5, 1) + 1
     v <- c(0, rev(1/v[-1]), v[-1], Inf)
     f$cut <- cut(f$dist, v, include.lowest=TRUE, labels=FALSE)
-    c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    #c5 <- hcl.colors(5, getOption("edma_options")$diverging)
+    c5 <- edma_colors(5, "diverging")
     if (is.null(pal))
-        pal <- hcl.colors(max(1L, length(v)-1L),
-            getOption("edma_options")$diverging)
+        #pal <- hcl.colors(max(1L, length(v)-1L),
+        #    getOption("edma_options")$diverging)
+        pal <- edma_colors(max(1L, length(v)-1L), "diverging")
     if (d3) {
         requireNamespace("rgl")
         rgl::plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
@@ -419,7 +518,7 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
             xy1 <- xyz[as.character(f$row[j]),1:2]
             xy2 <- xyz[as.character(f$col[j]),1:2]
             lines(rbind(xy1, xy2),
-                col=paste0(pal[f$cut[j]], "ff"),
+                col=pal[f$cut[j]],
                 lwd=if (f$cut[j] == 5) 0.5 else 2)
         }
         points(xyz[iSig,1:2], pch=pch, col=2)
@@ -463,11 +562,13 @@ plot_tb <- function(x, mar=c(1,1,1,4), ...) {
     v <- x[z]
     u <- unique(v)
     q <- match(v, u)
-    col <- hcl.colors(max(1L, length(u)),
-        getOption("edma_options")$qualitative)
+    #col <- hcl.colors(max(1L, length(u)),
+    #    getOption("edma_options")$qualitative)
+    col <- edma_colors(max(1L, length(u)), "qualitative")
     op <- par(mar=mar)
     on.exit(par(op))
-    lg <- hcl.colors(3, getOption("edma_options")$diverging)[2L]
+    #lg <- hcl.colors(3, getOption("edma_options")$diverging)[2L]
+    lg <- edma_colors(3, "qualitative")[2L]
     plot(0, type="n", ann=FALSE, axes=FALSE, asp=1,
         xlim=c(0, m+1), ylim=c(m+1, 0))
     polygon(

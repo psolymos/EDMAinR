@@ -15,7 +15,9 @@ export(
     "print_tb",
     "plot_tb",
     "combine_data",
-    "combine_data4")
+    "combine_data4",
+    "edma_colors",
+    "plot_edma_colors")
 
 ## export new generics, non visual
 export(
@@ -67,7 +69,7 @@ importFrom("ape",
 #importFrom("rgl",
 #    "plot3d", "lines3d")
 importFrom("grDevices",
-    "hcl.colors")
+    "hcl.colors", "colorRampPalette", "col2rgb", "hcl.pals", "rgb")
 
 ## edma_data methods
 S3method("stack", "edma_data")
