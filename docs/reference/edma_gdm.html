@@ -114,6 +114,9 @@ Lele and Richtsmeier (1992, 1995)." />
     <li>
       <a href="../articles/edma04-form-difference.html">EDMA form difference matrix</a>
     </li>
+    <li>
+      <a href="../articles/edma05-growth.html">EDMA growth matrix</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -243,7 +246,7 @@ American Journal of Physical Anthropology 98:73--86.
 <span class='no'>a1</span></div><div class='output co'>#&gt; EDMA data: Cebus apella - age 1, 6 landmarks, 3 dim...
 #&gt; 3 dimensions, 6 landmarks, 8 specimens</div><div class='input'><span class='no'>a2</span></div><div class='output co'>#&gt; EDMA data: Cebus apella females -- age 6, 6 landmar...
 #&gt; 3 dimensions, 6 landmarks, 36 specimens</div><div class='input'>
-<span class='no'>fit_a1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>a1</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
+<span class='no'>fit_a1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>a1</span>)
 <span class='no'>fit_a2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>a2</span>)
 
 <span class='co'>## --- growth matrix ---</span>
@@ -252,36 +255,36 @@ American Journal of Physical Anthropology 98:73--86.
 <span class='no'>gm</span></div><div class='output co'>#&gt; EDMA growth matrix
 #&gt; Call: edma_gm(a1 = fit_a1, a2 = fit_a2, B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T=1.2036, p=0</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>gm</span>)</div><div class='output co'>#&gt; 
+#&gt; T = 1.2036, p &lt; 2.22e-16</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>gm</span>)</div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  growth matrix
 #&gt; T-value = 1.2036, B = 10, p-value &lt; 2.2e-16
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='no'>gm</span>))</div><div class='output co'>#&gt;        2.5%    97.5%
-#&gt; 1 0.9484827 1.267111
-#&gt; 2 0.9602479 1.189080
-#&gt; 3 0.9616585 1.186898
-#&gt; 4 0.9692895 1.170315
-#&gt; 5 0.9604141 1.150196
-#&gt; 6 0.9671174 1.199384</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>))</div><div class='output co'>#&gt;   row col     dist     lower    upper
-#&gt; 1  L2  L1 1.344976 0.9484827 1.267111
-#&gt; 2  L3  L1 1.236018 0.9602479 1.189080
-#&gt; 3  L4  L1 1.236158 0.9616585 1.186898
-#&gt; 4  L5  L1 1.220912 0.9692895 1.170315
-#&gt; 5  L6  L1 1.190613 0.9604141 1.150196
-#&gt; 6  L3  L2 1.253479 0.9671174 1.199384</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;    row col     dist     lower    upper
-#&gt; 10  L4  L3 1.433060 0.9613419 1.329967
-#&gt; 7   L4  L2 1.386709 0.9676535 1.296256
-#&gt; 1   L2  L1 1.344976 0.9484827 1.267111
-#&gt; 8   L5  L2 1.326115 0.9691751 1.248116
-#&gt; 11  L5  L3 1.318959 0.9707480 1.242925
-#&gt; 9   L6  L2 1.312207 0.9627696 1.239265</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;    row col     dist     lower    upper
-#&gt; 5   L6  L1 1.190613 0.9604141 1.150196
-#&gt; 15  L6  L5 1.208496 0.9706878 1.164778
-#&gt; 4   L5  L1 1.220912 0.9692895 1.170315
-#&gt; 2   L3  L1 1.236018 0.9602479 1.189080
-#&gt; 3   L4  L1 1.236158 0.9616585 1.186898
-#&gt; 14  L6  L4 1.252233 0.9733420 1.198987</div><div class='input'>
+#&gt; 1 0.9473380 1.266577
+#&gt; 2 0.9423354 1.186800
+#&gt; 3 0.9463326 1.188309
+#&gt; 4 0.9614811 1.173736
+#&gt; 5 0.9467811 1.152568
+#&gt; 6 0.9624722 1.200058</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>))</div><div class='output co'>#&gt;   row col     dist     lower    upper
+#&gt; 1  L2  L1 1.344976 0.9473380 1.266577
+#&gt; 2  L3  L1 1.236018 0.9423354 1.186800
+#&gt; 3  L4  L1 1.236158 0.9463326 1.188309
+#&gt; 4  L5  L1 1.220912 0.9614811 1.173736
+#&gt; 5  L6  L1 1.190613 0.9467811 1.152568
+#&gt; 6  L3  L2 1.253479 0.9624722 1.200058</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;    row col     dist     lower    upper
+#&gt; 10  L4  L3 1.433060 0.9486204 1.345657
+#&gt; 7   L4  L2 1.386709 0.9596750 1.304237
+#&gt; 1   L2  L1 1.344976 0.9473380 1.266577
+#&gt; 8   L5  L2 1.326115 0.9580322 1.253977
+#&gt; 11  L5  L3 1.318959 0.9595860 1.246791
+#&gt; 9   L6  L2 1.312207 0.9424713 1.244259</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;    row col     dist     lower    upper
+#&gt; 5   L6  L1 1.190613 0.9467811 1.152568
+#&gt; 15  L6  L5 1.208496 0.9500779 1.162257
+#&gt; 4   L5  L1 1.220912 0.9614811 1.173736
+#&gt; 2   L3  L1 1.236018 0.9423354 1.186800
+#&gt; 3   L4  L1 1.236158 0.9463326 1.188309
+#&gt; 14  L6  L4 1.252233 0.9589396 1.196768</div><div class='input'>
 <span class='fu'><a href='edma_data.html'>plot_ord</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_ci</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_2d</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
     <span class='fu'><a href='edma_fit.html'>plot_3d</a></span>(<span class='no'>gm</span>)
 
@@ -292,36 +295,36 @@ American Journal of Physical Anthropology 98:73--86.
 #&gt; Call: edma_gdm(a1 = fit_a1, a2 = fit_a2, b1 = fit_a1, b2 = fit_a2, 
 #&gt;     B = 10)
 #&gt; 100 bootstrap runs (ref: denominator)
-#&gt; T=1, p=1</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>gdm</span>)</div><div class='output co'>#&gt; 
+#&gt; T = 1, p = 1</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>gdm</span>)</div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  growth difference matrix
 #&gt; T-value = 1, B = 100, p-value = 1
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='no'>gdm</span>))</div><div class='output co'>#&gt;        2.5%    97.5%
-#&gt; 1 0.9469631 1.012422
-#&gt; 2 0.9248929 1.019951
-#&gt; 3 0.9271595 1.133859
-#&gt; 4 0.9498827 1.063975
-#&gt; 5 0.9380324 1.062166
-#&gt; 6 0.9290253 1.088689</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>))</div><div class='output co'>#&gt;   row col dist     lower    upper
-#&gt; 1  L2  L1    1 0.9469631 1.012422
-#&gt; 2  L3  L1    1 0.9248929 1.019951
-#&gt; 3  L4  L1    1 0.9271595 1.133859
-#&gt; 4  L5  L1    1 0.9498827 1.063975
-#&gt; 5  L6  L1    1 0.9380324 1.062166
-#&gt; 6  L3  L2    1 0.9290253 1.088689</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;   row col dist     lower    upper
-#&gt; 1  L2  L1    1 0.9469631 1.012422
-#&gt; 2  L3  L1    1 0.9248929 1.019951
-#&gt; 3  L4  L1    1 0.9271595 1.133859
-#&gt; 4  L5  L1    1 0.9498827 1.063975
-#&gt; 5  L6  L1    1 0.9380324 1.062166
-#&gt; 6  L3  L2    1 0.9290253 1.088689</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;   row col dist     lower    upper
-#&gt; 1  L2  L1    1 0.9469631 1.012422
-#&gt; 2  L3  L1    1 0.9248929 1.019951
-#&gt; 3  L4  L1    1 0.9271595 1.133859
-#&gt; 4  L5  L1    1 0.9498827 1.063975
-#&gt; 5  L6  L1    1 0.9380324 1.062166
-#&gt; 6  L3  L2    1 0.9290253 1.088689</div><div class='input'>
+#&gt; 1 0.9635870 1.091587
+#&gt; 2 0.9435641 1.089637
+#&gt; 3 0.9083381 1.063129
+#&gt; 4 0.9566570 1.030732
+#&gt; 5 0.9403406 1.057876
+#&gt; 6 0.9630213 1.071233</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>))</div><div class='output co'>#&gt;   row col dist     lower    upper
+#&gt; 1  L2  L1    1 0.9635870 1.091587
+#&gt; 2  L3  L1    1 0.9435641 1.089637
+#&gt; 3  L4  L1    1 0.9083381 1.063129
+#&gt; 4  L5  L1    1 0.9566570 1.030732
+#&gt; 5  L6  L1    1 0.9403406 1.057876
+#&gt; 6  L3  L2    1 0.9630213 1.071233</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;   row col dist     lower    upper
+#&gt; 1  L2  L1    1 0.9635870 1.091587
+#&gt; 2  L3  L1    1 0.9435641 1.089637
+#&gt; 3  L4  L1    1 0.9083381 1.063129
+#&gt; 4  L5  L1    1 0.9566570 1.030732
+#&gt; 5  L6  L1    1 0.9403406 1.057876
+#&gt; 6  L3  L2    1 0.9630213 1.071233</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;   row col dist     lower    upper
+#&gt; 1  L2  L1    1 0.9635870 1.091587
+#&gt; 2  L3  L1    1 0.9435641 1.089637
+#&gt; 3  L4  L1    1 0.9083381 1.063129
+#&gt; 4  L5  L1    1 0.9566570 1.030732
+#&gt; 5  L6  L1    1 0.9403406 1.057876
+#&gt; 6  L3  L2    1 0.9630213 1.071233</div><div class='input'>
 <span class='fu'><a href='edma_data.html'>plot_ord</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-8.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_ci</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-9.png' alt='' width='700' height='433' /></div><div class='input'>#plot_2d(gdm) # need real data
 #if (interactive())
 #    plot_3d(gdm)

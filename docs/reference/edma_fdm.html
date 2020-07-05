@@ -114,6 +114,9 @@ Lele and Richtsmeier (1992, 1995)." />
     <li>
       <a href="../articles/edma04-form-difference.html">EDMA form difference matrix</a>
     </li>
+    <li>
+      <a href="../articles/edma05-growth.html">EDMA growth matrix</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -245,7 +248,7 @@ between landmarks from EDMA fit objects using the estimated mean forms.</p>
 reference FM and taking the ration between the reference FM
 and the bootstrap FMs from the other object.</p>
 <p>The T-statistic is based on the pairwise distanced in the FM,
-taking the max/min. Confidence intervals for local testing
+taking the max/min of the distances. Confidence intervals for local testing
 (via <code>confint</code>, <code>get_fdm</code>, and <code>plot_ci</code>)
 and T-test for global testing
 (via <code>T_test</code>, and <code>plot_Ttest</code>)
@@ -311,11 +314,11 @@ American Journal of Physical Anthropology 98:73--86.
 <span class='no'>fdm</span></div><div class='output co'>#&gt; EDMA form difference matrix
 #&gt; Call: edma_fdm(numerator = numerator, denominator = denominator, B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T=1.598, p=0</div><div class='input'><span class='no'>fdm2</span></div><div class='output co'>#&gt; EDMA form difference matrix
+#&gt; T = 1.598, p &lt; 2.22e-16</div><div class='input'><span class='no'>fdm2</span></div><div class='output co'>#&gt; EDMA form difference matrix
 #&gt; Call: edma_fdm(numerator = numerator, denominator = denominator, B = 10, 
 #&gt;     ref_denom = FALSE)
 #&gt; 10 bootstrap runs (ref: numerator)
-#&gt; T=1.598, p=0</div><div class='input'>
+#&gt; T = 1.598, p &lt; 2.22e-16</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fdm</span>(<span class='no'>fdm</span>))</div><div class='output co'>#&gt;     row   col      dist     lower    upper
 #&gt; 1   bas amsph 1.0425216 0.9887351 1.037981
 #&gt; 2  cpsh amsph 0.9824034 0.9831983 1.025311
