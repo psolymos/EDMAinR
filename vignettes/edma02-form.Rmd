@@ -103,7 +103,7 @@ plot_2d(fit, col=col)
 ```
 
 An easier way, however, is to provide a color palette
-from the coices listed on the help page of the function
+from the choices listed on the help page of the function
 `?hcl.colors`. The available diverging color palettes are:
 
 

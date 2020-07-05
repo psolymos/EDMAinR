@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 set.seed(123)
-library(EDMAinR)
 ```
 
 ## Introduction
@@ -27,13 +26,17 @@ Parametric estimation of SigmaK involves the following steps:
 3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix,
 4. make sure the results are estimable by running `sensitivity` analysis.
 
+```{r}
+library(EDMAinR)
+```
+
 ## Simulated landmark data
 
 To demonstrate the workflow, let us simulate some data.
 Simulation is useful for checking the limits of the estimating procedure.
 We know what the 'true' input are, because we are controlling those
 through the simulation. We can then compare the outputs (our estimates),
-to the known imputs, and this is how we evaluate the utility 
+to the known inputs, and this is how we evaluate the utility 
 and limitations of our methods.
 
 Let us begin with the following set of 6 landmarks in 2-dimensions:
@@ -71,12 +74,12 @@ xy <- attr(tmp, "coordinates")
 text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 ```
 
-We can see from the figure that the constant variance stranslates to
+We can see from the figure that the constant variance translates to
 roughly circle shaped convex hulls around the landmarks
 (the hull bounds the landmarks form the `n` specimens),
 and the size of these patches is similar (equal variances).
 
-## Nonparametruc estimation
+## Nonparametric estimation
 
 We use the non-parametric EDMA algorithm to estimate
 the form matrix and the SigmaKstar matrix:
@@ -118,7 +121,7 @@ constructed (the package contains example files, see
 
 - the 1st row describes the landmarks starting from the 2nd column,
 - the 1st column describes the landmarks in the same order as the column headers,
-- leave the cell in the topleft corner empty,
+- leave the cell in the top left corner empty,
 - use unique names or numbers in the rest of the table to denote unique variables in the Sigma matrix,
 - structural zeros (cells where the covariance is known or assumed to be 0) have to be blank,
 - there cannot be blank cells in the diagonal of the matrix,
@@ -142,7 +145,7 @@ print_tb(p)
 ## Parametric estimation
 
 The parametric estimation requires the fitted object from
-the previous step of nonparamatric estimation
+the previous step of nonparametric estimation
 (that gave us the estimate of the mean form and SigmaKstar),
 and the pattern matrix, so that the program knows what parameters
 to estimate and where those are placed in the SigmaK matrix:
