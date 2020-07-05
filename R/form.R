@@ -97,15 +97,21 @@ edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
 ## FDM, GM
 .print_edma_fdm <- function(x, title="EDMA", truncate=20, ...) {
     H <- T_test(x)
+    if (x$B) {
+        fp <- format.pval(H$p.value)
+        fp <- if (substr(fp, 1L, 1L) == "<")
+            paste0(", p ", fp) else paste0(", p = ", fp)
+    } else {
+        fp <- ""
+    }
     cat(title, "\n",
         "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n",
         if (x$B)
             paste(x$B, "bootstrap runs") else "no bootstrap",
         " (ref: ", if (x$ref_denom) "denominator" else "numerator", ")",
-        "\nT=", round(H$statistic, 4),
-        if (x$B)
-            paste0(", p=", round(H$p.value, 4)) else "",
+        "\nT = ", format(H$statistic, digits = max(1L, getOption("digits") - 2L)),
+        fp,
         sep="")
     invisible(x)
 }
