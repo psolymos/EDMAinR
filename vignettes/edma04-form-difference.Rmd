@@ -21,7 +21,7 @@ set.seed(429)
 This tutorial explains how to calculate form difference based
 on 2 EDMA data objects with homologous landmarks.
 We will use 2 data sets: one with and the other without the
-mutation responsible for Crouzon syndrom.
+mutation responsible for Crouzon syndrome:
 
 ```{r}
 library(EDMAinR)
@@ -55,7 +55,7 @@ Form difference ($FDM$) is calculated as the ratio of form matrices
 Lele and Richtsmeier (1992, 1995): $FDM(A,B) = FM(B)/FM(A)$.
 
 Bootstrap distribution is based on fixing the
-reference FM and taking the ratio between the reference $FM$
+reference $FM$ and taking the ratio between the reference $FM$
 and the bootstrap $FM$s from the other object.
 The `ref_denom` argument can be used to control which object
 is the reference (it is the denominator by default),
@@ -68,14 +68,16 @@ fdm
 
 ## Global T-test
 
-Here is how to do the global T-test: the T-statistic is based on the pairwise distances in the $FM$s, taking the max/min ratio of the distances.
+The global T-test is based on the pairwise distances in the $FM$s, 
+taking the max/min ratio of the distances.
 This is then done for all the `B` replicates, which provides the null
 distribution. The $p$ value for the T-test is calculated
-and the number of cases when the bootstrap T value was higher than the
-observed T value.
+as the number of replicates where the bootstrap T value was higher than 
+or equal to the observed T value, divided by `B`.
 
 `T_test` provides a summary of the test, `plot_Ttest` helps to visualize
-the null distribution and the observed T statistic:
+the null distribution (histogram) and the observed T statistic
+(vertical line):
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 T_test(fdm)
@@ -85,9 +87,12 @@ plot_Ttest(fdm)
 ## Local testing
 
 The local testing is done based on the
-confidence intervals using the stacked $FDM$s from the bootstrap
-(output is similar to the output of the `get_fm` function).
-The confidence level can be changed through the `level` argument:
+confidence intervals using the stacked $FDM$s from the bootstrap.
+Output structure is similar to the output of the `get_fm` function, but
+the interpretation of the confidence intervals is different due to the
+different nature of the bootstrap distribution.
+Here the distribution charactersizes the $FDM$ and not the $FM$.
+The confidence level can be changed through the `level` argument.
 
 ```{r}
 head(get_fdm(fdm))
@@ -97,9 +102,17 @@ head(get_fdm(fdm, sort=TRUE, decreasing=FALSE))
 
 Differences below or above the confidence limits
 indicate distances that significantly deviate from the bootstrap
-based random expectation, and thus are related to landmarks
+based null expectation, and thus are related to landmarks
 that drive tha differences. Inspecting the highest and lowest
 differences (using `sort`) can help revealing these landmarks.
+
+The `lower` and `upper` limits of the confidence intervals
+are based on `confint` (row names indicate the unsorted sequence
+of landmark pairs as in the output from `get_fdm(fdm)`):
+
+```{r}
+head(confint(fdm))
+```
 
 The `plot_ci` function shows the pairwise differences and confidence intervals.
 The x-axis label shows the landmark pairs, and gets really busy.
@@ -109,59 +122,156 @@ Use the `xshow=FALSE` argument to remove labels.
 plot_ci(fdm, xshow=FALSE)
 ```
 
+We can use the stacked $FDM$ data frame to make a 
+[**ggplot2**](https://ggplot2-book.org/)
+based plot:
+
+```{r fig.width=7,fig.height=5,out.width='100%'}
+library(ggplot2)
+df <- get_fdm(fdm, sort=TRUE)
+df$x <- 1:nrow(df)
+p <- ggplot(data=df, aes(x=x, y=dist, ymin=lower, ymax=upper)) +
+  geom_ribbon(col="#0000ff40", fill="#0000ff40") +
+  geom_line() +
+  geom_hline(yintercept=1, col=2) +
+  labs(y="FDM Ratio", x="Landmark Pairs") +
+  theme_linedraw() +
+  theme(axis.text.x=element_blank())
+p
+```
+
 # Influential landmarks
 
-Influential landmarks are identified by leaving one landmark out,
-then comparing the T-statistic with the value based on all the
-landmarks. The existing bootstrap distribution of
-the mean form is used (i.e. no re-estimation of the mean form).
-The most influential landmark is the one with the largest drop in T value.
+We can consider a landmark infliential with respect to the form difference
+if after removing the landmark, the global T value moves close to 1.
+Such a case would indicate that the landmark in question is driving the
+form differences (i.e. paitwise distances between the landmark and
+other landmarks contribute to the maximum value in the T statistic).
+If, however, we remove a non-influential landmark, 
+we expect the T value not to change a lot. 
+Therefore, the 'drop' in the T value after removing a landmark can be used
+to rank landmarks based on their influence.
 
-If we remove, e.g., a non-influential landmark, we expect the T value not to 
-change a lot, because T value is driven by the distances associated with the
-influential landmarks. However, if we remove and influential landmark, and 
-there are no other influential landmarks, we expect the T value to drop and 
-not be significant any more.
-`Tdrop` is the T value after leaving out one landmark.
+Influential landmarks are identified by leaving one landmark out at a time,
+then calculating the the T-statistic based on the remaining distances.
+We can use the bootstrap distribution to see of the T value 'drop'
+makes the global test non-significant. This means that after
+removing the landmark, the form difference cannot be distinguished
+from the null expectation.
+
+The most influential landmark is the one with the largest drop in T value
+compared to the original T statistic.
+`Tdrop` is the newly calculated T value after leaving out the landmark
+in question:
 
 ```{r}
 infl <- get_influence(fdm)
-infl[order(infl$Tdrop),]
+head(infl[order(infl$Tdrop),], 10)
 ```
 
+> *Note*: we used the `order` function to create an index to order
+> the rows of the `infl` data frame.
+> `get_influence` also takes a `level` argument for specifying the
+> desired confidence interval (default is 95%).
+
 The `plot` function shows the landmarks ordered by `Tdrop`
-with the influential landmarks on the left side of the plot:
+with the influential landmarks on the left-hand side of the plot.
+The horizontal line on the top indicates the original T value
+(with all the landmarks considered), the increasing line
+shows `Tdrop`, the shaded area is the null distribution for the
+T statistic:
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 plot(infl)
 ```
 
-# Ordination and clustering
+Here is the **ggplot2** version:
+
+```{r fig.width=7,fig.height=5,out.width='100%'}
+df <- infl[order(infl$Tdrop),]
+df$landmark <- factor(as.character(df$landmark), as.character(df$landmark))
+p <- ggplot(data=df, aes(x=landmark, y=Tdrop, ymin=lower, ymax=upper, group=1)) +
+  geom_ribbon(col="#0000ff40", fill="#0000ff40") +
+  geom_hline(yintercept=T_test(fdm)$statistic, col=2) +
+  geom_line() +
+  labs(y="T-value", x="Landmarks") +
+  theme(axis.text.x=element_text(angle = 45,
+        vjust = 1, hjust=1))
+p
+```
+
+# Ordination and clustering for specimens
 
 The ordination and cluster dendrogram shows the two sets
-of specimens from the 2 objects:
+of specimens from the 2 objects in tha same diagram.
+The 2 sets are combined with the `combine_data` function:
+
+```{r}
+x1
+x2
+(x12 <- combine_data(x1, x2))
+table(x12$groups)
+```
+
+The visualization otherwise use the same principles as
+described for EDMA data objects. The difference is
+that the specimens and their labels are colored
+(using a the default qualitative palette) according to the
+`groups` (numerator vs. denominator).
+
+If the the numerator and denominator objects are different
+(global T value is high, $p$ value is low, there are influential landmarks),
+we expect the two groups to separate in ordination space
+and along the dendrogram:
 
 ```{r fig.width=7,fig.height=7,out.width='100%'}
 plot_ord(fdm)
 ```
 
+The dendrogram leaves (speciemn labels) are also colored by groups:
+
 ```{r fig.width=7,fig.height=7,out.width='100%'}
 plot_clust(fdm)
 ```
 
-The 2D and 3D plots produces a plot of the mean form
+The colors can be changed via the color options:
+
+```{r fig.width=7,fig.height=7,out.width='100%'}
+op <- options("edma_options" = list(
+    diverging = "Blue-Red",
+    qualitative = "Warm"))
+plot_ord(fdm)
+options(op)
+```
+
+# Visualizing landmarks
+
+The 2D and 3D plots produce a plot of the mean form
 from the reference object ('prototype').
-Influential landmarks are colored red.
-Lines represent distances between landmarks,
-<1 differences are colored blue, >1 differences are colored red.
+The color intensity for the landmarks (dots) is associated with the `Tdrop`
+influence value (larger the difference, the more intensive the color;
+red by default).
+Lines between the landmarks represent distances.
+We use the diverging palettes:
+<1 differences are colored blue (1st half of the palette), >1 differences 
+are colored red (2st half of the palette).
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
-plot_2d(fdm)
+plot_2d(fdm, cex=2)
 ```
+
 
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 library(rgl)
-plot_3d(fdm)
+xyz <- plot_3d(fdm)
+text3d(xyz, texts=rownames(xyz), pos=1) # this adds names
+decorate3d() # this adds the axes
 rglwidget(width = 600, height = 600, reuse = FALSE)
 ```
+
+The 2D and 3D plots do not display all the pairwise distances.
+If displaying all edges is desired, use the `all=TRUE` argument.
+
+
+
