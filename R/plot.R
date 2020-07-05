@@ -348,6 +348,8 @@ cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
     if (is.null(col)) {
         pal <- hcl.colors(9, getOption("edma_options")$diverging, alpha=alpha)[5:9]
         coli <- cut(V, length(pal)-1L, labels=FALSE, include.lowest=TRUE)
+        if (length(unique(coli)) < 2L)
+          coli[] <- 1L
         col <- pal[coli]
     }
     if (d3) {
@@ -395,7 +397,7 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
     f$cut <- cut(f$dist, v, include.lowest=TRUE, labels=FALSE)
     c5 <- hcl.colors(5, getOption("edma_options")$diverging)
     if (is.null(pal))
-        pal <- hcl.colors(length(v)-1,
+        pal <- hcl.colors(max(1L, length(v)-1L),
             getOption("edma_options")$diverging)
     if (d3) {
         requireNamespace("rgl")
@@ -461,7 +463,7 @@ plot_tb <- function(x, mar=c(1,1,1,4), ...) {
     v <- x[z]
     u <- unique(v)
     q <- match(v, u)
-    col <- hcl.colors(length(u),
+    col <- hcl.colors(max(1L, length(u)),
         getOption("edma_options")$qualitative)
     op <- par(mar=mar)
     on.exit(par(op))
