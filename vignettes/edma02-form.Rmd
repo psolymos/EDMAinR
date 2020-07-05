@@ -77,7 +77,7 @@ The dot size is proportional to `SigmaKstar(fit)` diagonal elements
 The `plot_2d` function returns the plotting coordinates,
 which can be used to add the landmark names:
 
-```{r fig.width=5,fig.height=3,out.width='60%'}
+```{r fig.width=7,fig.height=5,out.width='60%'}
 xy <- plot_2d(fit, cex=2)
 text(xy, labels=rownames(xy), pos=1)
 ```
@@ -97,9 +97,9 @@ See `?rgl::plot3d` for options to modify the 3D plot.
 It is possible to supply your own color values to the
 `plot_2d` and `plot_3d` functions to allow full control:
 
-```{r fig.width=5,fig.height=3,out.width='60%'}
+```{r fig.width=7,fig.height=5,out.width='60%'}
 col <- rainbow(nrow(xy))
-plot_2d(fit, col=col)
+plot_2d(fit, col=col, cex=2)
 ```
 
 An easier way, however, is to provide a color palette
