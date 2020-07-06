@@ -91,7 +91,7 @@ confidence intervals using the stacked $FDM$s from the bootstrap.
 Output structure is similar to the output of the `get_fm` function, but
 the interpretation of the confidence intervals is different due to the
 different nature of the bootstrap distribution.
-Here the distribution charactersizes the $FDM$ and not the $FM$.
+Here the distribution characterizes the $FDM$ and not the $FM$.
 The confidence level can be changed through the `level` argument.
 
 ```{r}
@@ -103,7 +103,7 @@ head(get_fdm(fdm, sort=TRUE, decreasing=FALSE))
 Differences below or above the confidence limits
 indicate distances that significantly deviate from the bootstrap
 based null expectation, and thus are related to landmarks
-that drive tha differences. Inspecting the highest and lowest
+that drive the differences. Inspecting the highest and lowest
 differences (using `sort`) can help revealing these landmarks.
 
 The `lower` and `upper` limits of the confidence intervals
@@ -142,10 +142,10 @@ p
 
 # Influential landmarks
 
-We can consider a landmark infliential with respect to the form difference
+We can consider a landmark influential with respect to the form difference
 if after removing the landmark, the global T value moves close to 1.
 Such a case would indicate that the landmark in question is driving the
-form differences (i.e. paitwise distances between the landmark and
+form differences (i.e. pairwise distances between the landmark and
 other landmarks contribute to the maximum value in the T statistic).
 If, however, we remove a non-influential landmark, 
 we expect the T value not to change a lot. 
@@ -203,7 +203,7 @@ p
 # Ordination and clustering for specimens
 
 The ordination and cluster dendrogram shows the two sets
-of specimens from the 2 objects in tha same diagram.
+of specimens from the 2 objects in the same diagram.
 The 2 sets are combined with the `combine_data` function:
 
 ```{r}
@@ -228,7 +228,7 @@ and along the dendrogram:
 plot_ord(fdm)
 ```
 
-The dendrogram leaves (speciemn labels) are also colored by groups:
+The dendrogram leaves (specimen labels) are also colored by groups:
 
 ```{r fig.width=7,fig.height=7,out.width='100%'}
 plot_clust(fdm)

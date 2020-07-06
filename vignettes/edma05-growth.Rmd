@@ -80,7 +80,7 @@ plot_Ttest(gm)
 
 The local testing is done based on the
 confidence intervals using the stacked $GM$s from the bootstrap.
-Here the distribution charactersizes the $GM$ and not the $FM$.
+Here the distribution characterizes the $GM$ and not the $FM$.
 The confidence level can be changed through the `level` argument.
 
 ```{r}
@@ -113,7 +113,7 @@ plot(get_influence(gm))
 plot_ord(gm)
 ```
 
-The dendrogram leaves (speciemn labels) are also colored by groups:
+The dendrogram leaves (specimen labels) are also colored by groups:
 
 ```{r fig.width=7,fig.height=7,out.width='100%'}
 plot_clust(gm)
