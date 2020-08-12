@@ -120,7 +120,8 @@ plot_edma_colors <- function(n=9, maxq=9) {
 ## issue when only one specimen is present:
 ## rowMeans(sapply(fm[-which], ...) gives error
 .plot_edma_data <- function(x, which=NULL,
-col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
+col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51,
+xlim=NULL, ylim=NULL, ...) {
     c3 <- edma_colors(3, "diverging")
     if (is.na(col_chull))
         col_chull <- c3[1L]
@@ -152,7 +153,12 @@ col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51, ...) {
         }
         pci
     })
-    plot(pca, pch=3, axes=FALSE, ann=FALSE, ...)
+    lims <- apply(do.call(rbind, pci), 2, range)
+    if (is.null(xlim))
+      xlim <- lims[,1L]
+    if (is.null(ylim))
+      ylim <- lims[,2L]
+    plot(pca, pch=3, axes=FALSE, ann=FALSE, xlim=xlim, ylim=ylim, ...)
     for (j in seq_len(K)) {
         ll <- t(sapply(pci[ii], function(z) z[j,]))
         if (hull) {
