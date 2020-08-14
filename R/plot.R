@@ -462,8 +462,21 @@ cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
 plot_2d.edma_fit <- function(x, ...) .plot_d_data(x, d3=FALSE, ...)
 plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
 
+## midpoints for pairwise distances
+## proto is an edma_fit object
+.midpoints <- function(proto) {
+  xyz <- Meanform(proto)
+  M <- Meanform(proto)
+  d <- get_fm(proto)[,c("dist", "row", "col")]
+  d$row <- as.character(d$row)
+  d$col <- as.character(d$col)
+  Mi <- M[match(d$row, rownames(M)),]
+  Mj <- M[match(d$col, rownames(M)),]
+  0.5 * (Mi + Mj)
+}
 .plot_d_dm <- function(x, d3=TRUE, pal=NULL, pch=19,
-cex=1, alpha=0.8, all=FALSE, ...) {
+cex=1, alpha=0.8, all=FALSE,
+midpoints=FALSE, ...) {
     if (inherits(x, "edma_fdm")) {
         proto <- if (x$ref_denom)
             x$denominator else x$numerator
@@ -472,7 +485,8 @@ cex=1, alpha=0.8, all=FALSE, ...) {
         proto <- if (x$ref_denom)
             x$a1 else x$a2
     }
-    xyz <- Meanform(proto)
+    xyz <- if (midpoints)
+      .midpoints(proto) else Meanform(proto)
     if (!d3) {
         if (ncol(xyz) > 2L) {
             xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
@@ -493,43 +507,65 @@ cex=1, alpha=0.8, all=FALSE, ...) {
     ci <- confint(x)
     f$lower <- ci[,1L]
     f$upper <- ci[,2L]
-    f <- f[order(abs(log(f$dist))),]
+    o <- order(abs(log(f$dist)))
+    f <- f[o,]
+    if (midpoints)
+        xyz <- xyz[o,]
     fSig <- f$dist < f$lower | f$dist > f$upper
     Max <- max(1/min(1, f$dist), max(f$dist))
-    v <- (Max-1) * c(0, 0.1, 0.25, 0.5, 1) + 1
-    v <- c(0, rev(1/v[-1]), v[-1], Inf)
+    if (midpoints) {
+      v1 <- quantile(f$dist[f$dist < 1], seq(0, 1, 0.1))
+      v2 <- quantile(f$dist[f$dist > 1], seq(0, 1, 0.1))
+      v1[1L] <- 0
+      v2[length(v2)] <- Inf
+      v <- c(v1[-length(v1)], 1, v2[-1L])
+    } else {
+      v <- (Max-1) * c(0, 0.1, 0.25, 0.5, 1) + 1
+      v <- c(0, rev(1/v[-1]), v[-1], Inf)
+    }
     f$cut <- cut(f$dist, v, include.lowest=TRUE, labels=FALSE)
 
     s5 <- edma_colors(5, "sequential", alpha=alpha)
     c5 <- edma_colors(5, "diverging", alpha=alpha)
     if (is.null(pal))
         pal <- edma_colors(max(1L, length(v)-1L), "diverging", alpha=alpha)
-
     if (d3) {
         requireNamespace("rgl")
-        rgl::plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
-            type="s",
-            ann=FALSE, axes=FALSE,
-            xlab="", ylab="", zlab="",
-            col=s5[icol], radius=0.1*cex)
-        if (all) {
-            for (j in 1:nrow(f)) {
-                xyz1 <- rbind(xyz[as.character(f$row[j]),],
-                    xyz[as.character(f$col[j]),])
-                rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
-                    col=pal[f$cut[j]],
-                    lwd= 2)
-            }
+        if (midpoints) {
+          rgl::plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
+              type="s",
+              ann=FALSE, axes=FALSE,
+              xlab="", ylab="", zlab="",
+              col=pal[f$cut], radius=0.1*cex)
         } else {
-            for (j in which(fSig & f$cut != 5)) {
-                xyz1 <- rbind(xyz[as.character(f$row[j]),],
-                    xyz[as.character(f$col[j]),])
-                rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
-                    col=pal[f$cut[j]],
-                    lwd= 2)
-            }
+          rgl::plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
+              type="s",
+              ann=FALSE, axes=FALSE,
+              xlab="", ylab="", zlab="",
+              col=s5[icol], radius=0.1*cex)
+          if (all) {
+              for (j in 1:nrow(f)) {
+                  xyz1 <- rbind(xyz[as.character(f$row[j]),],
+                      xyz[as.character(f$col[j]),])
+                  rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+                      col=pal[f$cut[j]],
+                      lwd=2)
+              }
+          } else {
+              for (j in which(fSig & f$cut != 5)) {
+                  xyz1 <- rbind(xyz[as.character(f$row[j]),],
+                      xyz[as.character(f$col[j]),])
+                  rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+                      col=pal[f$cut[j]],
+                      lwd=2)
+              }
+          }
         }
     } else {
+      if (midpoints) {
+        plot(xyz[,1:2], axes=FALSE, ann=FALSE,
+          col=pal[f$cut], pch=pch, cex=cex)
+      } else {
         plot(xyz[,1:2], type="n", axes=FALSE, ann=FALSE)
         if (all) {
             for (j in 1:nrow(f)) {
@@ -549,6 +585,7 @@ cex=1, alpha=0.8, all=FALSE, ...) {
             }
         }
         points(xyz[,1:2], pch=pch, col=s5[icol], cex=cex)
+      }
     }
     invisible(xyz)
 }
