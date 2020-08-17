@@ -166,3 +166,20 @@ diag(SigmaK(e))
 matrix(diag(VCV), ncol=2, byrow=TRUE)
 
 
+
+
+D <- ncol(M)
+K <- nrow(M)
+
+system.time(v <- EDMAinR:::.edma_fit_np_old(stack(sim), n, K, D))
+system.time(z <- EDMAinR:::.edma_fit_np(as.array(sim)))
+v$M
+z$M
+z$M-v$M
+max(abs(z$M-v$M))
+
+v$SigmaKstar
+z$SigmaKstar
+z$SigmaKstar-v$SigmaKstar
+max(abs(z$SigmaKstar-v$SigmaKstar))
+
