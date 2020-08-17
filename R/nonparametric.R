@@ -3,8 +3,9 @@
 ## n: number of individuals (replicates)
 ## K: number of landmarks
 ## D: number of dimensions (2-3)
-.edma_fit_np <- function(X, n, K, D) {
-    ## calculate Euclidean distance for X
+## this _old function is here for comparison (~250% slower)
+.edma_fit_np_old <- function(X, n, K, D) {
+    ## calculate squared Euclidean distance for X
     d <- function(x, y) {
         sum((x - y)^2)
     }
@@ -82,6 +83,78 @@
     out
 }
 
+## nonparametric estimate of centered mean form and SigmaKstar
+## A: array input, K x D x n
+## this new function makes use of vectorized base functions
+## to gain speed and precistion
+## also returns some intermediate results for future use cases
+.edma_fit_np <- function(A) {
+    K <- dim(A)[1L]
+    D <- dim(A)[2L]
+    n <- dim(A)[3L]
+    ## calculate squared Euclidean distances for X
+    EuX <- array(0, c(K, K, n))
+    dimnames(EuX) <- dimnames(A)[c(1L,1L,3L)]
+    for (i in seq_len(n)) {
+        EuX[,,i] <- as.matrix(dist(A[,,i])^2)
+    }
+    ## calculate Eu(M)
+    EuM <- matrix(nrow = K, ncol = K)
+    dimnames(EuM) <- dimnames(A)[c(1L,1L)]
+    Mean <- Var <- EuM
+    for (i in seq_len(K)) {
+        for (j in 1:K) {
+            Mean[i,j] <- mean(EuX[i,j,])
+            Var[i,j] <- sd(EuX[i,j,])^2
+            if (D == 2L) {
+                EuM[i,j] <- sqrt((Mean[i,j])^2 - Var[i,j])
+            } else {
+                EuM[i,j] <- sqrt((Mean[i,j])^2 - 1.5 * Var[i,j])
+            }
+        }
+    }
+    ## calculate B(M)
+    I <- diag(1, K)
+    ones <- array(rep(1, K), c(1, K))
+    H <- I - (1/K) * crossprod(ones, ones)
+    BM <- (-1/2) * H %*% EuM %*% H
+    ## calculate eigenvalues and eigenvectors of B(M)
+    EIG <- eigen(BM)
+    ## estimate centred mean form M
+    M_hat <- matrix(nrow = K, ncol = D)
+    for (i in seq_len(D)) {
+        M_hat[, i] <- sqrt(EIG$values[i]) * EIG$vectors[, i]
+    }
+    dimnames(M_hat) <- dimnames(A)[1:2]
+    ## estimate SigmaKstar=H*SigmaK*H
+    a <- 0
+    for (i in seq_len(n)) {
+        a <- a + (-1/2) * H %*% EuX[,,i] %*% H
+    }
+    SigmaKstar_hat <- (a/n - BM)/D
+    dimnames(SigmaKstar_hat) <- dimnames(EuM)
+
+    ## check rank of SigmaKstar
+    r <- qr(SigmaKstar_hat)$rank
+    if (r != K-1)
+        warning(sprintf("rank of SigmaKstar was %s instead of %s", r, K-1))
+
+    ## meanform eigenvalues: first D values > 0, rest =0
+    mds <- cmdscale(dist(M_hat), k=D, eig=TRUE)
+    if (!all(mds$eig[seq_len(D)] > 0))
+        warning(sprintf("%s of the first %s eigenvalues <= 0",
+            sum(mds$eig[seq_len(D)] > 0), D))
+    if (sum(mds$eig[seq_len(D)]) / sum(mds$eig) < 0.99)
+        warning(sprintf("the first %s eigenvalues summed to %s",
+            sum(mds$eig[seq_len(D)]), D))
+
+    list(
+        M=M_hat,
+        SigmaKstar=SigmaKstar_hat,
+        H=H,
+        EuX=EuX, EuM=EuM, EuMean=Mean, EuVar=Var)
+}
+
 ## x is edma_data object
 ## use same pbapply setup as in opticut with cl arg etc
 ## bootstrap here is used for M uncertainty etc and not for T-test
@@ -92,14 +165,16 @@ edma_fit <- function(x, B=0) {
         stop("B must be non-negative")
     B <- as.integer(B)
     DIM <- dim(x)
-    fit <- .edma_fit_np(stack(x), DIM[3L], DIM[1L], DIM[2L])
+#    fit <- .edma_fit_np(stack(x), DIM[3L], DIM[1L], DIM[2L])
+    fit <- .edma_fit_np(as.array(x))
     dimnames(fit$M) <- dimnames(x)[1:2]
     dimnames(fit$SigmaKstar) <- dimnames(x)[c(1,1)]
     if (B > 0) {
         boot <- pbapply::pblapply(seq_len(B), function(i) {
             j <- sample(DIM[3L], replace=TRUE)
             z <- subset(x, j)
-            .edma_fit_np(stack(z), DIM[3L], DIM[1L], DIM[2L])
+#            .edma_fit_np(stack(z), DIM[3L], DIM[1L], DIM[2L])
+            .edma_fit_np(as.array(z))
         })
     } else {
         boot <- NULL
