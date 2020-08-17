@@ -56,7 +56,7 @@ importFrom("utils",
 importFrom("stats",
     "as.dist", "dist", "optim", "quantile", "rnorm",
     "cmdscale", "confint", "prcomp", "runif", "hclust",
-    "cov.wt", "qf")
+    "cov.wt", "qf", "sd")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon",
     "text", "hist", "points", "segments", "title")
