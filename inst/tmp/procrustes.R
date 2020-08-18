@@ -183,3 +183,13 @@ z$SigmaKstar
 z$SigmaKstar-v$SigmaKstar
 max(abs(z$SigmaKstar-v$SigmaKstar))
 
+
+library(magrittr)
+library(shapes)
+library(EDMAinR)
+
+e <- edma_fit(sim) %>%
+  SigmaK_fit(S1)
+
+system.time(x1 <- .edma_simulate_data_old(n=n, M, SigmaK))
+system.time(x2 <- .edma_simulate_data(n=n, M, SigmaK))

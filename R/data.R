@@ -163,7 +163,7 @@ as.array.edma_data <- function (x, ...) {
 }
 
 ## simulate data xyz sets
-.edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
+.edma_simulate_data_old <- function(n, M, SigmaK, H=NULL) {
     K <- nrow(M)
     D <- ncol(M)
     if (D > 3 || D < 2)
@@ -188,13 +188,40 @@ as.array.edma_data <- function (x, ...) {
         M=M, SigmaK=SigmaK, SigmaKstar=SigmaKstar, H=H,
         X=X, D=D, K=K, n=n)
 }
+.edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
+    K <- nrow(M)
+    if (K < 2L)
+        stop("Mean form must have at leats 2 landmarks (rows).")
+    D <- ncol(M)
+    if (D > 3L || D < 2L)
+        stop("Mean form must have 2 or 3 dimensions (columns).")
+    Z <- array(rnorm(K * D * n), c(K, D, n))
+    Cmat <- chol(SigmaK)
+    A <- array(0, c(K, D, n))
+    for (i in seq_len(n)) {
+        A[,,i] <- crossprod(Cmat, Z[,,i]) + M
+    }
+    if (is.null(H)) {
+        ones <- array(rep(1, K), c(1, K))
+        H <- diag(1, K) - (1/K) * crossprod(ones, ones)
+    }
+    SigmaKstar = H %*% SigmaK %*% H
+    list(
+        M=unname(M),
+        SigmaK=unname(SigmaK),
+        SigmaKstar=unname(SigmaKstar),
+        H=unname(H),
+        A=unname(A),
+        D=D, K=K, n=n)
+}
 edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     z <- .edma_simulate_data(n, M, SigmaK, H)
     DATA <- list()
     LM <- paste0("L", seq_len(z$K))
     for (i in seq_len(z$n)) {
-        DATA[[paste0("S", i)]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,
-                                                drop=FALSE])
+#        DATA[[paste0("S", i)]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,
+#                                                drop=FALSE])
+        DATA[[paste0("S", i)]] <- matrix(z$A[,,i], z$K, z$D)
         dimnames(DATA[[i]]) <- list(LM, c("X", "Y", "Z")[seq_len(z$D)])
     }
     out <- list(
@@ -205,8 +232,11 @@ edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
     dimnames(z$M) <- dimnames(DATA[[1L]])
     dimnames(z$SigmaK) <- dimnames(z$SigmaKstar) <-
         dimnames(z$H) <- list(LM, LM)
-    attr(out, "simulation_settings") <- list(M=z$M, SigmaK=z$SigmaK,
-        SigmaKstar=z$SigmaKstar, H=z$H)
+    attr(out, "simulation_settings") <- list(
+        M=z$M,
+        SigmaK=z$SigmaK,
+        SigmaKstar=z$SigmaKstar,
+        H=z$H)
     out
 }
 
