@@ -183,6 +183,9 @@ z$SigmaKstar
 z$SigmaKstar-v$SigmaKstar
 max(abs(z$SigmaKstar-v$SigmaKstar))
 
+system.time(x1 <- EDMAinR:::.edma_simulate_data_old(n=1000, M, SigmaK))
+system.time(x2 <- EDMAinR:::.edma_simulate_data(n=1000, M, SigmaK))
+
 
 library(magrittr)
 library(shapes)
@@ -191,5 +194,7 @@ library(EDMAinR)
 e <- edma_fit(sim) %>%
   SigmaK_fit(S1)
 
-system.time(x1 <- .edma_simulate_data_old(n=n, M, SigmaK))
-system.time(x2 <- .edma_simulate_data(n=n, M, SigmaK))
+p <- procGPA(A, scale=FALSE)
+plot(p$mshape,asp=1)
+plotshapes(A)
+plotshapes3d(A)
