@@ -158,7 +158,7 @@
 ## x is edma_data object
 ## use same pbapply setup as in opticut with cl arg etc
 ## bootstrap here is used for M uncertainty etc and not for T-test
-edma_fit <- function(x, B=0) {
+edma_fit <- function(x, B=0, ncores=1) {
     if (!inherits(x, "edma_data"))
         stop("x must be of class edma_data")
     if (B < 0)
@@ -170,12 +170,23 @@ edma_fit <- function(x, B=0) {
     dimnames(fit$M) <- dimnames(x)[1:2]
     dimnames(fit$SigmaKstar) <- dimnames(x)[c(1,1)]
     if (B > 0) {
+        ncores <- as.integer(ncores)
+        if (ncores > 1L) {
+            ncores <- min(ncores, parallel::detectCores(TRUE), na.rm=TRUE)
+            cl <- parallel::makeCluster(ncores)
+            parallel::clusterEvalQ(cl, library(EDMAinR))
+            parallel::clusterExport(cl, c("x"))
+        } else {
+            cl <- NULL
+        }
         boot <- pbapply::pblapply(seq_len(B), function(i) {
-            j <- sample(DIM[3L], replace=TRUE)
+            j <- sample(dim(x)[3L], replace=TRUE)
             z <- subset(x, j)
 #            .edma_fit_np(stack(z), DIM[3L], DIM[1L], DIM[2L])
-            .edma_fit_np(as.array(z))
-        })
+            EDMAinR:::.edma_fit_np(as.array(z))
+        }, cl=cl)
+        if (!is.null(cl))
+            parallel::stopCluster(cl)
     } else {
         boot <- NULL
     }

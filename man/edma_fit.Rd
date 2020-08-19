@@ -24,7 +24,7 @@ Estimate mean form and SigmaKstar matrix based on
 Lele (1991), Lele and Richtsmeier (1991) and Hu (2007).
 }
 \usage{
-edma_fit(x, B=0)
+edma_fit(x, B=0, ncores=1L)
 
 ## generics
 Meanform(object, ...)
@@ -56,6 +56,9 @@ an EDMA data object of class 'edma_data'.
 }
   \item{B}{
 nonnegative integer, the number of bootstrap replicates.
+}
+  \item{ncores}{
+positive integer, the number of cores to use when bootstrapping.
 }
   \item{truncate}{
 numeric, number of characters to print for the object title.
