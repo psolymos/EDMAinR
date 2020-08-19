@@ -26,7 +26,7 @@ Lele (1991), Lele and Richtsmeier (1991) and Hu (2007).
 }
 \usage{
 edma_fit(x, B=0, ncores=1L)
-.edma_fit_np(A)
+.edma_fit_np(A, less=TRUE)
 
 ## generics
 Meanform(object, ...)
@@ -59,8 +59,9 @@ an EDMA data object of class 'edma_data'.
   \item{B}{
 nonnegative integer, the number of bootstrap replicates.
 }
-  \item{A}{
+  \item{A, less}{
 landmark data as an array (i.e. \code{as.array(x)}).
+\code{less} is a logical argument controlling what the function returns.
 }
   \item{ncores}{
 positive integer, the number of cores to use when bootstrapping.

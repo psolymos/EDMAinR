@@ -88,7 +88,7 @@
 ## this new function makes use of vectorized base functions
 ## to gain speed and precistion
 ## also returns some intermediate results for future use cases
-.edma_fit_np <- function(A) {
+.edma_fit_np <- function(A, less=TRUE) {
     K <- dim(A)[1L]
     D <- dim(A)[2L]
     n <- dim(A)[3L]
@@ -147,12 +147,14 @@
     if (sum(mds$eig[seq_len(D)]) / sum(mds$eig) < 0.99)
         warning(sprintf("the first %s eigenvalues summed to %s",
             sum(mds$eig[seq_len(D)]), D))
-
-    list(
+    ## usually we don't want to accumulate everything
+    out <- list(
         M=M_hat,
         SigmaKstar=SigmaKstar_hat,
-        H=H,
-        EuX=EuX, EuM=EuM, EuMean=Mean, EuVar=Var)
+        H=H)
+    if (!less)
+        out <- c(out, list(EuX=EuX, EuM=EuM, EuMean=Mean, EuVar=Var))
+    out
 }
 
 ## x is edma_data object
