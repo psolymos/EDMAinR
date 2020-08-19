@@ -1,5 +1,6 @@
 \name{edma_fit}
 \alias{edma_fit}
+\alias{.edma_fit_np}
 \alias{Meanform}
 \alias{SigmaKstar}
 \alias{get_fm}
@@ -25,6 +26,7 @@ Lele (1991), Lele and Richtsmeier (1991) and Hu (2007).
 }
 \usage{
 edma_fit(x, B=0, ncores=1L)
+.edma_fit_np(A)
 
 ## generics
 Meanform(object, ...)
@@ -56,6 +58,9 @@ an EDMA data object of class 'edma_data'.
 }
   \item{B}{
 nonnegative integer, the number of bootstrap replicates.
+}
+  \item{A}{
+landmark data as an array (i.e. \code{as.array(x)}).
 }
   \item{ncores}{
 positive integer, the number of cores to use when bootstrapping.
@@ -93,6 +98,7 @@ Lele (1991), Lele and Richtsmeier (1991) and Hu (2007).
 }
 \value{
 \code{edma_fit} returns and EDMA fit object of class 'edma_fit'.
+\code{.edma_fit_np} is the workhorse function behind \code{edma_fit}.
 
 \code{stack.dist} takes any distance matrix of class 'dist'
 and turns that into a long form data frame with

@@ -165,28 +165,31 @@ edma_fit <- function(x, B=0, ncores=1) {
         stop("B must be non-negative")
     B <- as.integer(B)
     DIM <- dim(x)
-#    fit <- .edma_fit_np(stack(x), DIM[3L], DIM[1L], DIM[2L])
     fit <- .edma_fit_np(as.array(x))
     dimnames(fit$M) <- dimnames(x)[1:2]
     dimnames(fit$SigmaKstar) <- dimnames(x)[c(1,1)]
     if (B > 0) {
+        #fun <- .edma_fit_np
+        BB <- replicate(B, sample(DIM[3L], replace=TRUE))
+        A <- as.array(x)
         ncores <- as.integer(ncores)
         if (ncores > 1L) {
             ncores <- min(ncores, parallel::detectCores(TRUE), na.rm=TRUE)
             cl <- parallel::makeCluster(ncores)
-            parallel::clusterEvalQ(cl, library(EDMAinR))
-            parallel::clusterExport(cl, c("x"))
+            on.exit(parallel::stopCluster(cl))
+            #parallel::clusterExport(cl, c("fun"))
+            #parallel::clusterEvalQ(cl, library(EDMAinR))
         } else {
             cl <- NULL
         }
-        boot <- pbapply::pblapply(seq_len(B), function(i) {
-            j <- sample(dim(x)[3L], replace=TRUE)
-            z <- subset(x, j)
-#            .edma_fit_np(stack(z), DIM[3L], DIM[1L], DIM[2L])
-            EDMAinR:::.edma_fit_np(as.array(z))
-        }, cl=cl)
-        if (!is.null(cl))
-            parallel::stopCluster(cl)
+        boot <- pbapply::pbapply(BB, 2L, function(j, A) {
+            EDMAinR::.edma_fit_np(A[,,j])
+        }, A=A, cl=cl)
+#        boot <- pbapply::pblapply(seq_len(B), function(i) {
+#            j <- sample(dim(x)[3L], replace=TRUE)
+#            z <- subset(x, j)
+#            EDMAinR:::.edma_fit_np(as.array(z))
+#        }, cl=cl)
     } else {
         boot <- NULL
     }
