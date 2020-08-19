@@ -71,14 +71,28 @@ S1 <- matrix(
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(S1) <- list(rownames(M), rownames(M))
 parm1 <- c("s1"=0.2, "s2"=4)
-SigmaK <- EDMAinR:::.vec2mat(parm1, EDMAinR:::.mat2fac(S1))
-dimnames(SigmaK) <- dimnames(S1)
+SigmaK1 <- EDMAinR:::.vec2mat(parm1, EDMAinR:::.mat2fac(S1))
+dimnames(SigmaK1) <- dimnames(S1)
+
+## SigmaK
+S2 <- matrix(
+  c("s1", "r1",  NA, NA,  NA, NA,
+    "r1", "s2", NA, NA,  NA, NA,
+    NA,  NA, "s3", NA,  NA, NA,
+    NA,  NA,  NA, "s4", "r2", NA,
+    NA,  NA,  NA, "r2", "s5", NA,
+    NA,  NA,  NA, NA, NA, "s6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S2) <- list(rownames(M), rownames(M))
+parm2 <- c("s1"=0.2, "s2"=4, "s3"=0.2,"s4"=0.3, "s5"=4,"s6"=4,"r1"=0.2, "r2")
+SigmaK2 <- EDMAinR:::.vec2mat(parm2, EDMAinR:::.mat2fac(S2))
+dimnames(SigmaK2) <- dimnames(S2)
 
 ## number of specimens
 n <- 200
 
 ## simulate: natural space
-sim0 <- edma_simulate_data(n=n, M, SigmaK)
+sim0 <- edma_simulate_data(n=n, M, SigmaK1)
 
 ## make an array for Procrustes
 ## rotate/shift
@@ -198,3 +212,72 @@ p <- procGPA(A, scale=FALSE)
 plot(p$mshape,asp=1)
 plotshapes(A)
 plotshapes3d(A)
+
+
+
+devtools::check()
+devtools::install()
+remotes::install_github("psolymos/EDMAinR")
+
+library(EDMAinR)
+file <- system.file(
+    "extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
+    package="EDMAinR")
+x <- read_xyz(file)
+t1 <- system.time(edma_fit(x, B=200, ncores=1))
+t2 <- system.time(edma_fit(x, B=200, ncores=2))
+t4 <- system.time(edma_fit(x, B=200, ncores=4))
+cbind(t1, t2, t4)
+
+library(EDMAinR)
+file <- system.file(
+    "extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
+    package="EDMAinR")
+x <- read_xyz(file)
+t1 <- system.time(edma_fit(x, B=200))
+t2 <- system.time(edma_fit(x, B=200))
+t4 <- system.time(edma_fit(x, B=200))
+cbind(t1, t2, t4)
+
+library(EDMAinR)
+file <- system.file(
+    "extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
+    package="EDMAinR")
+x <- read_xyz(file)
+#t1 <- system.time(edma_fit(x, B=200, ncores=1))
+t2 <- system.time(edma_fit(x, B=200, ncores=2))
+
+## 0.1-3
+#               t1     t2     t4
+#user.self  56.558 56.585 55.625
+#sys.self    1.124  1.095  1.083
+#elapsed    64.973 64.314 63.465
+
+## 0.1-4
+#               t1     t2    t4
+#user.self  15.589  0.481 0.455
+#sys.self    0.282  0.130 0.126
+#elapsed    16.264 10.431 9.723
+
+remotes::install_github("psolymos/EDMAinR", ref="v0.1-3")
+
+remotes::install_github("psolymos/EDMAinR")
+
+## landlark 1 is the centroid
+K <- 6
+I <- diag(1, K)
+ones <- array(rep(1, K), c(1, K))
+H <- I - (1/K) * crossprod(ones, ones)
+
+L <- cbind(rep(-1, K-1), diag(1, K-1, K-1))
+
+SigmaKs <- SigmaKstar(edma_fit(sim0))
+SigmaKc <- L %*% SigmaKs %*% t(L)
+
+kronecker(L, L)
+
+fit <- edma_fit(sim)
+SigmaKstar(e)
+SigmaK(e)
+Meanform(e)
+
