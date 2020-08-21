@@ -73,7 +73,98 @@ S6 <- matrix(
     NA,  NA,  NA,  "c2", "c2","s2"),
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(S6) <- list(rownames(M), rownames(M))
-parm6 <- c("s1"=12, "c1"=1, "s2"=8, "c2"=2)
+parm6 <- c("s1"=12, "c1"=4, "s2"=8, "c2"=2)
+
+S7 <- matrix(
+  c("s1", "c1", "c1", NA,  NA,  NA,
+    "c1", "s1", NA,  NA,  NA,  NA,
+    "c1", NA, "s1", NA,  NA,  NA,
+    NA,  NA,  NA,  "s2", "c2", "c2",
+    NA,  NA,  NA,  "c2", "s2", "c2",
+    NA,  NA,  NA,  "c2", "c2","s2"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S7) <- list(rownames(M), rownames(M))
+parm7 <- c("s1"=12, "c1"=1, "s2"=8, "c2"=2)
+
+S6 <- matrix(
+  c("s1", "c1", "c2", NA,  NA,  NA,
+    "c1", "s1", "c3",  NA,  NA,  NA,
+    "c2", "c3", "s1", NA,  NA,  NA,
+    NA,  NA,  NA,  "s2", "c4", "c5",
+    NA,  NA,  NA,  "c4", "s2", "c6",
+    NA,  NA,  NA,  "c5", "c6","s2"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S6) <- list(rownames(M), rownames(M))
+parm6 <- c("s1"=12, "s2"=8,
+           "c1"=4, "c2"=2, "c3"=2, "c4"=2, "c5"=2, "c5"=2,)
+
+
+rnd_mat <- function(S) {
+  K <- nrow(S)
+  G <- matrix(rnorm(K^2), K, K)
+  SK = t(G) %*% G
+  SK[is.na(S)] <- NA
+  id <- which(lower.tri(S, diag=TRUE) & !is.na(S))
+  names(id) <- S[id]
+  v <- SK[id]
+  names(v) <- S[id]
+  v <- v[!duplicated(names(v))]
+  SigmaK <- make_Sigma(v, S)
+  list(parm=v, SigmaK=SigmaK, S=S)
+}
+sim_fun <- function(n, M, S, ...) {
+  #SigmaK <- make_Sigma(parm, S)
+  RM <- rnd_mat(S)
+  SigmaK <- RM$SigmaK
+  parm <- RM$parm
+  dimnames(SigmaK) <- dimnames(S)
+  sim <- edma_simulate_data(n=n, M, SigmaK)
+  fit <- SigmaK_fit(edma_fit(sim), S, ...)
+  est <- cbind(true=parm, est=fit$results$par[names(parm)])
+  structure(
+    list(
+      n=n,
+      M=M,
+      S=S,
+      parm=parm,
+      SigmaK=SigmaK,
+      sim=sim,
+      fit=fit,
+      est=est
+    ),
+    class="sim_res"
+  )
+}
+
+df <- function(S) {
+  K <- nrow(S)
+  c(df=sum(!is.na(S[lower.tri(S, diag=TRUE)])),
+    max=K*(K-1)/2)
+}
+
+n <- 1000
+method <- "Nelder-Mead"
+
+rbind(df(S1), df(S2), df(S3), df(S4), df(S5), df(S6), df(S7))
+
+res1 <- sim_fun(n, M, S1, parm1, method=method)
+res2 <- sim_fun(n, M, S2, parm2, method=method)
+res3 <- sim_fun(n, M, S3, parm3, method=method)
+res4 <- sim_fun(n, M, S4, parm4, method=method)
+res5 <- sim_fun(n, M, S5, parm5, method=method)
+res6 <- sim_fun(n, M, S6, parm6, method=method)
+res7 <- sim_fun(n, M, S7, parm7, method=method)
+
+res1$est
+res2$est
+res3$est
+res4$est
+res7$est
+
+
+
+
+
 
 sim_fun <- function(n, m, M, S, parm, ...) {
   SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(S))

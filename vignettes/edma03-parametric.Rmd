@@ -153,14 +153,21 @@ to estimate and where those are placed in the SigmaK matrix:
 (o <- SigmaK_fit(fit, p))
 ```
 
-Now let us compare the 'true' SigmaK matrix with the estimated one:
-
+Now let us compare the 'true' SigmaK matrix with the estimated ones.
+The 'full' (unconstrained) estimate can be accessed by the
+`SigmaKfull` function which follows Hu (2007).
+The `SigmaK` returns the estimates that are constrained by the
+pattern matrix. This result makes sure that the parameters coded 
+with the same names in the pattern matrix `p` get the same 
+estimated parameter values. This is achived by
+an additional optimization step based on the unconstrained solution.
 
 ```{r}
 print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
+print_tb(round(SigmaKfull(o), 2)) # full estimate
+print_tb(round(SigmaK(o), 2)) # constrained estimate
+cbind(true=parm, est=o$results$par[names(parm)])
 ```
-
 
 ## Unequal variance case
 
@@ -184,7 +191,7 @@ The SigmaK matrix looks like this:
 
 ```{r}
 parm <- c("1"=12, "2"=8)
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(p))
+SigmaK <- make_Sigma(parm, p)
 dimnames(SigmaK) <- dimnames(p)
 print_tb(SigmaK)
 ```
@@ -208,8 +215,58 @@ For the estimation, we use `edma_fit` and `SigmaK_fit` as before:
 fit <- edma_fit(sim)
 o <- SigmaK_fit(fit, p)
 print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
+print_tb(round(SigmaKfull(o), 2)) # full estimate
+print_tb(round(SigmaK(o), 2)) # constrained estimate
+cbind(true=parm, est=o$results$par[names(parm)])
 ```
+
+Let's have different values in the diagonal:
+
+```{r}
+p <- matrix(
+  c("1", NA,  NA, NA,  NA,  NA,
+    NA, "2", NA, NA,  NA,  NA,
+    NA,  NA, "3", NA,  NA,  NA,
+    NA,  NA,  NA, "4", NA,  NA,
+    NA,  NA,  NA, NA, "5", NA,
+    NA,  NA,  NA, NA,  NA, "6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(p) <- list(rownames(M), rownames(M))
+plot_tb(p)
+```
+
+The SigmaK matrix looks like this:
+
+```{r}
+parm <- c("1"=12, "2"=8, "3"=11, "4"=6, "5"=10, "6"=4)
+SigmaK <- make_Sigma(parm, p)
+dimnames(SigmaK) <- dimnames(p)
+print_tb(SigmaK)
+```
+
+This translates to the following simulated data:
+
+```{r}
+sim <- edma_simulate_data(n=n, M, SigmaK)
+
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+xy <- attr(tmp, "coordinates")
+text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
+```
+
+
+We can now see that the constrained and full solutions are identical,
+because no parameters are repeated in our pattern matrix:
+
+```{r}
+fit <- edma_fit(sim)
+o <- SigmaK_fit(fit, p)
+print_tb(SigmaK)              # true
+print_tb(round(SigmaKfull(o), 2)) # full estimate
+print_tb(round(SigmaK(o), 2)) # constrained estimate
+cbind(true=parm, est=o$results$par[names(parm)])
+```
+
 
 ## Correlations
 
