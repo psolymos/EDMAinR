@@ -71,10 +71,8 @@ make_Sigma <- function(params, pattern) {
     out
 }
 
-.make_A <- function(K, pattern) {
-    if (K < 3)
-        stop("K must be at least 3")
-    K <- as.integer(K)
+.make_A <- function(pattern) {
+    K <- as.integer(nrow(pattern))
     L <- cbind(rep(-1, K-1), diag(1, K-1, K-1))
     A.0 <- kronecker(L, L)
     Index.matrix0 <- matrix(seq(1:(K-1)^2),c(K-1,K-1))
@@ -113,7 +111,7 @@ make_Sigma <- function(params, pattern) {
 .SigmaK_fit_full <- function(SigmaKstar, pattern) {
     K <- nrow(SigmaKstar)
     L <-  cbind(rep(-1, K-1), diag(1, K-1, K-1))
-    A <- .make_A(K, pattern)
+    A <- .make_A(pattern)
 
     IDs <- ifelse(!is.na(pattern), matrix(seq_len(length(pattern)), K, K), NA)
     IDs <- IDs[lower.tri(IDs, diag=TRUE)]
@@ -224,6 +222,8 @@ method = "Nelder-Mead", control = list()) {
     pattern <- pattern[rownames(object$SigmaKstar),
         colnames(object$SigmaKstar)]
     K <- nrow(pattern)
+    if (K < 3)
+        stop("K must be at least 3")
     DF <- sum(!is.na(pattern[lower.tri(pattern,diag=TRUE)]))
     if (DF > K*(K-1)/2)
         stop(sprintf("too many unknowns (%s > %s) in pattern matrix",
