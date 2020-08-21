@@ -70,14 +70,9 @@ ncores=getOption("Ncpus", 1L), ...) {
             ncores <- min(ncores, parallel::detectCores(TRUE), na.rm=TRUE)
             cl <- parallel::makeCluster(ncores)
             on.exit(parallel::stopCluster(cl))
-            #parallel::clusterExport(cl, c("d1", "d2", "mix", "ref_denom"))
-            #parallel::clusterEvalQ(cl, library(EDMAinR))
         } else {
             cl <- NULL
         }
-#        bfd <- pbapply::pbreplicate(B,
-#            as.numeric(EDMAinR::.Ttest_data(d1, d2, mix=mix, ref_denom=ref_denom)),
-#            cl=cl)
         bfd <- pbapply::pbsapply(seq_len(B),
             function(i, d1, d2, mix, ref_denom) {
             as.numeric(
