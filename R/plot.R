@@ -476,7 +476,7 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
 }
 .plot_d_dm <- function(x, d3=TRUE, pal=NULL, pch=19,
 cex=1, alpha=0.8, all=FALSE,
-midpoints=FALSE, ...) {
+midpoints=FALSE, breaks=NULL, ...) {
     if (inherits(x, "edma_fdm")) {
         proto <- if (x$ref_denom)
             x$denominator else x$numerator
@@ -514,8 +514,10 @@ midpoints=FALSE, ...) {
     fSig <- f$dist < f$lower | f$dist > f$upper
     Max <- max(1/min(1, f$dist), max(f$dist))
     if (midpoints) {
-      v1 <- quantile(f$dist[f$dist < 1], seq(0, 1, 0.1))
-      v2 <- quantile(f$dist[f$dist > 1], seq(0, 1, 0.1))
+      Sv <- if (is.null(breaks))
+        c(0, 0.4, 0.7, 0.9, 0.95, 1) else breaks
+      v1 <- quantile(f$dist[f$dist < 1], rev(1-Sv))
+      v2 <- quantile(f$dist[f$dist > 1], Sv)
       v1[1L] <- 0
       v2[length(v2)] <- Inf
       v <- c(v1[-length(v1)], 1, v2[-1L])
@@ -568,13 +570,13 @@ midpoints=FALSE, ...) {
       } else {
         plot(xyz[,1:2], type="n", axes=FALSE, ann=FALSE)
         if (all) {
-            for (j in 1:nrow(f)) {
-                xy1 <- xyz[as.character(f$row[j]),1:2]
-                xy2 <- xyz[as.character(f$col[j]),1:2]
-                lines(rbind(xy1, xy2),
-                    col=pal[f$cut[j]],
-                    lwd=1)
-            }
+            segments(
+                x0=xyz[as.character(f$row),1],
+                y0=xyz[as.character(f$row),2],
+                x1=xyz[as.character(f$col),1],
+                y1=xyz[as.character(f$col),2],
+                col=pal[f$cut],
+                lwd=1)
         } else {
             for (j in which(fSig)) {
                 xy1 <- xyz[as.character(f$row[j]),1:2]
