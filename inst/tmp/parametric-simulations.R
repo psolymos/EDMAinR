@@ -130,6 +130,8 @@ rnd_mat <- function(S) {
   }
   z
 }
+
+
 sim_fun <- function(n, M, S, ...) {
   #SigmaK <- make_Sigma(parm, S)
   RM <- rnd_mat(S)
@@ -191,10 +193,16 @@ res4$est
 res7$est
 res8$est
 
-
-
-
-
+S <- S5
+p <- parm5
+check <- TRUE
+SigmaK <- make_Sigma(p, S)
+sim <- edma_simulate_data(n=n, M, SigmaK)
+fit <- edma_fit(sim)
+est1 <- SigmaK_fit(fit, S, twostep=FALSE, check=check)
+est2 <- SigmaK_fit(fit, S, twostep=TRUE, check=check)
+s1 <- sensitivity(est1)
+s2 <- sensitivity(est2)
 
 sim_fun <- function(n, m, M, S, parm, ...) {
   SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(S))
