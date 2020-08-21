@@ -57,16 +57,33 @@
     .formdiff(Meanform(fit1), Meanform(fit2))
 }
 
-.Ttest_fit <- function (d1, d2, B=0, ref_denom=TRUE, mix=FALSE, ...) {
+.Ttest_fit <- function (d1, d2, B=0, ref_denom=TRUE, mix=FALSE,
+ncores=getOption("Ncpus", 1L), ...) {
     fd <- .formdiff(Meanform(d1), Meanform(d2))
     d1 <- .get_data(d1)
     d2 <- .get_data(d2)
     .compare_data(d1, d2)
-    bfd <- if (B > 0) {
-        pbapply::pbreplicate(B,
-            as.numeric(.Ttest_data(d1, d2, mix=mix, ref_denom=ref_denom)))
-    } else {
-        NULL
+    bfd <- NULL
+    if (B > 0) {
+        ncores <- as.integer(ncores)
+        if (ncores > 1L) {
+            ncores <- min(ncores, parallel::detectCores(TRUE), na.rm=TRUE)
+            cl <- parallel::makeCluster(ncores)
+            on.exit(parallel::stopCluster(cl))
+            #parallel::clusterExport(cl, c("d1", "d2", "mix", "ref_denom"))
+            #parallel::clusterEvalQ(cl, library(EDMAinR))
+        } else {
+            cl <- NULL
+        }
+#        bfd <- pbapply::pbreplicate(B,
+#            as.numeric(EDMAinR::.Ttest_data(d1, d2, mix=mix, ref_denom=ref_denom)),
+#            cl=cl)
+        bfd <- pbapply::pbsapply(seq_len(B),
+            function(i, d1, d2, mix, ref_denom) {
+            as.numeric(
+                EDMAinR::.Ttest_data(
+                    d1=d1, d2=d2, mix=mix, ref_denom=ref_denom))
+        }, d1=d1, d2=d2, mix=mix, ref_denom=ref_denom, cl=cl)
     }
     fds <- cbind(fd, bfd)
     Tval <- apply(fds, 2, function(z) max(z)/min(z))

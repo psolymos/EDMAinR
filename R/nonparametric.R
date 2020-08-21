@@ -160,7 +160,7 @@
 ## x is edma_data object
 ## use same pbapply setup as in opticut with cl arg etc
 ## bootstrap here is used for M uncertainty etc and not for T-test
-edma_fit <- function(x, B=0, ncores=1) {
+edma_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L)) {
     if (!inherits(x, "edma_data"))
         stop("x must be of class edma_data")
     if (B < 0)

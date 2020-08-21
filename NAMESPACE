@@ -3,12 +3,17 @@ export(
     "edma_simulate_data",
     "read_xyz",
     "edma_fit",
-    ".edma_fit_np",
     "edma_fdm",
     "edma_gm",
     "edma_gdm",
     "SigmaK_fit",
     "read_pattern"
+)
+
+## export necessary internals
+export(
+    ".edma_fit_np",
+    ".Ttest_data"
 )
 
 ## export misc functions

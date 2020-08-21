@@ -1,6 +1,5 @@
 \name{edma_fit}
 \alias{edma_fit}
-\alias{.edma_fit_np}
 \alias{Meanform}
 \alias{SigmaKstar}
 \alias{get_fm}
@@ -25,8 +24,7 @@ Estimate mean form and SigmaKstar matrix based on
 Lele (1991), Lele and Richtsmeier (1991) and Hu (2007).
 }
 \usage{
-edma_fit(x, B=0, ncores=1L)
-.edma_fit_np(A, less=TRUE)
+edma_fit(x, B=0, ncores=getOption("Ncpus", 1L))
 
 ## generics
 Meanform(object, ...)
@@ -59,12 +57,9 @@ an EDMA data object of class 'edma_data'.
   \item{B}{
 nonnegative integer, the number of bootstrap replicates.
 }
-  \item{A, less}{
-landmark data as an array (i.e. \code{as.array(x)}).
-\code{less} is a logical argument controlling what the function returns.
-}
   \item{ncores}{
 positive integer, the number of cores to use when bootstrapping.
+Use \code{options(Ncpus = 2)} to set it to 2 globally.
 }
   \item{truncate}{
 numeric, number of characters to print for the object title.

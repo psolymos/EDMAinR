@@ -4,6 +4,7 @@
   retained as `.edma_fit_np_old` for comparison);
   it also exposes mean/variance for distances for future uses.
 * `edma_simulate_data` is also much faster now.
+* Nonparametric EDMA fid and FDM analysis can use multiple cores.
 
 # Version 0.1-3, 2020-07-05
 
