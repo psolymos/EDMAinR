@@ -20,7 +20,7 @@
     x
 }
 
-.SigmaK_fit <- function(SigmaKstar, H, pattern, init,
+.SigmaK_fit_old <- function(SigmaKstar, H, pattern, init,
 method = "Nelder-Mead", control = list()) {
     K <- nrow(SigmaKstar)
     pattern1 <- pattern
@@ -64,7 +64,131 @@ method = "Nelder-Mead", control = list()) {
     o
 }
 
+.make_A <- function(K, pattern) {
+    if (K < 3)
+        stop("K must be at least 3")
+    K <- as.integer(K)
+    L <- cbind(rep(-1, K-1), diag(1, K-1, K-1))
+    A.0 <- kronecker(L, L)
+    Index.matrix0 <- matrix(seq(1:(K-1)^2),c(K-1,K-1))
+    Index.vec0 <- 0
+    for (i in 1:K-1){
+        for (j in 1:K-1){
+            if (i < j) {
+                Index.vec0 <- c(Index.vec0, Index.matrix0[i,j])
+            }
+        }
+    }
+    Index.vec0 <- Index.vec0[-1]
+    A.1 <- A.0[-Index.vec0,]
+    Index.matrix1 <- matrix(seq(1:K^2),c(K,K))
+    Index.mat1 <- c(0, 0)
+    for (i in 1:K){
+        for (j in 1:K){
+            if (i < j) {
+                Index.mat1 <- rbind(
+                    Index.mat1,
+                    c(Index.matrix1[i,j], Index.matrix1[j,i]))
+            }
+        }
+    }
+    Index.mat1 <- Index.mat1[-1,]
+    A.2 <- A.1
+    A.2[,Index.mat1[,2]] <- A.1[,Index.mat1[,2]] + A.1[,Index.mat1[,1]]
+    A.2 <- A.2[,-Index.mat1[,1]]
+    if (ncol(A.2) != K*(K+1)/2)
+        stop("Something went wrong with constructing A.")
+    Index.nonzero <- which(!is.na(pattern[lower.tri(pattern,diag=TRUE)]))
+    A <- A.2[,Index.nonzero]
+    A
+}
+
+.SigmaK_fit_full <- function(SigmaKstar, pattern) {
+    K <- nrow(SigmaKstar)
+    L <-  cbind(rep(-1, K-1), diag(1, K-1, K-1))
+    A <- .make_A(K, pattern)
+
+    IDs <- ifelse(!is.na(pattern), matrix(seq_len(length(pattern)), K, K), NA)
+    IDs <- IDs[lower.tri(IDs, diag=TRUE)]
+    IDs <- IDs[!is.na(IDs)]
+
+    SigmaKc <- L %*% SigmaKstar %*% t(L)
+    SigmaKcvec = SigmaKc[lower.tri(SigmaKc, diag=TRUE)]
+    SigmaKhat1 = solve(t(A) %*% A) %*% t(A) %*% SigmaKcvec
+
+    SigmaKhat <- matrix(0, K, K)
+    SigmaKhat[IDs] <- SigmaKhat1
+    SigmaKhat <- t(SigmaKhat)
+    SigmaKhat[IDs] <- SigmaKhat1
+    dimnames(SigmaKhat) <- dimnames(SigmaKstar)
+    SigmaKhat
+}
+
+.SigmaK_fit <- function(SigmaKstar, pattern, init,
+method = "Nelder-Mead", control = list()) {
+    K <- nrow(SigmaKstar)
+    IDs <- ifelse(!is.na(pattern), matrix(seq_len(length(pattern)), K, K), NA)
+    IDs <- IDs[lower.tri(IDs, diag=TRUE)]
+    IDs <- IDs[!is.na(IDs)]
+    IDd <- which(diag(1, K, K) > 0)
+    isDiag <- IDs %in% IDd
+    names(IDs) <- pattern[IDs]
+    uni <- !duplicated(names(IDs))
+    attr(IDs, "diag") <- isDiag
+    attr(IDs, "unique") <- uni
+    isDiagUni <- isDiag[uni]
+
+    SigmaKfull <- .SigmaK_fit_full(SigmaKstar, pattern)
+    parms_full <- SigmaKfull[IDs]
+    parms_uni <- parms_full[uni]
+    for (i in names(IDs)[uni])
+        parms_uni[names(IDs)[uni] == i] <- mean(parms_full[names(IDs) == i])
+    if (missing(init))
+        init <- parms_uni
+    if (length(init) != length(parms_uni))
+        stop(sprintf("init length must be %s", length(parms_uni)))
+    num_max <- .Machine$double.xmax^(1/3)
+    fun <- function(parms) {
+        if (any(parms[isDiagUni] <= 0))
+            return(num_max)
+        sum((parms - parms_uni)^2)
+    }
+    if (!is.null(control$fnscale) && control$fnscale < 0)
+        stop("control$fnscale can not be negative")
+    o <- suppressWarnings({
+        optim(init, fun, method=method, control=control, hessian=FALSE)
+    })
+
+    parms_back <- parms_full
+    for (i in names(IDs)[uni])
+        parms_back[names(IDs) == i] <- o$par[names(IDs)[uni] == i]
+
+    SigmaKhat <- matrix(0, K, K)
+    SigmaKhat[IDs] <- parms_back
+    SigmaKhat <- t(SigmaKhat)
+    SigmaKhat[IDs] <- parms_back
+    dimnames(SigmaKhat) <- dimnames(SigmaKfull)
+
+    o$init <- init
+    o$SigmaK <- SigmaKhat
+    o$SigmaKfull <- SigmaKfull
+    o$method <- method
+    o$control <- control
+    o$id <- IDs
+    o
+}
+
 .check_pattern1 <- function(pattern) {
+    pattern1 <- pattern
+    pattern1[] <- NA
+    diag(pattern1) <- diag(pattern)
+    pattern0 <- pattern
+    diag(pattern0) <- NA
+    fac <- .mat2fac(pattern) # all parms
+    lev1 <- levels(.mat2fac(pattern1)) # parms in diag
+    lev0 <- levels(.mat2fac(pattern0)) # parms off-diag
+    if (length(intersect(lev1, lev0)) > 0)
+        stop("diagonal and off-diagonal parameters must not overlap")
     utri <- pattern[upper.tri(pattern)]
     ltri <- t(pattern)[upper.tri(pattern)]
     if (!all(is.na(utri) == is.na(ltri)))
@@ -111,7 +235,8 @@ read_pattern <- function(file, ...) {
 
 SigmaK_fit <- function(object, pattern, ...) {
     pattern <- .check_pattern(object, pattern)
-    o <- .SigmaK_fit(object$SigmaKstar, object$H, pattern, ...)
+#    o <- .SigmaK_fit(object$SigmaKstar, object$H, pattern, ...)
+    o <- .SigmaK_fit(object$SigmaKstar, pattern, ...)
     object$SigmaK <- o$SigmaK
     o$SigmaK <- NULL
     object$pattern <- pattern
@@ -120,7 +245,8 @@ SigmaK_fit <- function(object, pattern, ...) {
         for (i in seq_along(object$boot)) {
             object$boot[[i]][["SigmaK"]] <- .SigmaK_fit(
                 object$boot[[i]][["SigmaKstar"]],
-                object$boot[[i]][["H"]], pattern, ...)$SigmaK
+#                object$boot[[i]][["H"]],
+                pattern, ...)$SigmaK
         }
     }
     dimnames(object$SigmaK) <- dimnames(object$SigmaKstar)
