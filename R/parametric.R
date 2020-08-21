@@ -64,6 +64,13 @@ method = "Nelder-Mead", control = list()) {
     o
 }
 
+make_Sigma <- function(params, pattern) {
+    out <- .vec2mat(params, .mat2fac(pattern))
+    K <- nrow(out)
+    dimnames(out) <- list(paste0("L", seq_len(K)), paste0("L", seq_len(K)))
+    out
+}
+
 .make_A <- function(K, pattern) {
     if (K < 3)
         stop("K must be at least 3")
@@ -161,9 +168,10 @@ method = "Nelder-Mead", control = list()) {
         optim(init, fun, method=method, control=control, hessian=FALSE)
     })
 
+    names(o$par) <- names(IDs)[uni]
     parms_back <- parms_full
-    for (i in names(IDs)[uni])
-        parms_back[names(IDs) == i] <- o$par[names(IDs)[uni] == i]
+    for (i in names(o$par))
+        parms_back[names(IDs) == i] <- o$par[i]
 
     SigmaKhat <- matrix(0, K, K)
     SigmaKhat[IDs] <- parms_back
@@ -237,21 +245,25 @@ read_pattern <- function(file, ...) {
 
 SigmaK_fit <- function(object, pattern, ...) {
     pattern <- .check_pattern(object, pattern)
-#    o <- .SigmaK_fit(object$SigmaKstar, object$H, pattern, ...)
+#    o <- .SigmaK_fit_old(object$SigmaKstar, object$H, pattern, ...)
     o <- .SigmaK_fit(object$SigmaKstar, pattern, ...)
     object$SigmaK <- o$SigmaK
     o$SigmaK <- NULL
+    object$SigmaKfull <- o$SigmaK
+    o$SigmaKfull <- NULL
     object$pattern <- pattern
     object$results <- o
     if (!is.null(object$boot)) {
         for (i in seq_along(object$boot)) {
-            object$boot[[i]][["SigmaK"]] <- .SigmaK_fit(
+            z <- .SigmaK_fit(
                 object$boot[[i]][["SigmaKstar"]],
 #                object$boot[[i]][["H"]],
-                pattern, ...)$SigmaK
+                pattern, ...)
+            object$boot[[i]][["SigmaK"]] <- z$SigmaK
+            object$boot[[i]][["SigmaKfull"]] <- z$SigmaKfull
         }
     }
-    dimnames(object$SigmaK) <- dimnames(object$SigmaKstar)
+#    dimnames(object$SigmaK) <- dimnames(object$SigmaKstar)
     object$call <- match.call()
     class(object) <- c("edma_fit_p", "edma_fit", "edma_data")
     object
@@ -275,6 +287,10 @@ print.edma_fit_p <- function(x, truncate=40, ...) {
 ## extract SigmaK estimate
 SigmaK <- function (object, ...) UseMethod("SigmaK")
 SigmaK.edma_fit_p <- function (object, ...) object[["SigmaK"]]
+
+## extract SigmaK estimate
+SigmaKfull <- function (object, ...) UseMethod("SigmaKfull")
+SigmaKfull.edma_fit_p <- function (object, ...) object[["SigmaKfull"]]
 
 ## evaluates sensitivity:
 ## par_* are parameters according to pattern matrix

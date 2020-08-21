@@ -1,11 +1,14 @@
 \name{SigmaK_fit}
 \alias{SigmaK_fit}
-\alias{SigmaK}
 \alias{print.edma_fit_p}
+\alias{SigmaK}
 \alias{SigmaK.edma_fit_p}
+\alias{SigmaKfull}
+\alias{SigmaKfull.edma_fit_p}
 \alias{read_pattern}
 \alias{print_tb}
 \alias{plot_tb}
+\alias{make_Sigma}
 \title{
 Parametric EDMA fit
 }
@@ -21,12 +24,16 @@ read_pattern(file, ...)
 SigmaK_fit(object, pattern, ...)
 
 ## methods
-SigmaK(object, ...)
 \method{print}{edma_fit_p}(x, truncate=40, ...)
+SigmaK(object, ...)
 \method{SigmaK}{edma_fit_p}(object, ...)
+SigmaKfull(object, ...)
+\method{SigmaKfull}{edma_fit_p}(object, ...)
 
 print_tb(x, ...)
 plot_tb(x, mar=c(1, 1, 1, 4), ...)
+
+make_Sigma(params, pattern)
 }
 \arguments{
   \item{object, x}{
@@ -41,7 +48,11 @@ using \code{\link{read.csv}} or \code{\link[readxl]{read_excel}}.
 numeric, number of characters to print for the object title.
 }
   \item{pattern}{
-a pattern matrix, see Details.
+a pattern matrix, see Details and Examples.
+}
+  \item{params}{
+a named vector of parameters matching the non-\code{NA} values of the
+pattern matrix, see Details and Examples.
 }
   \item{mar}{
 plot margins, see \code{\link{par}}.
@@ -54,6 +65,10 @@ other arguments passed to methods.
 The pattern matrix describes the unknowns in the SigmaK matrix.
 Diagonal must be filled. Upper and lower diagonal values must
 be symmetric or \code{NA}. See Examples.
+
+\code{SigmaKfull} calculates the 'full' parametric estimate according to
+Hu (2007). \code{SigmaK} uses the \code{pattern} matrix to
+constrain the parametric estimates in an additional optimization step.
 }
 \value{
 \code{read_pattern} reads in a csv or xls/xlsx file with the
@@ -91,34 +106,36 @@ read_pattern(
     system.file("extdata/example.xlsx", package="EDMAinR"))
 
 ## here is a pattern matrix
-m <- matrix(c(
+p <- matrix(c(
     "a", NA, NA, NA,
     NA, "a", NA, NA,
     NA,  NA, "b", NA,
     NA,  NA, NA, "b"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.35)
-print_tb(m)
-plot_tb(m)
+print_tb(p)
+plot_tb(p)
+SigmaK <- make_Sigma(parm, p)
+dimnames(p) <- dimnames(SigmaK)
+
+## mean form
+M <- matrix(c(-2.5, 7.5, -2.5, -2.5,
+    -7.5, 2.5, 2.5, 4.5),
+    4, 2)
 
 ## simulate data, so we know what the true values were
-M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
-    .Dim=c(4L, 2L))
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
 sim <- edma_simulate_data(n=500, M, SigmaK)
-dimnames(M) <- dimnames(sim$data[[1L]])
-rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
-colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
 
 ## nonparametric fit
 fit <- edma_fit(sim)
 ## parametric fit
-o <- SigmaK_fit(fit, m)
+o <- SigmaK_fit(fit, p)
 o
 
 ## estimates
-cbind(true=parm, est=o$results$par)
-SigmaK(o)
+cbind(true=parm, est=o$results$par[names(parm)])
+SigmaK(o) # constrained parametric estimate
+SigmaKfull(o) # full set of estimates
 }
 \keyword{ IO }
 \keyword{ models }

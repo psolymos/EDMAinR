@@ -73,27 +73,31 @@ head(get_fm(fit, sort=TRUE, decreasing=FALSE))
 read_pattern(system.file("extdata/example.csv", package="EDMAinR"))
 read_pattern(system.file("extdata/example.xlsx", package="EDMAinR"))
 
-m <- matrix(c(
+p <- matrix(c(
     "a", NA, NA, NA,
     NA, "a", NA, NA,
     NA,  NA, "b", NA,
     NA,  NA, NA, "b"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.35)
+print_tb(p)
+plot_tb(p)
+SigmaK <- make_Sigma(parm, p)
+dimnames(p) <- dimnames(SigmaK)
 
-M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
-    .Dim = c(4L, 2L))
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
+M <- matrix(c(-2.5, 7.5, -2.5, -2.5,
+    -7.5, 2.5, 2.5, 4.5),
+    4, 2)
 
 sim <- edma_simulate_data(n=500, M, SigmaK)
-dimnames(M) <- dimnames(sim$data[[1L]])
-rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
-colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
 
-o <- SigmaK_fit(edma_fit(sim), m)
+fit <- edma_fit(sim)
+o <- SigmaK_fit(fit, p)
 o
-cbind(true=parm, est=o$results$par)
+
+cbind(true=parm, est=o$results$par[names(parm)])
 SigmaK(o)
+SigmaKfull(o)
 
 plot_ord(o)
 plot_clust(o)
