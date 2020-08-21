@@ -1,10 +1,8 @@
 \name{SigmaK_fit}
 \alias{SigmaK_fit}
 \alias{SigmaK}
-\alias{sensitivity}
 \alias{print.edma_fit_p}
 \alias{SigmaK.edma_fit_p}
-\alias{sensitivity.edma_fit_p}
 \alias{read_pattern}
 \alias{print_tb}
 \alias{plot_tb}
@@ -24,10 +22,8 @@ SigmaK_fit(object, pattern, ...)
 
 ## methods
 SigmaK(object, ...)
-sensitivity(object, ...)
 \method{print}{edma_fit_p}(x, truncate=40, ...)
 \method{SigmaK}{edma_fit_p}(object, ...)
-\method{sensitivity}{edma_fit_p}(object, m=10, ...)
 
 print_tb(x, ...)
 plot_tb(x, mar=c(1, 1, 1, 4), ...)
@@ -46,10 +42,6 @@ numeric, number of characters to print for the object title.
 }
   \item{pattern}{
 a pattern matrix, see Details.
-}
-  \item{m}{
-positive integer, number of times SigmaK estimation
-is to be replicated to assess sensitivity.
 }
   \item{mar}{
 plot margins, see \code{\link{par}}.
@@ -71,15 +63,6 @@ pattern matrix. See Examples.
 that to the EDMA fit object. The estimated SigmaK matrix
 can be accessed by the \code{SigmaK} method.
 Estimation is done by \code{\link{optim}}.
-
-\code{sensitivity} is used to re-estimate SigmaK matrix
-multiple times with random starting values for numerical
-optimization. When estimates vary while the loss function
-value is the same, it is usually a sign of non-identifiability.
-The return object has columns starting with
-\code{par_*} that are the parameters according to pattern matrix,
-\code{value} is the loss function value evaluated at
-the estimates.
 }
 \references{
 Hu, L., 2007. Euclidean Distance Matrix Analysis of Landmarks Data:
@@ -136,10 +119,6 @@ o
 ## estimates
 cbind(true=parm, est=o$results$par)
 SigmaK(o)
-
-## sensitivity
-s <- sensitivity(o)
-summary(s)
 }
 \keyword{ IO }
 \keyword{ models }

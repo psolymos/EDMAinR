@@ -35,7 +35,7 @@ export(
     "get_gm",
     "get_gdm",
     "T_test",
-    "sensitivity",
+#    "sensitivity",
     "get_influence",
     "as.edma_data",
     "landmarks",
@@ -112,7 +112,7 @@ S3method("print", "edma_fit_np")
 ## edma_fit_p methods
 S3method("print", "edma_fit_p")
 S3method("SigmaK", "edma_fit_p")
-S3method("sensitivity", "edma_fit_p")
+#S3method("sensitivity", "edma_fit_p")
 ## plot methods
 S3method("plot", "edma_fit")
 S3method("plot_2d", "edma_fit")

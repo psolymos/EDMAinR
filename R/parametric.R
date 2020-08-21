@@ -113,8 +113,10 @@ method = "Nelder-Mead", control = list()) {
     IDs <- IDs[!is.na(IDs)]
 
     SigmaKc <- L %*% SigmaKstar %*% t(L)
-    SigmaKcvec = SigmaKc[lower.tri(SigmaKc, diag=TRUE)]
-    SigmaKhat1 = solve(t(A) %*% A) %*% t(A) %*% SigmaKcvec
+    SigmaKcvec <- SigmaKc[lower.tri(SigmaKc, diag=TRUE)]
+    SigmaKhat1 <- try(solve(t(A) %*% A) %*% t(A) %*% SigmaKcvec, silent=TRUE)
+    if (inherits(SigmaKhat1, "try-error"))
+        stop(attr(SigmaKhat1, "condition")$message)
 
     SigmaKhat <- matrix(0, K, K)
     SigmaKhat[IDs] <- SigmaKhat1
@@ -277,9 +279,12 @@ SigmaK.edma_fit_p <- function (object, ...) object[["SigmaK"]]
 ## evaluates sensitivity:
 ## par_* are parameters according to pattern matrix
 ## value is the loss function value evaluated at par_* from optim
-sensitivity <- function (object, ...) UseMethod("sensitivity")
+#sensitivity <- function (object, ...) UseMethod("sensitivity")
 ## this works because initial values are random, so replicate is fine
-sensitivity.edma_fit_p <- function (object, m=10, ...) {
+
+## this is only applicable to the old SigmaK estimation
+
+.sensitivity_edma_fit_p_old <- function (object, m=10, ...) {
     if (m < 1)
         stop("m must be > 1")
     f <- function() {

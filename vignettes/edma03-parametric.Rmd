@@ -23,8 +23,7 @@ Parametric estimation of SigmaK involves the following steps:
 
 1. non-parametric estimation of mean form and SigmaKstar using the `edma_fit` function,
 2. constructing of a pattern matrix based on biology of landmarks and respecting statistical constraints,
-3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix,
-4. make sure the results are estimable by running `sensitivity` analysis.
+3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix.
 
 ```{r}
 library(EDMAinR)
@@ -162,23 +161,6 @@ print_tb(SigmaK)              # true
 print_tb(round(SigmaK(o), 2)) # estimate
 ```
 
-## Sensitivity analysis
-
-The parametric estimate is based on an optimization algorithm.
-This algorithm requires starting values for the unknown parameters.
-If a given parametric model's parameters are estimable,
-we end up with the exact same estimates no matter what starting values
-we use. This can be used to check the estimability of our parameters.
-The `sensitivity` function repeats the parametric estimation
-multiple times using different starting values:
-
-```{r}
-(s <- sensitivity(o))
-```
-
-The `par_1` column shows the parameter estimates for the variance,
-the `value` column shows the value of the loss function evaluated
-at `par_1`. Both these values are constant, which is a sign of estimability.
 
 ## Unequal variance case
 
@@ -227,7 +209,6 @@ fit <- edma_fit(sim)
 o <- SigmaK_fit(fit, p)
 print_tb(SigmaK)              # true
 print_tb(round(SigmaK(o), 2)) # estimate
-round(s <- sensitivity(o), 3)
 ```
 
 ## Correlations
@@ -274,7 +255,6 @@ fit <- edma_fit(sim)
 o <- SigmaK_fit(fit, p)
 print_tb(SigmaK)              # true
 print_tb(round(SigmaK(o), 2)) # estimate
-round(s <- sensitivity(o), 3)
 ```
 
 ## Non-estimable case: equi-correlation
@@ -316,17 +296,9 @@ text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 
 ```{r}
 fit <- edma_fit(sim)
-o <- SigmaK_fit(fit, p)
-print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
-(s <- sensitivity(o))
+try(o <- SigmaK_fit(fit, p))
 ```
 
-The sensitivity analysis reveals that we get different estimates
-when using different starting values. Although the estimates differ
-greatly, the loss function values are identical.
-Therefore, we cannot decide which estimate is the best,
-these are equally bad, i.e. non-estimable.
 
 ## Non-estimable case: blocks
 
@@ -369,10 +341,7 @@ This setup seems estimable:
 
 ```{r}
 fit <- edma_fit(sim)
-o <- SigmaK_fit(fit, p)
-print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
-round(s <- sensitivity(o), 3)
+try(o <- SigmaK_fit(fit, p))
 ```
 
 

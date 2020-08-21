@@ -94,9 +94,6 @@ o <- SigmaK_fit(edma_fit(sim), m)
 o
 cbind(true=parm, est=o$results$par)
 SigmaK(o)
-s <- sensitivity(o)
-summary(s)
-boxplot(s)
 
 plot_ord(o)
 plot_clust(o)
