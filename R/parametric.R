@@ -223,6 +223,11 @@ method = "Nelder-Mead", control = list()) {
         stop("dimnames of patterm must match landmark names")
     pattern <- pattern[rownames(object$SigmaKstar),
         colnames(object$SigmaKstar)]
+    K <- nrow(pattern)
+    DF <- sum(!is.na(pattern[lower.tri(pattern,diag=TRUE)]))
+    if (DF > K*(K-1)/2)
+        stop(sprintf("too many unknowns (%s > %s) in pattern matrix",
+            DF, K*(K-1)/2))
     invisible(pattern)
 }
 
