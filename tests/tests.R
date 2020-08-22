@@ -99,6 +99,8 @@ cbind(true=parm, est=o$results$par[names(parm)])
 SigmaK(o)
 SigmaKfull(o)
 
+sensitivity(o)
+
 plot_ord(o)
 plot_clust(o)
 

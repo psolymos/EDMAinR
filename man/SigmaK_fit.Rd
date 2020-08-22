@@ -168,6 +168,9 @@ o
 cbind(true=parm, est=o$results$par[names(parm)])
 SigmaK(o) # constrained parametric estimate
 SigmaKfull(o) # full set of estimates
+
+## sensitivity analysis
+sensitivity(o)
 }
 \keyword{ IO }
 \keyword{ models }
