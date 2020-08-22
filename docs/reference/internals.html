@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Check and manipulate colors — edma_colors • EDMAinR</title>
+<title>Internal functions — internals • EDMAinR</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,9 @@
 
 
 
-<meta property="og:title" content="Check and manipulate colors — edma_colors" />
-<meta property="og:description" content="Check and manipulate the default color values." />
+<meta property="og:title" content="Internal functions — internals" />
+<meta property="og:description" content="Users should avoid directly using these functions. Not part of the public
+user interface and can be changed any time without warning." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -137,97 +138,56 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Check and manipulate colors</h1>
+    <h1>Internal functions</h1>
     
-    <div class="hidden name"><code>edma_colors.Rd</code></div>
+    <div class="hidden name"><code>internals.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Check and manipulate the default color values.</p>
+    <p>Users should avoid directly using these functions. Not part of the public
+user interface and can be changed any time without warning.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>edma_colors</span>(<span class='no'>n</span>,
-    <span class='kw'>type</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"diverging"</span>, <span class='st'>"sequential"</span>, <span class='st'>"qualitative"</span>),
-    <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>rev</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
-
-<span class='fu'>plot_edma_colors</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>9</span>, <span class='kw'>maxq</span><span class='kw'>=</span><span class='fl'>9</span>)</pre>
+    <pre class="usage"><span class='fu'>.edma_fit_np</span>(<span class='no'>A</span>, <span class='kw'>less</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='fu'>.Ttest_data</span>(<span class='no'>d1</span>, <span class='no'>d2</span>, <span class='kw'>ref_denom</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>mix</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>n</th>
-      <td><p>the number of colors (&gt;0) to be in the palette.</p></td>
+      <th>A</th>
+      <td><p>landmark data as an array (i.e. <code><a href='https://rdrr.io/r/base/array.html'>as.array(x)</a></code>).</p></td>
     </tr>
     <tr>
-      <th>type</th>
-      <td><p>the type of palette.</p></td>
+      <th>less</th>
+      <td><p>logical argument controlling what the function returns.</p></td>
     </tr>
     <tr>
-      <th>alpha</th>
-      <td><p>the alpha transparency, a number in [0,1].</p></td>
+      <th>d1, d2</th>
+      <td><p>EDMA fit object to compare forms.</p></td>
     </tr>
     <tr>
-      <th>rev</th>
-      <td><p>logical, should colors be reversed.</p></td>
+      <th>ref_denom</th>
+      <td><p>logical, when <code>TRUE</code>, the <code>denominator</code> is used as
+reference object (its form matrix is fixed when calculating
+bootstrap comparing to the other object).</p></td>
     </tr>
     <tr>
-      <th>maxq</th>
-      <td><p>maximum number of qualitative colors to plot.</p></td>
+      <th>mix</th>
+      <td><p>logical, to use mixed bootstrap (numeriator and denominator
+populations are mixed with replacement) or not
+(only the non-reference population is resampled with replacement).</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>edma_colors</code> create a vector of <code>n</code> colors
-based on the settings in <code><a href='https://rdrr.io/r/base/options.html'>getOption("edma_options")</a></code>.</p>
-<p>The options can be set via <code><a href='https://rdrr.io/r/base/options.html'>options</a></code> (see Examples).
-The options can either be the name of a palette <code><a href='https://rdrr.io/r/grDevices/palettes.html'>hcl.colors</a></code>.
-When the option is set to multiple values, those are treated
-as colors to be interplolated with <code><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></code>.
-For qualitative palettes, the color values are used directly
-(recycled as needed).</p>
-<p>Sequential palettes are produced as the higher half of the
-diverging palette for consistency.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p><code>edma_colors</code> returns a vector of hax color codes,
-<code>plot_edma_colors</code> produces a plot with the
-diverging, sequential, and qualitative default palettes
-given settings in <code><a href='https://rdrr.io/r/base/options.html'>getOption("edma_options")</a></code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='https://rdrr.io/r/grDevices/palettes.html'>hcl.colors</a></code>, <code><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></code>, <code><a href='https://rdrr.io/r/grDevices/col2rgb.html'>col2rgb</a></code></p></div>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## default palettes</span>
-<span class='fu'>plot_edma_colors</span>(<span class='fl'>101</span>)</div><div class='img'><img src='edma_colors-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## change default palettes</span>
-<span class='no'>op</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='st'>"edma_options"</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-    <span class='kw'>diverging</span> <span class='kw'>=</span> <span class='st'>"Green-Orange"</span>,
-    <span class='kw'>qualitative</span> <span class='kw'>=</span> <span class='st'>"Dark 2"</span>))
-<span class='fu'>plot_edma_colors</span>(<span class='fl'>101</span>)</div><div class='img'><img src='edma_colors-2.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## use color names</span>
-<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='st'>"edma_options"</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-    <span class='kw'>diverging</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"black"</span>, <span class='st'>"grey"</span>, <span class='st'>"pink"</span>),
-    <span class='kw'>qualitative</span> <span class='kw'>=</span> <span class='st'>"Warm"</span>))
-<span class='fu'>plot_edma_colors</span>(<span class='fl'>101</span>)</div><div class='img'><img src='edma_colors-3.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## reset defaults</span>
-<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='no'>op</span>)
-<span class='fu'>plot_edma_colors</span>(<span class='fl'>101</span>)</div><div class='img'><img src='edma_colors-4.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
-    <h2>Author</h2>
-    <p>Peter Solymos</p>
   </div>
 </div>
 
