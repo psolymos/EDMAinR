@@ -18,7 +18,6 @@ S1 <- matrix(
     NA,  NA,  NA, NA,  NA, "s"),
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(S1) <- list(rownames(M), rownames(M))
-parm1 <- c("s"=4)
 
 S2 <- matrix(
   c("s1", NA,  NA, NA,  NA,  NA,
@@ -29,7 +28,6 @@ S2 <- matrix(
     NA,  NA,  NA, NA,  NA, "s4"),
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(S2) <- list(rownames(M), rownames(M))
-parm2 <- c("s1"=12, "s2"=2, "s3"=4, "s4"=7)
 
 S3 <- matrix(
   c("s1", NA,  NA, NA,  NA,  NA,
@@ -40,7 +38,6 @@ S3 <- matrix(
     NA,  NA,  NA, NA,  NA, "s6"),
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(S3) <- list(rownames(M), rownames(M))
-parm3 <- c("s1"=12, "s2"=1, "s3"=3, "s4"=4, "s5"=8, "s6"=6)
 
 S4 <- matrix(
   c("s1", "c1", "c1", NA,  NA,  NA,
@@ -54,6 +51,36 @@ dimnames(S4) <- list(rownames(M), rownames(M))
 parm4 <- c("s1"=12, "c1"=1, "s2"=8, "c2"=2)
 
 S5 <- matrix(
+  c("s1", "c1", "c1", NA,  NA,  NA,
+    "c1", "s1", NA,  NA,  NA,  NA,
+    "c1", NA, "s1", NA,  NA,  NA,
+    NA,  NA,  NA,  "s2", "c2", "c2",
+    NA,  NA,  NA,  "c2", "s2", "c2",
+    NA,  NA,  NA,  "c2", "c2","s2"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S5) <- list(rownames(M), rownames(M))
+
+S6 <- matrix(
+  c("s1", "c1", NA,  NA,  NA,  "c7",
+    "c1", "s2", "c3", NA,  NA,  NA,
+    NA, "c3",  "s3", NA,  NA,  NA,
+    NA,  NA,   NA,  "s4", "c4", "c5",
+    NA,  NA,   NA,  "c4", "s5", "c6",
+    "c7",  NA,   NA,  "c5", "c6","s6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S6) <- list(rownames(M), rownames(M))
+
+S7 <- matrix(
+  c("s1", "c1", "c2", "c3",  NA,  NA,
+    "c1", "s2", NA,  NA,  NA,  NA,
+    "c2", NA, "s3", NA,  NA,  NA,
+    "c3",  NA,  NA,  "s4", "c4", "c5",
+    NA,  NA,  NA,  "c4", "s5", "c6",
+    NA,  NA,  NA,  "c5", "c6","s6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S7) <- list(rownames(M), rownames(M))
+
+S8 <- matrix(
   c("s", "c", "c", "c", "c", "c",
     "c", "s", "c", "c", "c", "c",
     "c", "c", "s", "c", "c", "c",
@@ -62,9 +89,8 @@ S5 <- matrix(
     "c", "c", "c", "c", "c", "s"),
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(S5) <- list(rownames(M), rownames(M))
-parm5 <- c("s"=10, "c"=2)
 
-S6 <- matrix(
+S9 <- matrix(
   c("s1", "c1", "c1", NA,  NA,  NA,
     "c1", "s1", "c1",  NA,  NA,  NA,
     "c1", "c1", "s1", NA,  NA,  NA,
@@ -72,39 +98,8 @@ S6 <- matrix(
     NA,  NA,  NA,  "c2", "s2", "c2",
     NA,  NA,  NA,  "c2", "c2","s2"),
   nrow=6, ncol=6, byrow=TRUE)
-dimnames(S6) <- list(rownames(M), rownames(M))
-parm6 <- c("s1"=12, "c1"=4, "s2"=8, "c2"=2)
+dimnames(S9) <- list(rownames(M), rownames(M))
 
-S7 <- matrix(
-  c("s1", "c1", "c1", NA,  NA,  NA,
-    "c1", "s1", NA,  NA,  NA,  NA,
-    "c1", NA, "s1", NA,  NA,  NA,
-    NA,  NA,  NA,  "s2", "c2", "c2",
-    NA,  NA,  NA,  "c2", "s2", "c2",
-    NA,  NA,  NA,  "c2", "c2","s2"),
-  nrow=6, ncol=6, byrow=TRUE)
-dimnames(S7) <- list(rownames(M), rownames(M))
-parm7 <- c("s1"=12, "c1"=1, "s2"=8, "c2"=2)
-
-S8 <- matrix(
-  c("s1", "c1", "c2", NA,  NA,  NA,
-    "c1", "s2", "c3",  NA,  NA,  NA,
-    "c2", "c3", "s3", NA,  NA,  NA,
-    NA,  NA,  NA,  "s4", "c4", "c5",
-    NA,  NA,  NA,  "c4", "s5", "c6",
-    NA,  NA,  NA,  "c5", "c6","s6"),
-  nrow=6, ncol=6, byrow=TRUE)
-dimnames(S8) <- list(rownames(M), rownames(M))
-
-S8 <- matrix(
-  c("s1", "c1", "c2", "c3",  NA,  NA,
-    "c1", "s2", NA,  NA,  NA,  NA,
-    "c2", NA, "s3", NA,  NA,  NA,
-    "c3",  NA,  NA,  "s4", "c4", "c5",
-    NA,  NA,  NA,  "c4", "s5", "c6",
-    NA,  NA,  NA,  "c5", "c6","s6"),
-  nrow=6, ncol=6, byrow=TRUE)
-dimnames(S8) <- list(rownames(M), rownames(M))
 
 .rnd_mat <- function(S) {
   K <- nrow(S)
@@ -121,7 +116,7 @@ dimnames(S8) <- list(rownames(M), rownames(M))
 }
 rnd_mat <- function(S) {
   z <- .rnd_mat(S)
-  A <- .make_A(S)
+  A <- EDMAinR:::.make_A(S)
   solve(solve(t(A) %*% A))
   OK <- !inherits(try(chol.default(z$SigmaK), silent=TRUE), "try-error")
   while(!OK) {
@@ -139,21 +134,16 @@ sim_fun <- function(n, M, S, ...) {
   parm <- RM$parm
   dimnames(SigmaK) <- dimnames(S)
   sim <- edma_simulate_data(n=n, M, SigmaK)
-  fit <- SigmaK_fit(edma_fit(sim), S, ...)
-  est <- cbind(true=parm, est=fit$results$par[names(parm)])
-  structure(
-    list(
-      n=n,
-      M=M,
-      S=S,
-      parm=parm,
-      SigmaK=SigmaK,
-      sim=sim,
-      fit=fit,
-      est=est
-    ),
-    class="sim_res"
-  )
+  fit <- edma_fit(sim)
+  o1 <- SigmaK_fit(fit, S, twostep=FALSE, ...)
+  o2 <- SigmaK_fit(fit, S, twostep=FALSE, ...)
+  out <- cbind(true=parm,
+    est1=o1$results$par[names(parm)],
+    est2=o2$results$par[names(parm)])
+  out <- cbind(
+    out,
+    bias1=(out[,"est1"]-out[,"true"])/out[,"true"],
+    bias1=(out[,"est2"]-out[,"true"])/out[,"true"])
 }
 
 df <- function(S) {
@@ -163,10 +153,9 @@ df <- function(S) {
 }
 
 n <- 1000
-method <- "Nelder-Mead"
 
 fOK <-function(S) {
-  A <- .make_A(S)
+  A <- EDMAinR:::.make_A(S)
   z <- try(solve(solve(t(A) %*% A)), silent=TRUE)
   !inherits(z, "try-error")
 }
@@ -183,6 +172,32 @@ res5 <- sim_fun(n, M, S5)
 res6 <- sim_fun(n, M, S6)
 res7 <- sim_fun(n, M, S7)
 res8 <- sim_fun(n, M, S8)
+res9 <- sim_fun(n, M, S9)
+
+repfun <- function(B, S) {
+  res <- replicate(B, sim_fun(n, M, S), simplify=FALSE)
+
+}
+
+B <- 100
+res1 <- pbapply::pbreplicate(B, sim_fun(n, M, S1), simplify=FALSE, cl=4)
+res2 <- pbapply::pbreplicate(B, sim_fun(n, M, S2), simplify=FALSE, cl=4)
+res3 <- pbapply::pbreplicate(B, sim_fun(n, M, S3), simplify=FALSE, cl=4)
+res4 <- pbapply::pbreplicate(B, sim_fun(n, M, S4), simplify=FALSE, cl=4)
+res5 <- pbapply::pbreplicate(B, sim_fun(n, M, S5), simplify=FALSE, cl=4)
+res6 <- pbapply::pbreplicate(B, sim_fun(n, M, S6), simplify=FALSE, cl=4)
+res7 <- pbapply::pbreplicate(B, sim_fun(n, M, S7), simplify=FALSE, cl=4)
+
+summary(t(sapply(res1, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))))
+boxplot(t(sapply(res1, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))))
+
+boxplot(t(sapply(res1, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))), ylim=c(-1,1))
+boxplot(t(sapply(res2, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))), ylim=c(-1,1))
+boxplot(t(sapply(res3, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))), ylim=c(-1,1))
+boxplot(t(sapply(res4, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))), ylim=c(-1,1))
+boxplot(t(sapply(res5, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))), ylim=c(-1,1))
+boxplot(t(sapply(res6, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))), ylim=c(-1,1))
+boxplot(t(sapply(res7, function(z) c(o1=z[,"bias1"], o2=z[,"bias1"]))), ylim=c(-1,1))
 
 ## 11 seems to be the largest
 
