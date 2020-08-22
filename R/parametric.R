@@ -164,7 +164,7 @@ method = "Nelder-Mead", control = list(), twostep=TRUE, check=TRUE) {
         stop(as.character(SigmaKfull))
     if (inherits(SigmaKfull, "try-error")) {
         if (twostep)
-            stop("try check=TRUE when twostep=TRUE")
+            stop(as.character(SigmaKfull))
         SigmaKfull <- NULL
         parms_full <- rep(1, length(IDs))
     } else {

@@ -91,7 +91,7 @@ M <- matrix(c(-2.5, 7.5, -2.5, -2.5,
 
 sim <- edma_simulate_data(n=500, M, SigmaK)
 
-fit <- edma_fit(sim)
+fit <- edma_fit(sim, B=5)
 o <- SigmaK_fit(fit, p)
 o
 

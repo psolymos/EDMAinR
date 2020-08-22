@@ -9,6 +9,8 @@
 \alias{print_tb}
 \alias{plot_tb}
 \alias{make_Sigma}
+\alias{sensitivity}
+\alias{sensitivity.edma_fit_p}
 \title{
 Parametric EDMA fit
 }
@@ -21,7 +23,10 @@ partly based on Hu (2007).
 read_pattern(file, ...)
 
 ## estimation
-SigmaK_fit(object, pattern, ...)
+SigmaK_fit(object, pattern,
+    twostep=TRUE, check=TRUE, ...)
+
+sensitivity(object, ...)
 
 ## methods
 \method{print}{edma_fit_p}(x, truncate=40, ...)
@@ -29,6 +34,7 @@ SigmaK(object, ...)
 \method{SigmaK}{edma_fit_p}(object, ...)
 SigmaKfull(object, ...)
 \method{SigmaKfull}{edma_fit_p}(object, ...)
+\method{sensitivity}{edma_fit_p}(object, m=10, scale=10, ...)
 
 print_tb(x, ...)
 plot_tb(x, mar=c(1, 1, 1, 4), ...)
@@ -50,9 +56,31 @@ numeric, number of characters to print for the object title.
   \item{pattern}{
 a pattern matrix, see Details and Examples.
 }
+  \item{twostep}{
+logical, if the optimization is to be constrained by
+the SigmaK estimate based on Hu (2007) approach,
+see Details.
+}
+  \item{check}{
+logical, if inputs should trigger errors when we know
+the patterns are non identifiable, i.e. number of
+non-zero elements > K(K-1)/2, or when the A matrix is non-invertible.
+\code{check=FALSE} will still produce an error in such
+cases when \code{twostep=TRUE}.
+}
+
   \item{params}{
 a named vector of parameters matching the non-\code{NA} values of the
 pattern matrix, see Details and Examples.
+}
+  \item{m}{
+positive integer, number of times SigmaK estimation
+is to be replicated to assess sensitivity.
+}
+  \item{scale}{
+positive numeric, scaling value for random numbers to be used in
+sensitivity analysis. The original initial values are
+multiplied by random Uniform(0.001, \code{scale}) values.
 }
   \item{mar}{
 plot margins, see \code{\link{par}}.
@@ -68,7 +96,11 @@ be symmetric or \code{NA}. See Examples.
 
 \code{SigmaKfull} calculates the 'full' parametric estimate according to
 Hu (2007). \code{SigmaK} uses the \code{pattern} matrix to
-constrain the parametric estimates in an additional optimization step.
+constrain the parametric estimates in an additional optimization step
+(thus the name 2-step). We minimize sum((SigmaKfull - SigmaK_hat)^2).
+
+The 1-step approach minimizes
+sum((SigmaKstar - (H \%*\% SigmaK_hat \%*\% H))^2)
 }
 \value{
 \code{read_pattern} reads in a csv or xls/xlsx file with the
