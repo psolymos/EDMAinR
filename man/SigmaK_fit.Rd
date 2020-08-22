@@ -1,13 +1,16 @@
 \name{SigmaK_fit}
 \alias{SigmaK_fit}
-\alias{SigmaK}
-\alias{sensitivity}
 \alias{print.edma_fit_p}
+\alias{SigmaK}
 \alias{SigmaK.edma_fit_p}
-\alias{sensitivity.edma_fit_p}
+\alias{SigmaKfull}
+\alias{SigmaKfull.edma_fit_p}
 \alias{read_pattern}
 \alias{print_tb}
 \alias{plot_tb}
+\alias{make_Sigma}
+\alias{sensitivity}
+\alias{sensitivity.edma_fit_p}
 \title{
 Parametric EDMA fit
 }
@@ -20,17 +23,23 @@ partly based on Hu (2007).
 read_pattern(file, ...)
 
 ## estimation
-SigmaK_fit(object, pattern, ...)
+SigmaK_fit(object, pattern,
+    twostep=TRUE, check=TRUE, ...)
+
+sensitivity(object, ...)
 
 ## methods
-SigmaK(object, ...)
-sensitivity(object, ...)
 \method{print}{edma_fit_p}(x, truncate=40, ...)
+SigmaK(object, ...)
 \method{SigmaK}{edma_fit_p}(object, ...)
-\method{sensitivity}{edma_fit_p}(object, m=10, ...)
+SigmaKfull(object, ...)
+\method{SigmaKfull}{edma_fit_p}(object, ...)
+\method{sensitivity}{edma_fit_p}(object, m=10, scale=10, ...)
 
 print_tb(x, ...)
 plot_tb(x, mar=c(1, 1, 1, 4), ...)
+
+make_Sigma(params, pattern)
 }
 \arguments{
   \item{object, x}{
@@ -45,11 +54,33 @@ using \code{\link{read.csv}} or \code{\link[readxl]{read_excel}}.
 numeric, number of characters to print for the object title.
 }
   \item{pattern}{
-a pattern matrix, see Details.
+a pattern matrix, see Details and Examples.
+}
+  \item{twostep}{
+logical, if the optimization is to be constrained by
+the SigmaK estimate based on Hu (2007) approach,
+see Details.
+}
+  \item{check}{
+logical, if inputs should trigger errors when we know
+the patterns are non identifiable, i.e. number of
+non-zero elements > K(K-1)/2, or when the A matrix is non-invertible.
+\code{check=FALSE} will still produce an error in such
+cases when \code{twostep=TRUE}.
+}
+
+  \item{params}{
+a named vector of parameters matching the non-\code{NA} values of the
+pattern matrix, see Details and Examples.
 }
   \item{m}{
 positive integer, number of times SigmaK estimation
 is to be replicated to assess sensitivity.
+}
+  \item{scale}{
+positive numeric, scaling value for random numbers to be used in
+sensitivity analysis. The original initial values are
+multiplied by random Uniform(0.001, \code{scale}) values.
 }
   \item{mar}{
 plot margins, see \code{\link{par}}.
@@ -62,6 +93,14 @@ other arguments passed to methods.
 The pattern matrix describes the unknowns in the SigmaK matrix.
 Diagonal must be filled. Upper and lower diagonal values must
 be symmetric or \code{NA}. See Examples.
+
+\code{SigmaKfull} calculates the 'full' parametric estimate according to
+Hu (2007). \code{SigmaK} uses the \code{pattern} matrix to
+constrain the parametric estimates in an additional optimization step
+(thus the name 2-step). We minimize sum((SigmaKfull - SigmaK_hat)^2).
+
+The 1-step approach minimizes
+sum((SigmaKstar - (H \%*\% SigmaK_hat \%*\% H))^2)
 }
 \value{
 \code{read_pattern} reads in a csv or xls/xlsx file with the
@@ -71,15 +110,6 @@ pattern matrix. See Examples.
 that to the EDMA fit object. The estimated SigmaK matrix
 can be accessed by the \code{SigmaK} method.
 Estimation is done by \code{\link{optim}}.
-
-\code{sensitivity} is used to re-estimate SigmaK matrix
-multiple times with random starting values for numerical
-optimization. When estimates vary while the loss function
-value is the same, it is usually a sign of non-identifiability.
-The return object has columns starting with
-\code{par_*} that are the parameters according to pattern matrix,
-\code{value} is the loss function value evaluated at
-the estimates.
 }
 \references{
 Hu, L., 2007. Euclidean Distance Matrix Analysis of Landmarks Data:
@@ -108,38 +138,39 @@ read_pattern(
     system.file("extdata/example.xlsx", package="EDMAinR"))
 
 ## here is a pattern matrix
-m <- matrix(c(
+p <- matrix(c(
     "a", NA, NA, NA,
     NA, "a", NA, NA,
     NA,  NA, "b", NA,
     NA,  NA, NA, "b"
 ), 4, 4, byrow=TRUE)
 parm <- c(a=0.25, b=0.35)
-print_tb(m)
-plot_tb(m)
+print_tb(p)
+plot_tb(p)
+SigmaK <- make_Sigma(parm, p)
+dimnames(p) <- dimnames(SigmaK)
+
+## mean form
+M <- matrix(c(-2.5, 7.5, -2.5, -2.5,
+    -7.5, 2.5, 2.5, 4.5),
+    4, 2)
 
 ## simulate data, so we know what the true values were
-M <- structure(c(-2.5, 7.5, -2.5, -2.5, -7.5, 2.5, 2.5, 4.5),
-    .Dim=c(4L, 2L))
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(m))
 sim <- edma_simulate_data(n=500, M, SigmaK)
-dimnames(M) <- dimnames(sim$data[[1L]])
-rownames(SigmaK) <- rownames(m) <- rownames(sim$data[[1L]])
-colnames(SigmaK) <- colnames(m) <- rownames(sim$data[[1L]])
 
 ## nonparametric fit
 fit <- edma_fit(sim)
 ## parametric fit
-o <- SigmaK_fit(fit, m)
+o <- SigmaK_fit(fit, p)
 o
 
 ## estimates
-cbind(true=parm, est=o$results$par)
-SigmaK(o)
+cbind(true=parm, est=o$results$par[names(parm)])
+SigmaK(o) # constrained parametric estimate
+SigmaKfull(o) # full set of estimates
 
-## sensitivity
-s <- sensitivity(o)
-summary(s)
+## sensitivity analysis
+sensitivity(o)
 }
 \keyword{ IO }
 \keyword{ models }

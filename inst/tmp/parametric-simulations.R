@@ -73,7 +73,136 @@ S6 <- matrix(
     NA,  NA,  NA,  "c2", "c2","s2"),
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(S6) <- list(rownames(M), rownames(M))
-parm6 <- c("s1"=12, "c1"=1, "s2"=8, "c2"=2)
+parm6 <- c("s1"=12, "c1"=4, "s2"=8, "c2"=2)
+
+S7 <- matrix(
+  c("s1", "c1", "c1", NA,  NA,  NA,
+    "c1", "s1", NA,  NA,  NA,  NA,
+    "c1", NA, "s1", NA,  NA,  NA,
+    NA,  NA,  NA,  "s2", "c2", "c2",
+    NA,  NA,  NA,  "c2", "s2", "c2",
+    NA,  NA,  NA,  "c2", "c2","s2"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S7) <- list(rownames(M), rownames(M))
+parm7 <- c("s1"=12, "c1"=1, "s2"=8, "c2"=2)
+
+S8 <- matrix(
+  c("s1", "c1", "c2", NA,  NA,  NA,
+    "c1", "s2", "c3",  NA,  NA,  NA,
+    "c2", "c3", "s3", NA,  NA,  NA,
+    NA,  NA,  NA,  "s4", "c4", "c5",
+    NA,  NA,  NA,  "c4", "s5", "c6",
+    NA,  NA,  NA,  "c5", "c6","s6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S8) <- list(rownames(M), rownames(M))
+
+S8 <- matrix(
+  c("s1", "c1", "c2", "c3",  NA,  NA,
+    "c1", "s2", NA,  NA,  NA,  NA,
+    "c2", NA, "s3", NA,  NA,  NA,
+    "c3",  NA,  NA,  "s4", "c4", "c5",
+    NA,  NA,  NA,  "c4", "s5", "c6",
+    NA,  NA,  NA,  "c5", "c6","s6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S8) <- list(rownames(M), rownames(M))
+
+.rnd_mat <- function(S) {
+  K <- nrow(S)
+  G <- matrix(rnorm(K^2), K, K)
+  SK = t(G) %*% G
+  SK[is.na(S)] <- NA
+  id <- which(lower.tri(S, diag=TRUE) & !is.na(S))
+  names(id) <- S[id]
+  v <- SK[id]
+  names(v) <- S[id]
+  v <- v[!duplicated(names(v))]
+  SigmaK <- make_Sigma(v, S)
+  list(parm=v, SigmaK=SigmaK, S=S)
+}
+rnd_mat <- function(S) {
+  z <- .rnd_mat(S)
+  A <- .make_A(S)
+  solve(solve(t(A) %*% A))
+  OK <- !inherits(try(chol.default(z$SigmaK), silent=TRUE), "try-error")
+  while(!OK) {
+    z <- .rnd_mat(S)
+    OK <- !inherits(try(chol.default(z$SigmaK), silent=TRUE), "try-error")
+  }
+  z
+}
+
+
+sim_fun <- function(n, M, S, ...) {
+  #SigmaK <- make_Sigma(parm, S)
+  RM <- rnd_mat(S)
+  SigmaK <- RM$SigmaK
+  parm <- RM$parm
+  dimnames(SigmaK) <- dimnames(S)
+  sim <- edma_simulate_data(n=n, M, SigmaK)
+  fit <- SigmaK_fit(edma_fit(sim), S, ...)
+  est <- cbind(true=parm, est=fit$results$par[names(parm)])
+  structure(
+    list(
+      n=n,
+      M=M,
+      S=S,
+      parm=parm,
+      SigmaK=SigmaK,
+      sim=sim,
+      fit=fit,
+      est=est
+    ),
+    class="sim_res"
+  )
+}
+
+df <- function(S) {
+  K <- nrow(S)
+  c(df=sum(!is.na(S[lower.tri(S, diag=TRUE)])),
+    max=K*(K-1)/2)
+}
+
+n <- 1000
+method <- "Nelder-Mead"
+
+fOK <-function(S) {
+  A <- .make_A(S)
+  z <- try(solve(solve(t(A) %*% A)), silent=TRUE)
+  !inherits(z, "try-error")
+}
+
+data.frame(setup=1:8,
+    rbind(df(S1), df(S2), df(S3), df(S4), df(S5), df(S6), df(S7), df(S8)),
+    A_OK=sapply(list(S1, S2, S3, S4, S5, S6, S7, S8), fOK))
+
+res1 <- sim_fun(n, M, S1)
+res2 <- sim_fun(n, M, S2)
+res3 <- sim_fun(n, M, S3)
+res4 <- sim_fun(n, M, S4)
+res5 <- sim_fun(n, M, S5)
+res6 <- sim_fun(n, M, S6)
+res7 <- sim_fun(n, M, S7)
+res8 <- sim_fun(n, M, S8)
+
+## 11 seems to be the largest
+
+res1$est
+res2$est
+res3$est
+res4$est
+res7$est
+res8$est
+
+S <- S5
+p <- parm5
+check <- TRUE
+SigmaK <- make_Sigma(p, S)
+sim <- edma_simulate_data(n=n, M, SigmaK)
+fit <- edma_fit(sim)
+est1 <- SigmaK_fit(fit, S, twostep=FALSE, check=check)
+est2 <- SigmaK_fit(fit, S, twostep=TRUE, check=check)
+s1 <- sensitivity(est1)
+s2 <- sensitivity(est2)
 
 sim_fun <- function(n, m, M, S, parm, ...) {
   SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(S))

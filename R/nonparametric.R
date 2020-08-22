@@ -78,8 +78,7 @@
 
     out <- list(
         M=est.M,
-        SigmaKstar=est.SigmaKstar,
-        H=H)
+        SigmaKstar=est.SigmaKstar)
     out
 }
 
@@ -150,8 +149,7 @@
     ## usually we don't want to accumulate everything
     out <- list(
         M=M_hat,
-        SigmaKstar=SigmaKstar_hat,
-        H=H)
+        SigmaKstar=SigmaKstar_hat)
     if (!less)
         out <- c(out, list(EuX=EuX, EuM=EuM, EuMean=Mean, EuVar=Var))
     out

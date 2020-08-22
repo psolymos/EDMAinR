@@ -23,8 +23,7 @@ Parametric estimation of SigmaK involves the following steps:
 
 1. non-parametric estimation of mean form and SigmaKstar using the `edma_fit` function,
 2. constructing of a pattern matrix based on biology of landmarks and respecting statistical constraints,
-3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix,
-4. make sure the results are estimable by running `sensitivity` analysis.
+3. use the `SigmaK_fit` to estimate SigmaK using the non-parametric fit and the pattern matrix.
 
 ```{r}
 library(EDMAinR)
@@ -99,8 +98,7 @@ round(Meanform(fit), 2) # estimate
 The 'true' `SigmaKstar` matrix is stored in our simulation object:
 
 ```{r}
-tmp <- attr(sim, "simulation_settings")$SigmaKstar
-round(tmp, 2)
+round(attr(sim, "simulation_settings")$SigmaKstar, 2)
 round(SigmaKstar(fit), 2)
 ```
 
@@ -154,31 +152,44 @@ to estimate and where those are placed in the SigmaK matrix:
 (o <- SigmaK_fit(fit, p))
 ```
 
-Now let us compare the 'true' SigmaK matrix with the estimated one:
+Now let us compare the 'true' SigmaK matrix with the estimated ones.
+The 'full' estimate of SigmaK can be accessed by the
+`SigmaKfull` function which follows Hu (2007).
 
+```{r}
+print_tb(SigmaK)                  # true
+print_tb(round(SigmaKfull(o), 2)) # full estimate
+```
+
+We can see in the SigmaKfull matrix that the values are slightly
+different, because the algorithm treats every non-`NA` entry in the
+pattern matrix (non-0 cell in the SigmaK matrix to be estimated)
+as an unknown variable.
+
+The `SigmaK` by default returns the estimates that are constrained by the
+pattern matrix. We call this default method the 2-step algorithm
+because the numerical optimization follows the estimation of SigmaKfull.
+We then use the pattern matrix to constrain the parameters denoted by the
+same labels to be the same value. Let's see what value we get
+for our constant variance parameter:
 
 ```{r}
 print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
+print_tb(round(SigmaK(o), 2)) # constrained estimate
+cbind(true=sigma^2, estimate=o$results$par)
 ```
 
-## Sensitivity analysis
-
-The parametric estimate is based on an optimization algorithm.
-This algorithm requires starting values for the unknown parameters.
-If a given parametric model's parameters are estimable,
-we end up with the exact same estimates no matter what starting values
-we use. This can be used to check the estimability of our parameters.
-The `sensitivity` function repeats the parametric estimation
-multiple times using different starting values:
+There is an other method we call the 1-step algorithm where the 
+numerical optimization is performed without the information
+from SigmaKfull. It uses only the SigmaKstar matrix.
+We can use this algorithm as:
 
 ```{r}
-(s <- sensitivity(o))
+(o1 <- SigmaK_fit(fit, p, twostep=FALSE))
+cbind(true=sigma^2, onestep=o1$results$par, twostep=o$results$par)
 ```
 
-The `par_1` column shows the parameter estimates for the variance,
-the `value` column shows the value of the loss function evaluated
-at `par_1`. Both these values are constant, which is a sign of estimability.
+Both estimates look the same and very close to the true estimate.
 
 ## Unequal variance case
 
@@ -201,8 +212,8 @@ plot_tb(p)
 The SigmaK matrix looks like this:
 
 ```{r}
-parm <- c("1"=12, "2"=8)
-SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(p))
+parm <- c("1"=12, "2"=2)
+SigmaK <- make_Sigma(parm, p)
 dimnames(SigmaK) <- dimnames(p)
 print_tb(SigmaK)
 ```
@@ -224,11 +235,67 @@ For the estimation, we use `edma_fit` and `SigmaK_fit` as before:
 
 ```{r}
 fit <- edma_fit(sim)
-o <- SigmaK_fit(fit, p)
-print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
-round(s <- sensitivity(o), 3)
+o1 <- SigmaK_fit(fit, p, twostep=FALSE)
+o2 <- SigmaK_fit(fit, p, twostep=TRUE)
+print_tb(SigmaK)                   # true
+print_tb(round(SigmaKfull(o2), 2)) # full estimate
+cbind(true=parm, 
+  onestep=o1$results$par[names(parm)], 
+  twostep=o2$results$par[names(parm)])
 ```
+
+Let's have 6 different values in the diagonal:
+
+```{r}
+p <- matrix(
+  c("1", NA,  NA, NA,  NA,  NA,
+    NA, "2", NA, NA,  NA,  NA,
+    NA,  NA, "3", NA,  NA,  NA,
+    NA,  NA,  NA, "4", NA,  NA,
+    NA,  NA,  NA, NA, "5", NA,
+    NA,  NA,  NA, NA,  NA, "6"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(p) <- list(rownames(M), rownames(M))
+plot_tb(p)
+```
+
+The SigmaK matrix looks like this:
+
+```{r}
+parm <- c("1"=12, "2"=8, "3"=11, "4"=3, "5"=10, "6"=2)
+SigmaK <- make_Sigma(parm, p)
+dimnames(SigmaK) <- dimnames(p)
+print_tb(SigmaK)
+```
+
+This translates to the following simulated data:
+
+```{r}
+sim <- edma_simulate_data(n=n, M, SigmaK)
+
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+xy <- attr(tmp, "coordinates")
+text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
+```
+
+
+We can now see that the constrained and full solutions are identical,
+because no parameters are repeated in our pattern matrix:
+
+```{r}
+fit <- edma_fit(sim)
+o1 <- SigmaK_fit(fit, p, twostep=FALSE)
+o2 <- SigmaK_fit(fit, p, twostep=TRUE)
+print_tb(SigmaK)                   # true
+print_tb(round(SigmaKfull(o2), 2)) # full estimate
+cbind(true=parm, 
+  onestep=o1$results$par[names(parm)], 
+  twostep=o2$results$par[names(parm)])
+```
+
+We can see that both the 1-step and 2-step algorithms give
+estimates that are close to the true values when all the correlations (off-diagonal
+elements) of SigmaK are 0 (coded as `NA` in the pattern matrix).
 
 ## Correlations
 
@@ -271,15 +338,51 @@ This setup seems estimable:
 
 ```{r}
 fit <- edma_fit(sim)
-o <- SigmaK_fit(fit, p)
-print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
-round(s <- sensitivity(o), 3)
+o1 <- SigmaK_fit(fit, p, twostep=FALSE)
+o2 <- SigmaK_fit(fit, p, twostep=TRUE)
+print_tb(SigmaK)                   # true
+print_tb(round(SigmaKfull(o2), 2)) # full estimate
+cbind(true=parm, 
+  onestep=o1$results$par[names(parm)], 
+  twostep=o2$results$par[names(parm)])
 ```
+
+## Sensitivity analysis
+
+The parametric estimate is based on an optimization algorithm.
+This algorithm requires starting values for the unknown parameters.
+The robustness of our estimates can be tested using different
+starting values for the optimization. The idea is that 
+we can call the estimates stable if the optimization finds
+the same values irrespective of the starting values.
+
+We can assess the results in this regard using the `sensitivity`
+function. This function repeats the estimation `m` times
+by using a starting value that is the original starting value
+times a random uniform number. The same idea can be applied to the
+1-step and 1-step estimator:
+
+```{r}
+sensitivity(o1)
+sensitivity(o2)
+```
+
+The `par_1`, `par_2`, etc. columns shows the parameter estimates for the
+unknown variables, the `value` column shows the value of the loss 
+function evaluated these parameter values. Each row represent
+a separate run, the 1st row the original estimate, the rest
+from repeated runs with different starting values.
+We see that in this case the 2-step estimator is less 
+sensitive to starting values, but both methods provide very similar
+estimates and loss function values.
 
 ## Non-estimable case: equi-correlation
 
-The following parametrization is non identifiable:
+The following parametrization is a very common parametrization.
+As we will see, contrary to the intuition that models with few
+unknowns (a single variance and a single covariance term) are identifiable,
+this model is actually non-identifiable. Let us walk through the steps
+of estimating the parameters and look for signs of non-identifiability:
 
 ```{r}
 p <- matrix(
@@ -316,17 +419,39 @@ text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 
 ```{r}
 fit <- edma_fit(sim)
-o <- SigmaK_fit(fit, p)
-print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
-(s <- sensitivity(o))
+try(o1 <- SigmaK_fit(fit, p, twostep=FALSE))
+try(o2 <- SigmaK_fit(fit, p, twostep=TRUE))
 ```
 
-The sensitivity analysis reveals that we get different estimates
-when using different starting values. Although the estimates differ
-greatly, the loss function values are identical.
-Therefore, we cannot decide which estimate is the best,
-these are equally bad, i.e. non-estimable.
+Oops, we get an error in both cases. Based on Hu (2007),
+we need to have a certain number of 0s in the SigmaK matrix
+to be able to identify the parameters. The number of non-zero
+values cannot be larger than $K (K-1)/2$ (counting the elements
+in the diagonal and the lower triangle only). This is what the 
+error informs us about. The `check` argument can be used to
+disable this check and see what we get if we disregard
+such mathematical results:
+
+```{r}
+try(o1 <- SigmaK_fit(fit, p, twostep=FALSE, check=FALSE))
+try(o2 <- SigmaK_fit(fit, p, twostep=TRUE, check=FALSE))
+```
+
+Interesting. The 1-step estimator works because it does not depend on
+SigmaKfull. The 2-step estimator, however, fails because
+the so called $A$ matrix that we need to estimate SigmaKfull
+is non-invertible.
+
+Let's investigate the sensitivity analysis results for the 1-step estimator:
+
+```{r}
+sensitivity(o1)
+```
+
+The clear sign of non-identifiability here is that the loss function values
+are identical across runs, but the estimates vary widely.
+Just as a reminder, our true values were `r parm["1"]` for variance
+and `r parm["2"]` for covariance.
 
 ## Non-estimable case: blocks
 
@@ -344,18 +469,18 @@ p <- matrix(
   nrow=6, ncol=6, byrow=TRUE)
 dimnames(p) <- list(rownames(M), rownames(M))
 plot_tb(p)
-```
 
-The SigmaK matrix looks like this:
-
-```{r}
 parm <- c("1"=12, "2"=1, "3"=8, "4"=2)
 SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(p))
 dimnames(SigmaK) <- dimnames(p)
 print_tb(SigmaK)
 ```
 
-The unequal variances translate to the following simulated data:
+The number of non-zero entries (diagonal and lower triangle)
+in this case is 12 which is less than $K(K-1)/2=15$.
+According to the simple rule of thumb from above, this should work.
+
+The bloc design translates to the following simulated data:
 
 ```{r}
 sim <- edma_simulate_data(n=n, M, SigmaK)
@@ -365,14 +490,151 @@ xy <- attr(tmp, "coordinates")
 text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
 ```
 
-This setup seems estimable:
+Although 12 < 15, this setup still leads to non-ivertible $A$ matrix 
+for the 2-step algorithm, and we can see the clear signs of non-estimability
+for the 1-step algorithm based on the sensitivity analysis:
 
 ```{r}
 fit <- edma_fit(sim)
-o <- SigmaK_fit(fit, p)
-print_tb(SigmaK)              # true
-print_tb(round(SigmaK(o), 2)) # estimate
-round(s <- sensitivity(o), 3)
+try(o1 <- SigmaK_fit(fit, p, twostep=FALSE, check=FALSE))
+try(o2 <- SigmaK_fit(fit, p, twostep=TRUE, check=FALSE))
+sensitivity(o1)
 ```
 
+## An estimable block pattern
 
+Let's try a slight variation of this block design:
+
+```{r}
+p <- matrix(
+  c("1", "2", "2", "2",  NA,  NA,
+    "2", "1", NA,  NA,   NA,  NA,
+    "2", NA,  "1", NA,   NA,  NA,
+    "2", NA,  NA,  "3",  "4", "4",
+    NA,  NA,  NA,  "4",  "3", "4",
+    NA,  NA,  NA,  "4",  "4","3"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(p) <- list(rownames(M), rownames(M))
+plot_tb(p)
+
+parm <- c("1"=12, "2"=1, "3"=8, "4"=2)
+SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(p))
+dimnames(SigmaK) <- dimnames(p)
+print_tb(SigmaK)
+```
+
+We have again 12 non-zero entries, but the 0 from the 1st row and 2nd
+colum to the 3rd row and 1st column (and its pair in the upper triangle).
+```{r}
+sim <- edma_simulate_data(n=n, M, SigmaK)
+
+tmp <- plot_2d(sim, xlim=c(-80, 100), ylim=c(-60, 60), asp=1)
+xy <- attr(tmp, "coordinates")
+text(xy[,1]+15, xy[,2], labels=rownames(xy), cex=0.6, col=4)
+```
+
+Everything looks fine now:
+
+```{r}
+fit <- edma_fit(sim)
+o1 <- SigmaK_fit(fit, p, twostep=FALSE)
+o2 <- SigmaK_fit(fit, p, twostep=TRUE)
+
+print_tb(SigmaK)                   # true
+print_tb(round(SigmaKfull(o2), 2)) # full estimate
+cbind(true=parm, 
+  onestep=o1$results$par[names(parm)], 
+  twostep=o2$results$par[names(parm)])
+
+sensitivity(o1)
+sensitivity(o2)
+```
+
+The default checks for the `SigmaK_fit` can catch the non-identifiable
+situation. Use the `check=FALSE` and `twostep=FALSE` options with care.
+
+## Selecting the best parametric model
+
+Assumptions about biological mechanisms driving the 0 pattern in the
+covariance matrix can help researchers to formulate hypotheses.
+If these hypotheses translate into patterns that are estimable,
+we can use the loss function value from the 1-step estimator
+to tell which model fits the data better:
+
+We will use the `p1` pattern matrix to simulate the data,
+and we will use all 5 identifiable patterns to try to
+estimate the parametric SigmaK matrix.
+
+```{r}
+p1 <- matrix(
+  c("1", NA, NA, NA,  NA,  NA,
+    NA, "1", NA, NA,  NA,  NA,
+    NA, NA, "1", NA,  NA,  NA,
+    NA,  NA,  NA, "1", NA, NA,
+    NA,  NA,  NA, NA, "1", NA,
+    NA,  NA,  NA, NA, NA, "1"),
+  nrow=6, ncol=6, byrow=TRUE)
+p2 <- matrix(
+  c("1", NA,  NA, NA,  NA,  NA,
+    NA, "1", NA, NA,  NA,  NA,
+    NA,  NA, "1", NA,  NA,  NA,
+    NA,  NA,  NA, "2", NA,  NA,
+    NA,  NA,  NA, NA, "2", NA,
+    NA,  NA,  NA, NA,  NA, "2"),
+  nrow=6, ncol=6, byrow=TRUE)
+p3 <- matrix(
+  c("1", NA,  NA, NA,  NA,  NA,
+    NA, "2", NA, NA,  NA,  NA,
+    NA,  NA, "3", NA,  NA,  NA,
+    NA,  NA,  NA, "4", NA,  NA,
+    NA,  NA,  NA, NA, "5", NA,
+    NA,  NA,  NA, NA,  NA, "6"),
+  nrow=6, ncol=6, byrow=TRUE)
+p4 <- matrix(
+  c("1", "2", "2", NA,  NA,  NA,
+    "2", "1", NA,  NA,  NA,  NA,
+    "2", NA,  "1", NA,  NA,  NA,
+    NA,  NA,  NA,  "3", "4", "4",
+    NA,  NA,  NA,  "4", "3", NA,
+    NA,  NA,  NA,  "4", NA,  "3"),
+  nrow=6, ncol=6, byrow=TRUE)
+p5 <- matrix(
+  c("1", "2", "2", "2",  NA,  NA,
+    "2", "1", NA,  NA,   NA,  NA,
+    "2", NA,  "1", NA,   NA,  NA,
+    "2", NA,  NA,  "3",  "4", "4",
+    NA,  NA,  NA,  "4",  "3", "4",
+    NA,  NA,  NA,  "4",  "4","3"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(p1) <- list(rownames(M), rownames(M))
+dimnames(p2) <- list(rownames(M), rownames(M))
+dimnames(p3) <- list(rownames(M), rownames(M))
+dimnames(p4) <- list(rownames(M), rownames(M))
+dimnames(p5) <- list(rownames(M), rownames(M))
+
+parm <- c("1"=12, "2"=1, "3"=8, "4"=2)
+SigmaK <- EDMAinR:::.vec2mat(parm, EDMAinR:::.mat2fac(p4))
+dimnames(SigmaK) <- dimnames(p4)
+sim <- edma_simulate_data(n=n, M, SigmaK)
+```
+
+We fit 5 models, then compare the loss function values.
+The model with the smallest loss function value is the best:
+
+```{r}
+fit <- edma_fit(sim)
+o1 <- SigmaK_fit(fit, p1, twostep=FALSE)
+o2 <- SigmaK_fit(fit, p2, twostep=FALSE)
+o3 <- SigmaK_fit(fit, p3, twostep=FALSE)
+o4 <- SigmaK_fit(fit, p4, twostep=FALSE)
+o5 <- SigmaK_fit(fit, p5, twostep=FALSE)
+
+value <- sapply(list(o1, o2, o3, o4, o5), function(o) {
+  o$results$value
+})
+
+data.frame(
+  model=1:5,
+  value=value,
+  delta=value - min(value))
+```

@@ -74,19 +74,6 @@ parm1 <- c("s1"=0.2, "s2"=4)
 SigmaK1 <- EDMAinR:::.vec2mat(parm1, EDMAinR:::.mat2fac(S1))
 dimnames(SigmaK1) <- dimnames(S1)
 
-## SigmaK
-S2 <- matrix(
-  c("s1", "r1",  NA, NA,  NA, NA,
-    "r1", "s2", NA, NA,  NA, NA,
-    NA,  NA, "s3", NA,  NA, NA,
-    NA,  NA,  NA, "s4", "r2", NA,
-    NA,  NA,  NA, "r2", "s5", NA,
-    NA,  NA,  NA, NA, NA, "s6"),
-  nrow=6, ncol=6, byrow=TRUE)
-dimnames(S2) <- list(rownames(M), rownames(M))
-parm2 <- c("s1"=0.2, "s2"=4, "s3"=0.2,"s4"=0.3, "s5"=4,"s6"=4,"r1"=0.2, "r2")
-SigmaK2 <- EDMAinR:::.vec2mat(parm2, EDMAinR:::.mat2fac(S2))
-dimnames(SigmaK2) <- dimnames(S2)
 
 ## number of specimens
 n <- 200

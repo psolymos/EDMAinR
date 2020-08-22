@@ -7,7 +7,8 @@ export(
     "edma_gm",
     "edma_gdm",
     "SigmaK_fit",
-    "read_pattern"
+    "read_pattern",
+    "make_Sigma"
 )
 
 ## export necessary internals
@@ -30,6 +31,7 @@ export(
     "Meanform",
     "SigmaKstar",
     "SigmaK",
+    "SigmaKfull",
     "get_fm",
     "get_fdm",
     "get_gm",
@@ -112,6 +114,7 @@ S3method("print", "edma_fit_np")
 ## edma_fit_p methods
 S3method("print", "edma_fit_p")
 S3method("SigmaK", "edma_fit_p")
+S3method("SigmaKfull", "edma_fit_p")
 S3method("sensitivity", "edma_fit_p")
 ## plot methods
 S3method("plot", "edma_fit")
