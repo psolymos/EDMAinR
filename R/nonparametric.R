@@ -185,6 +185,7 @@ edma_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L)) {
         boot <- pbapply::pbapply(BB, 2L, function(j, A) {
             EDMAinR::.edma_fit_np(A[,,j])
         }, A=A, cl=cl)
+        attr(boot, "samples") <- BB
     } else {
         boot <- NULL
     }
