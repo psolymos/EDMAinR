@@ -149,6 +149,9 @@
     <pre class="usage">## read xyz files
 read_xyz(file, ...)
 
+## write xyz files
+write_xyz(x, file)
+
 ## data generation
 edma_simulate_data(n, M, SigmaK, H=NULL)
 
@@ -221,7 +224,7 @@ as.dist(m, diag=FALSE, upper=FALSE)</pre>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>file</th>
-      <td><p>the name of the file which the data are to be read from,
+      <td><p>the name of the file which the data are to be read from, or written to,
 see <code><a href='https://rdrr.io/r/utils/read.table.html'>read.table</a></code> for more details.</p></td>
     </tr>
     <tr>
@@ -361,6 +364,13 @@ function with Ward's clustering method).</p>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>read_xyz</span>(<span class='no'>file</span>)
 <span class='no'>x</span></div><div class='output co'>#&gt; EDMA data: Crouzon P0 MUT
 #&gt; 3 dimensions, 47 landmarks, 28 specimens</div><div class='input'>
+<span class='co'>## test writing xyz file</span>
+<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span>(<span class='kw'>fileext</span> <span class='kw'>=</span> <span class='st'>".xyz"</span>)
+<span class='fu'>write_xyz</span>(<span class='no'>x</span>, <span class='kw'>file</span><span class='kw'>=</span><span class='no'>f</span>)
+<span class='no'>tmp</span> <span class='kw'>&lt;-</span> <span class='fu'>read_xyz</span>(<span class='kw'>file</span><span class='kw'>=</span><span class='no'>f</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>x</span>), <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>tmp</span>)))
+<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='no'>f</span>)
+
 <span class='co'>## the orignal structure</span>
 <span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span>(<span class='no'>file</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='no'>l</span>[<span class='fl'>1</span>:<span class='fl'>10</span>], <span class='kw'>sep</span><span class='kw'>=</span><span class='st'>"\n"</span>)</div><div class='output co'>#&gt; Crouzon P0 MUT

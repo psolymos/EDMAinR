@@ -373,6 +373,24 @@
 <a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/pkg/ggdendro/man/ggdendrogram.html">ggdendrogram</a></span>(h, <span class="dt">rotate =</span> <span class="ot">TRUE</span>, <span class="dt">size =</span> <span class="dv">2</span>)</a></code></pre></div>
 <p><img src="edma01-data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 </div>
+<div id="writing-data-to-xyz-format" class="section level2">
+<h2 class="hasAnchor">
+<a href="#writing-data-to-xyz-format" class="anchor"></a>Writing data to xyz format</h2>
+<p>Different kinds of morphometrics data formats can be turned into EDMA data format as long as it can be organized into a <span class="math inline">\(K \times D \times n\)</span> array and then using the <code>as.edma_data</code> method.</p>
+<p>Once the data is an EDMA data object, the <code>write_xyz</code> function will write that into a text file with extension xyz:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">f &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span>(<span class="dt">fileext =</span> <span class="st">".xyz"</span>) <span class="co"># create a temporary file</span></a>
+<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="kw"><a href="../reference/edma_data.html">write_xyz</a></span>(x, <span class="dt">file=</span>f)            <span class="co"># write data to temp file</span></a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">tmp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/edma_data.html">read_xyz</a></span>(<span class="dt">file=</span>f)         <span class="co"># read back the data</span></a>
+<a class="sourceLine" id="cb23-4" data-line-number="4">x                               <span class="co"># original data</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt; 3 dimensions, 47 landmarks, 28 specimens</span></a>
+<a class="sourceLine" id="cb23-7" data-line-number="7">tmp                             <span class="co"># this should be the same too</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 3 dimensions, 47 landmarks, 28 specimens</span></a>
+<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">## test if the all the dimnames are the same</span></a>
+<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/identical.html">identical</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(x), <span class="kw"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(tmp)))</a>
+<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(f)                       <span class="co"># delete temp file</span></a></code></pre></div>
+</div>
 </div>
   </div>
 
@@ -397,6 +415,7 @@
 <a href="#visual-inspection-of-the-data">Visual inspection of the data</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#spotting-data-errors">Spotting data errors</a></li>
       <li><a href="#ordination-and-clustering">Ordination and clustering</a></li>
+      <li><a href="#writing-data-to-xyz-format">Writing data to xyz format</a></li>
       </ul>
 </li>
       </ul>
