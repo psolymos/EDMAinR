@@ -2,6 +2,7 @@
 export(
     "edma_simulate_data",
     "read_xyz",
+    "write_xyz",
     "edma_fit",
     "edma_fdm",
     "edma_gm",

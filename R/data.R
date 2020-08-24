@@ -59,6 +59,24 @@ read_xyz <- function(file, ...) {
     out
 }
 
+write_xyz <- function(x, file) {
+    if (!inherits(x, "edma_data"))
+        stop("x must be an edma_data object")
+    text <- c(
+        x$name,
+        "XYZ",
+        paste0(dim(x)[1L], "L ", dim(x)[2L], " ", dim(x)[3L]),
+        paste(landmarks(x), collapse=" "),
+        apply(as.matrix(x), 1, paste, collapse=" "),
+        "",
+        specimens(x)
+    )
+    if (missing(file))
+        file <- stdout()
+    writeLines(text, con = file, sep = "\n")
+}
+
+
 ## this turns the data into X expected by fitting functions
 stack.edma_data <- function(x, ...) {
     d <- x$data

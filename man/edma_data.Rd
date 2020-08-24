@@ -1,5 +1,6 @@
 \name{edma_data}
 \alias{read_xyz}
+\alias{write_xyz}
 \alias{print.edma_data}
 \alias{stack.edma_data}
 \alias{subset.edma_data}
@@ -40,6 +41,9 @@ Functions for reading, simulating, and manipulating EDMA data.
 \usage{
 ## read xyz files
 read_xyz(file, ...)
+
+## write xyz files
+write_xyz(x, file)
 
 ## data generation
 edma_simulate_data(n, M, SigmaK, H=NULL)
@@ -92,7 +96,7 @@ plot_clust(x, ...)
 }
 \arguments{
   \item{file}{
-the name of the file which the data are to be read from,
+the name of the file which the data are to be read from, or written to,
 see \code{\link{read.table}} for more details.
 }
   \item{x, m}{
@@ -241,6 +245,13 @@ file <- system.file(
     package="EDMAinR")
 x <- read_xyz(file)
 x
+
+## test writing xyz file
+f <- tempfile(fileext = ".xyz")
+write_xyz(x, file=f)
+tmp <- read_xyz(file=f)
+stopifnot(identical(dimnames(x), dimnames(tmp)))
+unlink(f)
 
 ## the orignal structure
 l <- readLines(file)
