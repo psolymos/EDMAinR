@@ -344,3 +344,26 @@ Here is an example:
 library(ggdendro)
 ggdendrogram(h, rotate = TRUE, size = 2)
 ```
+
+
+## Writing data to xyz format
+
+Different kinds of morphometrics data formats
+can be turned into EDMA data format as long as it can be
+organized into a $K \times D \times n$ array
+and then using the `as.edma_data` method.
+
+Once the data is an EDMA data object, the
+`write_xyz` function will write that into a text file with extension xyz:
+
+```{r}
+f <- tempfile(fileext = ".xyz") # create a temporary file
+write_xyz(x, file=f)            # write data to temp file
+tmp <- read_xyz(file=f)         # read back the data
+x                               # original data
+tmp                             # this should be the same too
+## test if the all the dimnames are the same
+stopifnot(identical(dimnames(x), dimnames(tmp)))
+unlink(f)                       # delete temp file
+```
+

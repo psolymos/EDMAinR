@@ -20,18 +20,24 @@ set.seed(429)
 
 This tutorial explains how to calculate growth matrix based
 on 2 EDMA data objects with homologous landmarks.
+
 We will use data sets where landmarks were measured on specimens
-of 2 different ages:
+of 2 different ages (E17.5 embryonic and newborn mice), 
+taking a subset (`l`) of 10 landmarks:
 
 ```{r}
 library(EDMAinR)
 
-file_a1 <- system.file("extdata/purplebook/cebusage1.xyz",
+file_a1 <- system.file("extdata/growth/CZEM_wt_global.xyz",
     package="EDMAinR")
-a1 <- read_xyz(file_a1)
-file_a2 <- system.file("extdata/purplebook/cebusage6.xyz",
+file_a2 <- system.file("extdata/growth/CZP0_wt_global.xyz",
     package="EDMAinR")
-a2 <- read_xyz(file_a2)
+
+l <- c("amsph", "bas", "loci", "lpto", "lsqu",
+        "lsyn", "roci", "rpto", "rsqu", "rsyn")
+
+a1 <- read_xyz(file_a1)[l,,]
+a2 <- read_xyz(file_a2)[l,,]
 a1
 a2
 ```
@@ -51,10 +57,12 @@ from objects `a1` and `a2`.
 
 The growth matrix is calculated as the ratio of form matrices
 ($FM$) from the numerator and denominator objects: $FDM(a1,a2) = FM(a2)/FM(a1)$.
-
+`a2` is taken as the numerator, `a1` as the denominator.
+We put the older sample (newborn) in the numerator spot 
+and the younger sample (embryonic) in the denominator spot
 
 ```{r}
-gm <- edma_gm(a1=fit_a1, a2=fit_a2, B=10)
+gm <- edma_gm(a1=fit_a1, a2=fit_a2, B=25)
 gm
 ```
 
@@ -151,6 +159,46 @@ rglwidget(width = 600, height = 600, reuse = FALSE)
 Growth difference matrix ($GDM$) is calculated as 
 $GDM(A1,A2,B1,B2) = GM(B1,B2) / GM(A1,A2)$.
 
-To be added later: example data set needed.
+We will use two Crouzon mutant samples, same age groups as 
+for the unaffected samples (embryonic and newborn):
 
+```{r}
+file_b1 <- system.file("extdata/growth/CZEM_mut_global.xyz",
+    package="EDMAinR")
+file_b2 <- system.file("extdata/growth/CZP0_mut_global.xyz",
+    package="EDMAinR")
+
+b1 <- read_xyz(file_b1)[l,,]
+b2 <- read_xyz(file_b2)[l,,]
+b1
+b2
+
+fit_b1 <- edma_fit(b1)
+fit_b2 <- edma_fit(b2)
+```
+
+Growth matrices ($GM$) are formed as pairwise Euclidean distances
+between landmarks from EDMA fit objects using the estimated mean forms
+from objects `a1` and `a2`.
+
+The growth matrix is calculated as the ratio of form matrices
+($FM$) from the numerator and denominator objects: $FDM(a1,a2) = FM(a2)/FM(a1)$.
+`a2` is taken as the numerator, `a1` as the denominator.
+We put the older sample (newborn) in the numerator spot 
+and the younger sample (embryonic) in the denominator spot
+
+```{r}
+gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_b1, b2=fit_b2, B=25)
+gdm
+
+T_test(gdm)
+plot_Ttest(gdm)
+plot_ci(gdm)
+
+plot_ord(gdm)
+plot_clust(gdm)
+
+plot_2d(gdm)
+plot_3d(gdm)
+```
 
