@@ -199,6 +199,11 @@ plot_ord(gdm)
 plot_clust(gdm)
 
 plot_2d(gdm)
-plot_3d(gdm)
 ```
 
+```{r fig.width=7,fig.height=5,out.width='100%'}
+xyz <- plot_3d(gdm)
+text3d(xyz, texts=rownames(xyz), pos=1) # this adds names
+decorate3d() # this adds the axes
+rglwidget(width = 600, height = 600, reuse = FALSE)
+```
