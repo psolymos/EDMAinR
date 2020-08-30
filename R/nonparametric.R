@@ -189,7 +189,7 @@ edma_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L)) {
     } else {
         boot <- NULL
     }
-    out <- c(x[c("name", "data")], fit)
+    out <- c(x, fit)
     out$call <- match.call()
     out$boot <- boot
     class(out) <- c("edma_fit_np", "edma_fit", "edma_data")
