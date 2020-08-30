@@ -226,7 +226,6 @@ as.array.edma_data <- function (x, ...) {
         M=unname(M),
         SigmaK=unname(SigmaK),
         SigmaKstar=unname(SigmaKstar),
-        H=unname(H),
         A=unname(A),
         D=D, K=K, n=n)
 }
@@ -244,13 +243,11 @@ edma_simulate_data <- function(n, M, SigmaK) {
     )
     class(out) <- c("edma_data")
     dimnames(z$M) <- dimnames(DATA[[1L]])
-    dimnames(z$SigmaK) <- dimnames(z$SigmaKstar) <-
-        dimnames(z$H) <- list(LM, LM)
+    dimnames(z$SigmaK) <- dimnames(z$SigmaKstar) <- list(LM, LM)
     attr(out, "simulation_settings") <- list(
         M=z$M,
         SigmaK=z$SigmaK,
-        SigmaKstar=z$SigmaKstar,
-        H=z$H)
+        SigmaKstar=z$SigmaKstar)
     out
 }
 
