@@ -1,22 +1,39 @@
 library(EDMAinR)
 library(geomorph)
+library(shapes) # Morpho, Momocs
 
-## -------- functions for rotating/translating -----------
+## -------- functions for rotating/translating/etc -----------
 
-## degree to radian
-deg2rad <- function(deg) deg * pi /180
-
-## make a rotation matrix based on degrees
-Rmat2d <- function(deg) {
-    rad <- deg2rad(deg)
-    matrix(c(cos(rad), sin(rad), -sin(rad), cos(rad)), 2, 2)
-}
+# R: rotation, t: translation, alpha: scaling, E: perturbation
+#
+# Model 1: alpha_i (M+E_i)R_i+t_i. (scaling after perturbation)
+# Model 2: (alpha_i*M + E_i)R_i + t_i (scaling before perturbation)
+#
+# alpha_i vector to be provided by the user.
+# We will generate it from some distribution for simulations.
 
 ## rotate M around its centroid (i.e. not origin)
 rotate_2d <- function(M, deg=0, center=TRUE) {
-    tr <- colMeans(M)
+    ## degree to radian
+    deg2rad <- function(deg) deg * pi /180
+    ## make a rotation matrix based on degrees
+    Rmat2d <- function(deg) {
+        rad <- deg2rad(deg)
+        matrix(c(cos(rad), sin(rad), -sin(rad), cos(rad)), 2, 2)
+    }
+    tr <- if (center)
+      colMeans(M) else rep(0, ncol(M))
     Mpr <- t(t(M) - tr)
     out <- Mpr %*% Rmat2d(deg)
+    t(t(out) + tr)
+}
+
+## scale M around its centroid (i.e. not origin)
+scale_2d <- function(M, scale=1, center=TRUE) {
+    tr <- if (center)
+      colMeans(M) else rep(0, ncol(M))
+    Mpr <- t(t(M) - tr)
+    out <- Mpr * scale
     t(t(out) + tr)
 }
 
@@ -25,23 +42,81 @@ translate_2d <- function(M, tx=0, ty=0) {
     t(t(M) + c(tx, ty))
 }
 
-## rotate and translate M
-rot_trans_2d <- function(M, deg=0, tx=0, ty=0) {
-    translate_2d(rotate_2d(M, deg), tx, ty)
+## simulate a single specimen given M and SigmaK
+simulate1_2d <- function(M, SigmaK, deg=0, tx=0, ty=0, scale=1, before=FALSE) {
+    if (before)
+        M <- scale_2d(M, scale)
+    S <- EDMAinR:::.edma_simulate_data(1, M, SigmaK)$A[,,1]
+    N <- S
+    if (!before)
+        S <- scale_2d(S, scale)
+    S <- rotate_2d(S, deg)
+    S <- translate_2d(S, tx, ty)
+    dimnames(S) <- list(paste0("L", seq_len(nrow(S))), c("X", "Y"))
+    dimnames(N) <- dimnames(S)
+    attr(S, "natural") <- N
+    S
 }
 
-## randomly rotate and translate M within bounds of +/- range
-rnd_rot_trans_2d <- function(M, range=10) {
-    rot_trans_2d(M,
-        runif(1, 0, 360),
-        runif(1, -range, range),
-        runif(1, -range, range))
+simulate_2d <- function(n, M, SigmaK, deg=0, tx=0, ty=0, scale=1, before=FALSE) {
+    nn <- seq_len(n)
+    deg <- rep(deg, n)[nn]
+    tx <- rep(tx, n)[nn]
+    ty <- rep(ty, n)[nn]
+    scale <- rep(scale, n)[nn]
+    d <- lapply(nn, function(i) {
+        simulate1_2d(M, SigmaK,
+                     deg=deg[i],
+                     tx=tx[i],
+                     ty=ty[i],
+                     scale=scale[i],
+                     before=before)
+    })
+    names(d) <- paste0("S", nn)
+    N <- d
+    for (i in nn) {
+        N[[i]] <- attr(d[[i]], "natural")
+        attr(d[[i]], "natural") <- NULL
+    }
+    out <- list(name="Simulated data", data=d)
+    class(out) <- c("edma_data_simul", "edma_data")
+    nat <- out
+    nat$data <- N
+    out$natural <- as.array(nat)
+    attr(out, "M") <- M
+    attr(out, "SigmaK") <- SigmaK
+    out
+}
+
+## plot the simulated objects
+plot.edma_data_simul <- function(x, nmax=NULL, natural=FALSE,
+chull=FALSE, ellipse=FALSE, ...) {
+    A <- if (natural)
+        x$natural else as.array(x)
+    n <- dim(x)[3]
+    if (is.null(nmax))
+      nmax <- n
+    AA <- rbind(x$M, do.call(rbind, lapply(1:n, function(i) A[,,i])))
+    plot(AA, type="n", asp=1, axes=FALSE, ann=FALSE, ...)
+    for (i in seq_len(nmax)) {
+        polygon(A[,,i], border="#00000088", col=NA)
+    }
+    for (i in seq_len(dim(A)[1])) {
+        AAA <- t(A[i,,])
+        if (ellipse)
+            polygon(EDMAinR:::.data_ellipse(AAA),
+                col="#ff000044", border="#ff0000")
+        if (chull)
+            polygon(AAA[chull(AAA),],
+                col="#ff000044", border="#ff0000")
+    }
+    invisible(x)
 }
 
 ## ---------- simulation -----------
 
 ## Mean form
-M <- rbind(
+M1 <- rbind(
     L1=c(2, 0),
     L2=c(0, 2),
     L3=c(-2, 0),
@@ -49,16 +124,8 @@ M <- rbind(
     L5=c(0, -6),
     L6=c(1, -5)
 )
-colnames(M) <- c("X", "Y")
-M <- 10 * M
-
-if (FALSE) {
-set.seed(34)
-plot(0, type="n", asp=1, xlim=c(-10, 10), ylim=c(-10, 10))
-polygon(M)
-for (i in 2:4)
-    polygon(rnd_rot_trans_2d(M), border=i)
-}
+colnames(M1) <- c("X", "Y")
+M1 <- 10 * M1
 
 ## SigmaK
 S1 <- matrix(
@@ -69,73 +136,53 @@ S1 <- matrix(
     NA,  NA,  NA, NA, "s2", NA,
     NA,  NA,  NA, NA, NA, "s2"),
   nrow=6, ncol=6, byrow=TRUE)
-dimnames(S1) <- list(rownames(M), rownames(M))
-parm1 <- c("s1"=0.2, "s2"=4)
-SigmaK1 <- EDMAinR:::.vec2mat(parm1, EDMAinR:::.mat2fac(S1))
-dimnames(SigmaK1) <- dimnames(S1)
+dimnames(S1) <- list(rownames(M1), rownames(M1))
+parm1 <- c("s1"=1, "s2"=5)
+SigmaK1 <- make_Sigma(parm1, S1)
 
+## simulation settings
+set.seed(23)
+n <- 100 # number of specimens
+range <- 100
+#alpha <- rlnorm(n, 0, 0.1) # set this 1 to remove scaling
+before <- FALSE
+alpha <- 1
+deg <- runif(n, 0, 360)
+tx <- runif(n, -range, range)
+ty <- runif(n, -range, range)
 
-## number of specimens
-n <- 200
+## simulated object
+sim <- simulate_2d(n, M1, SigmaK1,
+    deg=deg, tx=tx, ty=ty, scale=alpha, before=before)
+## has the following elements:
+## $data:     EDMA data list after sclaing/perturbation
+## $natural:  data as 3D array in natural space (before rotation/translation)
 
-## simulate: natural space
-sim0 <- edma_simulate_data(n=n, M, SigmaK1)
+op <- par(mfrow=c(1,2))
+plot(sim, nmax=5, natural=TRUE, chull=FALSE, ellipse=TRUE)
+title("Natural space")
+plot(sim, nmax=5)
+polygon(M1, border=2, col=NA)
+title("Observations")
+par(op)
 
-## make an array for Procrustes
-## rotate/shift
-A <- as.array(sim0)
-for (i in 1:n) {
-    A[,,i] <- rnd_rot_trans_2d(A[,,i], range=100)
-}
-sim <- as.edma_data(A)
-
-## quick check
-plot_2d(sim)
-
-## -------- natural space -----------
-
-plot(as.matrix(sim0), type="n", asp=1, axes=FALSE, ann=FALSE)
-#points(as.matrix(sim0), col="#00000044", pch=".")
-for (i in 1:10) {
-  polygon(sim0$data[[i]], border="#00000088", col=NA)
-}
-for (i in 1:nrow(M)) {
-  polygon(EDMAinR:::.data_ellipse(t(as.array(sim0)[i,,])),
-          col="#ff000044", border="#ff0000")
-}
-points(M, col=2, pch=3, cex=2)
-#polygon(M, border=2, col=NA, lwd=2)
-
-## --------- observed specimens ----------
-
-plot(as.matrix(sim), type="n", asp=1, axes=FALSE, ann=FALSE)
-#points(as.matrix(sim), col="#00000044", pch=".")
-for (i in 1:10) {
-  polygon(sim$data[[i]], border="#00000088", col=NA)
-}
-for (i in 1:nrow(M)) {
-  polygon(EDMAinR:::.data_ellipse(t(as.array(sim0)[i,,])),
-          col="#ff000044", border="#ff0000")
-}
-points(M, col=2, pch=3, cex=2)
-polygon(M, border=2, col=NA)
+## here is how to get mean/var of the pairwise Eu distances
+z <- EDMAinR:::.edma_fit_np(sim, less=FALSE)
+str(z)
+z$EuMean
+z$EuVar
 
 ## EDMA
+#sim <- edma_simulate_data(n, M1, SigmaK1)
 fit <- edma_fit(sim)
 e <- SigmaK_fit(fit, S1)
+Meanform(e)
 SigmaKstar(e)
 SigmaK(e)
-Meanform(e)
 
 ## Procrustes
-p <- gpagen(as.array(sim))
-
-## compare FM
-## scaling estimate, need non-scaled Mean form estimate
-
-## M hat
-Me <- Meanform(e)
-Mp <- p$consensus
+A <- as.array(sim)
+p <- gpagen(A)
 
 ## calculate unscaled residuals (RRR)
 AA <- A
@@ -158,7 +205,7 @@ par(op)
 VCVs <- cov(t(t(RRR) / p$Csize))
 VCV <- cov(RRR)
 
-## chack if we get the same as they
+## check if we get the same as they
 plot(as.numeric(VCVs), as.numeric(p$points.VCV))
 abline(0,1)
 
@@ -167,104 +214,12 @@ diag(SigmaK(e))
 matrix(diag(VCV), ncol=2, byrow=TRUE)
 
 
-
-
-D <- ncol(M)
-K <- nrow(M)
-
-system.time(v <- EDMAinR:::.edma_fit_np_old(stack(sim), n, K, D))
-system.time(z <- EDMAinR:::.edma_fit_np(as.array(sim)))
-v$M
-z$M
-z$M-v$M
-max(abs(z$M-v$M))
-
-v$SigmaKstar
-z$SigmaKstar
-z$SigmaKstar-v$SigmaKstar
-max(abs(z$SigmaKstar-v$SigmaKstar))
-
-system.time(x1 <- EDMAinR:::.edma_simulate_data_old(n=1000, M, SigmaK))
-system.time(x2 <- EDMAinR:::.edma_simulate_data(n=1000, M, SigmaK))
-
-
-library(magrittr)
-library(shapes)
-library(EDMAinR)
-
-e <- edma_fit(sim) %>%
-  SigmaK_fit(S1)
+## using shapes
 
 p <- procGPA(A, scale=FALSE)
 plot(p$mshape,asp=1)
-plotshapes(A)
-plotshapes3d(A)
+#plotshapes(A)
 
 
 
-devtools::check()
-devtools::install()
-remotes::install_github("psolymos/EDMAinR")
-
-library(EDMAinR)
-file <- system.file(
-    "extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
-    package="EDMAinR")
-x <- read_xyz(file)
-t1 <- system.time(edma_fit(x, B=200, ncores=1))
-t2 <- system.time(edma_fit(x, B=200, ncores=2))
-t4 <- system.time(edma_fit(x, B=200, ncores=4))
-cbind(t1, t2, t4)
-
-library(EDMAinR)
-file <- system.file(
-    "extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
-    package="EDMAinR")
-x <- read_xyz(file)
-t1 <- system.time(edma_fit(x, B=200))
-t2 <- system.time(edma_fit(x, B=200))
-t4 <- system.time(edma_fit(x, B=200))
-cbind(t1, t2, t4)
-
-library(EDMAinR)
-file <- system.file(
-    "extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
-    package="EDMAinR")
-x <- read_xyz(file)
-#t1 <- system.time(edma_fit(x, B=200, ncores=1))
-t2 <- system.time(edma_fit(x, B=200, ncores=2))
-
-## 0.1-3
-#               t1     t2     t4
-#user.self  56.558 56.585 55.625
-#sys.self    1.124  1.095  1.083
-#elapsed    64.973 64.314 63.465
-
-## 0.1-4
-#               t1     t2    t4
-#user.self  15.589  0.481 0.455
-#sys.self    0.282  0.130 0.126
-#elapsed    16.264 10.431 9.723
-
-remotes::install_github("psolymos/EDMAinR", ref="v0.1-3")
-
-remotes::install_github("psolymos/EDMAinR")
-
-## landlark 1 is the centroid
-K <- 6
-I <- diag(1, K)
-ones <- array(rep(1, K), c(1, K))
-H <- I - (1/K) * crossprod(ones, ones)
-
-L <- cbind(rep(-1, K-1), diag(1, K-1, K-1))
-
-SigmaKs <- SigmaKstar(edma_fit(sim0))
-SigmaKc <- L %*% SigmaKs %*% t(L)
-
-kronecker(L, L)
-
-fit <- edma_fit(sim)
-SigmaKstar(e)
-SigmaK(e)
-Meanform(e)
 
