@@ -311,9 +311,9 @@ print.edma_fit_p <- function(x, truncate=40, ...) {
         .shorten_name(x$name, truncate), "\n",
         "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n",
-        ncol(x$data[[1L]]), " dimensions, ",
         nrow(x$data[[1L]]), " landmarks, ",
-        length(x$data), " replicates, ",
+        ncol(x$data[[1L]]), " dimensions, ",
+        length(x$data), " specimens, ",
         if (length(x$boot))
             paste(length(x$boot), "bootstrap runs") else "no bootstrap",
         sep="")
