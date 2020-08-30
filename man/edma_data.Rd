@@ -46,7 +46,7 @@ read_xyz(file, ...)
 write_xyz(x, file)
 
 ## data generation
-edma_simulate_data(n, M, SigmaK, H=NULL)
+edma_simulate_data(n, M, SigmaK)
 
 ## print
 \method{print}{edma_data}(x, truncate=40, ...)
@@ -115,10 +115,9 @@ logical, if \code{TRUE}, the user is asked before each plot.
 subset is for subsetting specimens (e.g. for bootstrap).
 [i, j, k] indices refer to [landmarks, dimensions, specimens].
 }
-  \item{n, M, SigmaK, H}{
+  \item{n, M, SigmaK}{
 number of specimens (n), mean form matrix (M, K x D),
-variance-covariance matrix (K x K symmetric),
-and H matrix (can be \code{NULL}) for simulations.
+variance-covariance matrix (K x K symmetric).
 }
   \item{truncate}{
 numeric, number of characters to print for the object title.

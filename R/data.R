@@ -98,8 +98,8 @@ stack.edma_data <- function(x, ...) {
 ## print function
 print.edma_data <- function(x, truncate=40, ...) {
     cat("EDMA data: ", .shorten_name(x$name, truncate), "\n",
-        ncol(x$data[[1L]]), " dimensions, ",
         nrow(x$data[[1L]]), " landmarks, ",
+        ncol(x$data[[1L]]), " dimensions, ",
         length(x$data), " specimens", sep="")
     invisible(x)
 }
@@ -201,12 +201,12 @@ as.array.edma_data <- function (x, ...) {
         ones <- array(rep(1, K), c(1, K))
         H <- diag(1, K) - (1/K) * crossprod(ones, ones)
     }
-    SigmaKstar = H %*% SigmaK %*% H
+    SigmaKstar <- H %*% SigmaK %*% H
     list(
         M=M, SigmaK=SigmaK, SigmaKstar=SigmaKstar, H=H,
         X=X, D=D, K=K, n=n)
 }
-.edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
+.edma_simulate_data <- function(n, M, SigmaK) {
     K <- nrow(M)
     if (K < 2L)
         stop("Mean form must have at leats 2 landmarks (rows).")
@@ -219,11 +219,9 @@ as.array.edma_data <- function (x, ...) {
     for (i in seq_len(n)) {
         A[,,i] <- crossprod(Cmat, Z[,,i]) + M
     }
-    if (is.null(H)) {
-        ones <- array(rep(1, K), c(1, K))
-        H <- diag(1, K) - (1/K) * crossprod(ones, ones)
-    }
-    SigmaKstar = H %*% SigmaK %*% H
+    ones <- array(rep(1, K), c(1, K))
+    H <- diag(1, K) - (1/K) * crossprod(ones, ones)
+    SigmaKstar <- H %*% SigmaK %*% H
     list(
         M=unname(M),
         SigmaK=unname(SigmaK),
@@ -232,13 +230,11 @@ as.array.edma_data <- function (x, ...) {
         A=unname(A),
         D=D, K=K, n=n)
 }
-edma_simulate_data <- function(n, M, SigmaK, H=NULL) {
-    z <- .edma_simulate_data(n, M, SigmaK, H)
+edma_simulate_data <- function(n, M, SigmaK) {
+    z <- .edma_simulate_data(n, M, SigmaK)
     DATA <- list()
     LM <- paste0("L", seq_len(z$K))
     for (i in seq_len(z$n)) {
-#        DATA[[paste0("S", i)]] <- as.matrix(z$X[((i-1)*z$K+1):(i*z$K),,
-#                                                drop=FALSE])
         DATA[[paste0("S", i)]] <- matrix(z$A[,,i], z$K, z$D)
         dimnames(DATA[[i]]) <- list(LM, c("X", "Y", "Z")[seq_len(z$D)])
     }
