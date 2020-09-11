@@ -337,7 +337,7 @@ as.dist.edma_data <- function(m, diag = FALSE, upper = FALSE) {
 
 as.edma_data <- function(x, ...) UseMethod("as.edma_data")
 
-as.edma_data.edma_data <- function(x) x
+as.edma_data.edma_data <- function(x, ...) x
 
 as.edma_data.array <- function(x, ...) {
     d <- dim(x)
