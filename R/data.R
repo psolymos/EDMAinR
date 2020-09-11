@@ -335,20 +335,23 @@ as.dist.edma_data <- function(m, diag = FALSE, upper = FALSE) {
     out
 }
 
-as.edma_data <- function (x, ...) UseMethod("as.edma_data")
+as.edma_data <- function(x, ...) UseMethod("as.edma_data")
+
+as.edma_data.edma_data <- function(x) x
 
 as.edma_data.array <- function(x, ...) {
     d <- dim(x)
     K <- d[1L]
     D <- d[2L]
     n <- d[3L]
-    dn <- dimnames(x)
+    dn <- list(dimnames(x)[[1L]], dimnames(x)[[2L]], dimnames(x)[[3L]])
     if (is.null(dn[[1L]]))
         dn[[1L]] <- paste0("L", seq_len(K))
     if (is.null(dn[[2L]]))
         dn[[2L]] <- c("X", "Y", "Z")[seq_len(D)]
     if (is.null(dn[[3L]]))
         dn[[3L]] <- paste0("S", seq_len(n))
+    dimnames(x) <- dn
     DATA <- list()
     LM <- paste0("L", seq_len(K))
     for (i in seq_len(n)) {

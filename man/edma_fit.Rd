@@ -16,6 +16,7 @@
 \alias{plot_3d.edma_fit}
 \alias{plot_ord.edma_fit}
 \alias{plot_clust.edma_fit}
+\alias{as.edma_data.edma_fit}
 \title{
 Nonparametric EDMA fit
 }
@@ -37,6 +38,7 @@ get_fm(object, ...)
 \method{SigmaKstar}{edma_fit}(object, ...)
 \method{get_fm}{edma_fit}(object, sort=FALSE, level=0.95, ...)
 \method{confint}{edma_fit}(object, parm, level=0.95, ...)
+\method{as.edma_data}{edma_fit}(x, ...)
 
 ## plot methods
 plot_3d(x, ...)

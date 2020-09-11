@@ -60,8 +60,8 @@
 .Ttest_fit <- function (d1, d2, B=0, ref_denom=TRUE, mix=FALSE,
 ncores=getOption("Ncpus", 1L), ...) {
     fd <- .formdiff(Meanform(d1), Meanform(d2))
-    d1 <- .get_data(d1)
-    d2 <- .get_data(d2)
+    d1 <- as.edma_data(d1)
+    d2 <- as.edma_data(d2)
     .compare_data(d1, d2)
     bfd <- NULL
     if (B > 0) {
@@ -201,11 +201,11 @@ dimensions.edma_fdm <- function(x, ...)
             ci <- unname(quantile(Tvals, a))
     } else {
         if (object$ref_denom) {
-            x <- edma_fit(.get_data(object$numerator)[lsd,,])
-            ref <- edma_fit(.get_data(object$denominator)[lsd,,])
+            x <- edma_fit(as.edma_data(object$numerator)[lsd,,])
+            ref <- edma_fit(as.edma_data(object$denominator)[lsd,,])
         } else {
-            x <- edma_fit(.get_data(object$denominator)[lsd,,])
-            ref <- edma_fit(.get_data(object$numerator)[lsd,,])
+            x <- edma_fit(as.edma_data(object$denominator)[lsd,,])
+            ref <- edma_fit(as.edma_data(object$numerator)[lsd,,])
         }
         Tval <- attr(.formdiff(Meanform(x), Meanform(ref)), "Tval")
     }

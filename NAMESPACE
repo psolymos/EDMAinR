@@ -98,6 +98,8 @@ S3method("as.data.frame", "edma_data")
 S3method("as.array", "edma_data")
 S3method("as.dist", "edma_data")
 S3method("as.edma_data", "array")
+S3method("as.edma_data", "edma_fit")
+S3method("as.edma_data", "edma_data")
 ## plot methods
 S3method("plot", "edma_data")
 S3method("plot_2d", "edma_data")

@@ -87,7 +87,7 @@
 ## this new function makes use of vectorized base functions
 ## to gain speed and precistion
 ## also returns some intermediate results for future use cases
-.edma_fit_np <- function(A, less=TRUE) {
+.Eu2 <- function(A) {
     K <- dim(A)[1L]
     D <- dim(A)[2L]
     n <- dim(A)[3L]
@@ -112,6 +112,20 @@
             }
         }
     }
+    list(EuX=EuX, EuM=EuM, EuMean=Mean, EuVar=Var)
+}
+.edma_fit_np <- function(A, less=TRUE) {
+    K <- dim(A)[1L]
+    D <- dim(A)[2L]
+    n <- dim(A)[3L]
+
+    ## calculate arrays using .Eu2()
+    Eu2 <- .Eu2(A)
+    EuX <- Eu2$EuX
+    EuM <- Eu2$EuM
+    #Mean <- Eu2$EuMean=Mean
+    #Var <- Eu2$EuVar
+
     ## calculate B(M)
     I <- diag(1, K)
     ones <- array(rep(1, K), c(1, K))
@@ -151,7 +165,7 @@
         M=M_hat,
         SigmaKstar=SigmaKstar_hat)
     if (!less)
-        out <- c(out, list(EuX=EuX, EuM=EuM, EuMean=Mean, EuVar=Var))
+        out <- c(out, Eu2)
     out
 }
 
@@ -287,3 +301,6 @@ level = 0.95, ...) {
     class(object) <- "edma_data"
     object
 }
+
+as.edma_data.edma_fit <- function(x, ...) .get_data(x)
+
