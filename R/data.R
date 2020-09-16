@@ -28,7 +28,6 @@ read_xyz <- function(file, ...) {
         warning("K <= D: EDMA will not work.")
     if (K < 2L)
         warning("K < 2: EDMA will not work.")
-    D <- ncol(M)
     if (D > 3L || D < 2L)
         warning("D should be 2 or 3: EDMA will not work.")
     DIMS <- DIMS[seq_len(D)]
