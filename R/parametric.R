@@ -47,7 +47,7 @@ method = "Nelder-Mead", control = list()) {
         init0[names(init)] <- init
     }
     if (any(init0[lev1] <= 0))
-        stop("inits for diagonal elements must be > 0")
+        stop("inits for diagonal elements must be > 0.")
     num_max <- .Machine$double.xmax^(1/3)
     fun <- function(parms){
         SigmaK <- .vec2mat(parms, fac)
@@ -56,7 +56,7 @@ method = "Nelder-Mead", control = list()) {
         sum((SigmaKstar - (H %*% SigmaK %*% H))^2)
     }
     if (!is.null(control$fnscale) && control$fnscale < 0)
-        stop("control$fnscale can not be negative")
+        stop("control$fnscale can not be negative.")
     o <- suppressWarnings({
         optim(init0, fun, method=method, control=control, hessian=FALSE)
     })
@@ -125,7 +125,7 @@ make_Sigma <- function(params, pattern) {
     SigmaKcvec <- SigmaKc[lower.tri(SigmaKc, diag=TRUE)]
     AA <- try(solve(t(A) %*% A), silent=TRUE)
     if (inherits(AA, "try-error"))
-        stop("pattern matrix leads to non-invertible A matrix")
+        stop("Pattern matrix leads to non-invertible A matrix.")
     SigmaKhat1 <- AA %*% t(A) %*% SigmaKcvec
 
     SigmaKhat <- matrix(0, K, K)
@@ -143,7 +143,7 @@ method = "Nelder-Mead", control = list(), twostep=TRUE, check=TRUE) {
         stop("K must be at least 3")
     DF <- sum(!is.na(pattern[lower.tri(pattern,diag=TRUE)]))
     if (check && DF > K*(K-1)/2)
-        stop(sprintf("too many unknowns (%s > %s) in pattern matrix",
+        stop(sprintf("Too many unknowns (%s > %s) in pattern matrix.",
             DF, K*(K-1)/2))
     I <- diag(1, K)
     ones <- array(rep(1, K), c(1, K))
@@ -178,13 +178,13 @@ method = "Nelder-Mead", control = list(), twostep=TRUE, check=TRUE) {
     if (missing(init))
         init <- parms_uni
     if (length(init) != length(parms_uni))
-        stop(sprintf("init length must be %s", length(parms_uni)))
+        stop(sprintf("init length must be %s.", length(parms_uni)))
     init <- init[names(parms_uni)]
     if (any(is.na(init)))
-        stop("names of init must match pattern entries")
+        stop("Names of init must match pattern entries.")
     num_max <- .Machine$double.xmax^(1/3)
     if (!is.null(control$fnscale) && control$fnscale < 0)
-        stop("control$fnscale can not be negative")
+        stop("control$fnscale can not be negative.")
     TMP <- matrix(0, K, K)
     re_match <- match(names(IDs), names(parms_uni))
     fun_c <- function(parms) {
@@ -232,21 +232,21 @@ method = "Nelder-Mead", control = list(), twostep=TRUE, check=TRUE) {
     lev1 <- levels(.mat2fac(pattern1)) # parms in diag
     lev0 <- levels(.mat2fac(pattern0)) # parms off-diag
     if (length(intersect(lev1, lev0)) > 0)
-        stop("diagonal and off-diagonal parameters must not overlap")
+        stop("Diagonal and off-diagonal parameters must not overlap.")
     utri <- pattern[upper.tri(pattern)]
     ltri <- t(pattern)[upper.tri(pattern)]
     if (!all(is.na(utri) == is.na(ltri)))
-        stop("NA's (0's) are not symmertic in pattern matrix")
+        stop("NA's (0's) are not symmertic in pattern matrix.")
     if (!all(utri[!is.na(utri)] == ltri[!is.na(ltri)]))
-        stop("non-NA's (non-0's) are not symmertic in pattern matrix")
+        stop("Non-NA's (non-0's) are not symmertic in pattern matrix.")
     pattern[upper.tri(pattern)] <- NA
     pattern[upper.tri(pattern)] <- t(pattern)[upper.tri(pattern)]
     if (any(is.na(diag(pattern))))
-        stop("pattern matrix must have parameters in the diagonal")
+        stop("Pattern matrix must have parameters in the diagonal.")
     if (dim(pattern)[1L] != dim(pattern)[1L])
-        stop("pattern matrix must be square matrix")
+        stop("Pattern matrix must be square matrix.")
     if (is.null(dimnames(pattern)))
-        stop("pattern must have landmark names as dimnames")
+        stop("Pattern must have landmark names as dimnames.")
     invisible(pattern)
 }
 .check_pattern <- function(object, pattern) {
@@ -254,7 +254,7 @@ method = "Nelder-Mead", control = list(), twostep=TRUE, check=TRUE) {
     .check_pattern1(pattern)
     if (!all(landmarks(object) %in% rownames(pattern)) ||
         !all(landmarks(object) %in% colnames(pattern)))
-        stop("dimnames of patterm must match landmark names")
+        stop("Dimnames of patterm must match landmark names.")
     pattern <- pattern[rownames(object$SigmaKstar),
         colnames(object$SigmaKstar)]
     invisible(pattern)

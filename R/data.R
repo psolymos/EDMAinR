@@ -24,6 +24,13 @@ read_xyz <- function(file, ...) {
     tmp <- gsub("\\D+","", strsplit(h[3L], " ")[[1L]])
     K <- as.integer(tmp[1L])
     D <- as.integer(tmp[2L])
+    if (K <= D)
+        warning("K <= D: EDMA will not work.")
+    if (K < 2L)
+        warning("K < 2: EDMA will not work.")
+    D <- ncol(M)
+    if (D > 3L || D < 2L)
+        warning("D should be 2 or 3: EDMA will not work.")
     DIMS <- DIMS[seq_len(D)]
     n <- as.integer(tmp[3L])
     LABELS <- make.names(strsplit(h[4L], " ")[[1L]])
@@ -41,11 +48,11 @@ read_xyz <- function(file, ...) {
         SPECIMENS <- paste0("S", seq_len(n))
     SPECIMENS <- sapply(strsplit(SPECIMENS, " "), "[[", 1L)
     if (length(SPECIMENS) != n)
-        stop("length of specimen names must match n")
+        stop("Length of specimen names must match n.")
     if (any(duplicated(SPECIMENS)))
-        stop("specimen names must be unique")
+        stop("Specimen names must be unique.")
     if (any(duplicated(LABELS)))
-        stop("landmark names must be unique")
+        stop("Landmark names must be unique.")
     DATA <- list()
     for (i in seq_len(n)) {
         DATA[[SPECIMENS[i]]] <- as.matrix(X[((i-1)*K+1):(i*K),,drop=FALSE])
@@ -61,7 +68,7 @@ read_xyz <- function(file, ...) {
 
 write_xyz <- function(x, file) {
     if (!inherits(x, "edma_data"))
-        stop("x must be an edma_data object")
+        stop("x must be an edma_data object.")
     text <- c(
         x$name,
         "XYZ",
@@ -213,6 +220,8 @@ as.array.edma_data <- function (x, ...) {
     D <- ncol(M)
     if (D > 3L || D < 2L)
         stop("Mean form must have 2 or 3 dimensions (columns).")
+    if (K <= D)
+        warning("K <= D: EDMA will not work.")
     Z <- array(rnorm(K * D * n), c(K, D, n))
     Cmat <- chol(SigmaK)
     A <- array(0, c(K, D, n))
@@ -256,10 +265,10 @@ edma_simulate_data <- function(n, M, SigmaK) {
 combine_data <- function(a, b, ga="G1", gb="G2") {
     ls <- intersect(landmarks(a), landmarks(b))
     if (!all(ls %in% union(landmarks(a), landmarks(b))))
-        stop("landmarks must be the same in the 2 objects")
+        stop("Landmarks must be the same in the 2 objects.")
     ds <- intersect(dimnames(a)[[2L]], dimnames(b)[[2L]])
     if (!all(ds %in% union(dimnames(a)[[2L]], dimnames(b)[[2L]])))
-        stop("dimensions must be the same in the 2 objects")
+        stop("Dimensions must be the same in the 2 objects.")
     names(a$data) <- paste0(ga, "_", names(a$data))
     names(b$data) <- paste0(gb, "_", names(b$data))
     a <- a[ls,ds,]
@@ -278,23 +287,23 @@ combine_data4 <- function(a1, a2, b1, b2,
 ga1="A1", ga2="A2", gb1="B1", gb2="B2") {
     ls <- intersect(landmarks(a1), landmarks(a2))
     if (!all(ls %in% union(landmarks(a1), landmarks(a2))))
-        stop("landmarks must be the same in the 4 objects")
+        stop("Landmarks must be the same in the 4 objects.")
     ls <- intersect(landmarks(b1), landmarks(b2))
     if (!all(ls %in% union(landmarks(b1), landmarks(b2))))
-        stop("landmarks must be the same in the 4 objects")
+        stop("Landmarks must be the same in the 4 objects.")
     ls <- intersect(landmarks(a1), landmarks(b1))
     if (!all(ls %in% union(landmarks(a1), landmarks(b1))))
-        stop("landmarks must be the same in the 4 objects")
+        stop("Landmarks must be the same in the 4 objects.")
 
     ds <- intersect(dimnames(a1)[[2L]], dimnames(a2)[[2L]])
     if (!all(ds %in% union(dimnames(a1)[[2L]], dimnames(a2)[[2L]])))
-        stop("dimensions must be the same in the 4 objects")
+        stop("Dimensions must be the same in the 4 objects.")
     ds <- intersect(dimnames(b1)[[2L]], dimnames(b2)[[2L]])
     if (!all(ds %in% union(dimnames(b1)[[2L]], dimnames(b2)[[2L]])))
-        stop("dimensions must be the same in the 4 objects")
+        stop("Dimensions must be the same in the 4 objects.")
     ds <- intersect(dimnames(a1)[[2L]], dimnames(b1)[[2L]])
     if (!all(ds %in% union(dimnames(a1)[[2L]], dimnames(b1)[[2L]])))
-        stop("dimensions must be the same in the 4 objects")
+        stop("Dimensions must be the same in the 4 objects.")
 
     names(a1$data) <- paste0(ga1, "_", names(a1$data))
     names(a2$data) <- paste0(ga2, "_", names(a2$data))

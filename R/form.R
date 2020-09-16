@@ -2,19 +2,19 @@
 ## a and b are edma_fit objects
 .compare_data <- function (a, b, text="", ...) {
     if (nrow(a$data[[1L]]) != nrow(b$data[[1L]]))
-        stop(paste(text, "number of landmarks must be identical"))
+        stop(paste(text, "Number of landmarks must be identical."))
     if (ncol(a$data[[1L]]) != ncol(b$data[[1L]]))
-        stop(paste(text, "number of dimensions must be identical"))
+        stop(paste(text, "Number of dimensions must be identical."))
     if (!all(rownames(a$data[[1L]]) == rownames(b$data[[1L]])))
-        stop(paste(text, "landmark names and ordering must be identical"))
+        stop(paste(text, "Landmark names and ordering must be identical."))
     if (!all(colnames(a$data[[1L]]) == colnames(b$data[[1L]])))
-        stop(paste(text, "dimension names and ordering must be identical"))
+        stop(paste(text, "Dimension names and ordering must be identical."))
     invisible(NULL)
 }
 ## compare fit objects (imitating multiple dispatch for S3)
 .compare_objects <- function (a, b, text="", ...) {
     if (!inherits(b, "edma_fit") || !inherits(a, "edma_fit"))
-        stop("input must be edma_fit object")
+        stop("Input must be edma_fit object.")
     .compare_data(a, b, text, ...)
 }
 

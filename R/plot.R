@@ -12,7 +12,7 @@ plot_ci <- function (x,...) UseMethod("plot_ci")
 edma_colors <- function(n,
 type=c("diverging", "sequential", "qualitative"), alpha=1, rev=FALSE) {
     if (n < 1L)
-        stop("Number of colors must be > 0")
+        stop("Number of colors must be > 0.")
     type <- match.arg(type)
     op <- getOption("edma_options")
     ## avoid surprises
@@ -607,9 +607,9 @@ plot.edma_dm <- plot_2d.edma_dm
 print_tb <- function(x, ...) {
     m <- nrow(x)
     if (ncol(x) != m)
-        stop("tb can only be used for square matrices")
+        stop("tb can only be used for square matrices.")
     if (!identical(rownames(x), colnames(x)))
-        stop("row and col names must be identical")
+        stop("Row and column names must be identical.")
     print(as.table(x), quote = FALSE,
       na.print = ".", zero.print = ".", ...)
 }
@@ -617,9 +617,9 @@ print_tb <- function(x, ...) {
 plot_tb <- function(x, mar=c(1,1,1,4), ...) {
     m <- nrow(x)
     if (ncol(x) != m)
-        stop("tb can only be used for square matrices")
+        stop("tb can only be used for square matrices.")
     if (!identical(rownames(x), colnames(x)))
-        stop("row and col names must be identical")
+        stop("Row and column names must be identical.")
     z <- !is.na(x)
     z[!is.na(x) & x == 0] <- FALSE
     i <- row(x)[z]

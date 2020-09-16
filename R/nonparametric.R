@@ -65,15 +65,15 @@
     ## check rank of SigmaKstar
     r <- qr(est.SigmaKstar)$rank
     if (r != K-1)
-        warning(sprintf("rank of SigmaKstar was %s instead of %s", r, K-1))
+        warning(sprintf("Rank of SigmaKstar was %s instead of %s.", r, K-1))
 
     ## meanform eigenvalues: first D values > 0, rest =0
     mds <- cmdscale(dist(est.M), k=D, eig=TRUE)
     if (!all(mds$eig[seq_len(D)] > 0))
-        warning(sprintf("%s of the first %s eigenvalues <= 0",
+        warning(sprintf("%s of the first %s eigenvalues <= 0.",
             sum(mds$eig[seq_len(D)] > 0), D))
     if (sum(mds$eig[seq_len(D)]) / sum(mds$eig) < 0.99)
-        warning(sprintf("the first %s eigenvalues summed to %s",
+        warning(sprintf("The first %s eigenvalues summed to %s.",
             sum(mds$eig[seq_len(D)]), D))
 
     out <- list(
@@ -118,6 +118,8 @@
     K <- dim(A)[1L]
     D <- dim(A)[2L]
     n <- dim(A)[3L]
+    if (K <= D)
+        stop("K should be larger than D for EDMA to work")
 
     ## calculate arrays using .Eu2()
     Eu2 <- .Eu2(A)
@@ -150,15 +152,15 @@
     ## check rank of SigmaKstar
     r <- qr(SigmaKstar_hat)$rank
     if (r != K-1)
-        warning(sprintf("rank of SigmaKstar was %s instead of %s", r, K-1))
+        warning(sprintf("Rank of SigmaKstar was %s instead of %s.", r, K-1))
 
     ## meanform eigenvalues: first D values > 0, rest =0
     mds <- cmdscale(dist(M_hat), k=D, eig=TRUE)
     if (!all(mds$eig[seq_len(D)] > 0))
-        warning(sprintf("%s of the first %s eigenvalues <= 0",
+        warning(sprintf("%s of the first %s eigenvalues <= 0.",
             sum(mds$eig[seq_len(D)] > 0), D))
     if (sum(mds$eig[seq_len(D)]) / sum(mds$eig) < 0.99)
-        warning(sprintf("the first %s eigenvalues summed to %s",
+        warning(sprintf("The first %s eigenvalues summed to %s.",
             sum(mds$eig[seq_len(D)]), D))
     ## usually we don't want to accumulate everything
     out <- list(
@@ -174,9 +176,9 @@
 ## bootstrap here is used for M uncertainty etc and not for T-test
 edma_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L)) {
     if (!inherits(x, "edma_data"))
-        stop("x must be of class edma_data")
+        stop("x must be of class edma_data.")
     if (B < 0)
-        stop("B must be non-negative")
+        stop("B must not be negative.")
     B <- as.integer(B)
     DIM <- dim(x)
     fit <- .edma_fit_np(as.array(x))
