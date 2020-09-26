@@ -380,15 +380,15 @@ plot.edma_influence <- function(x, ...) {
 ## CI plot for FDM, GM, GDM
 
 .plot_ci <- function(x, xlab="", ylab="",
-    bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
-    x <- x[order(x$dist),]
+    bottom=1.5, xcex=0.5, xshow=TRUE, what="dist", ...) {
+    x <- x[order(x[[what]]),]
     k <- nrow(x)
     xv <- seq_len(k)
-    r <- range(x$dist, x$lower, x$upper, 1, na.rm=TRUE)
+    r <- range(x[[what]], x$lower, x$upper, 1, na.rm=TRUE)
     op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
     c5 <- edma_colors(5, "diverging")
-    plot(xv, x$dist, ylim=r, type="n",
+    plot(xv, x[[what]], ylim=r, type="n",
         xlab=xlab, ylab=ylab, axes=FALSE)
     polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), border=NA,
         col=c5[2L])
@@ -398,7 +398,7 @@ plot.edma_influence <- function(x, ...) {
             lines(xv[i]+c(-0.5, 0.5), c(1, 1),
                 col=if (1 > x$upper[i] || 1 < x$lower[i])
                     c5[5L] else c5[3L])
-    lines(xv, x$dist, col=c5[1L])
+    lines(xv, x[[what]], col=c5[1L])
     axis(2)
     if (xshow) {
         lab <- paste0(as.character(x$row), "-", as.character(x$col))
@@ -413,6 +413,8 @@ plot_ci.edma_gm <- function(x, ...)
     .plot_ci(get_gm(x), ylab="GM Ratio", ...)
 plot_ci.edma_gdm <- function(x, ...)
     .plot_ci(get_gdm(x), ylab="GDM Ratio", ...)
+plot_ci.edma_sdm <- function(x, ...)
+    .plot_ci(get_sdm(x), ylab="Shape Difference", what="sdm", ...)
 
 ## 2D and 3D plots
 
@@ -654,4 +656,34 @@ plot_tb <- function(x, mar=c(1,1,1,4), ...) {
     text(rep(m+1, m), seq_len(m), rownames(x))
     invisible(x)
 }
+
+
+## Global plots for shape difference
+
+plot_Ztest <- function (x,...) UseMethod("plot_Ztest")
+plot_Ctest <- function (x,...) UseMethod("plot_Ctest")
+
+plot_Ztest.edma_sdm <- function(x, level = 0.95, ...) {
+    c5 <- edma_colors(5, "diverging")
+    z <- x$boot$Zval
+    a <- c((1-level)/2, 1-(1-level)/2)
+    ci <- quantile(z, a)
+    hist(z, xlab="Z-values", main="",
+        col=c5[2L], border=c5[1L], ...)
+    abline(v=0, lwd=2, col=c5[5L])
+    abline(v=ci, lwd=2, col=c5[1L], lty=2)
+    invisible(x)
+}
+plot_Ctest.edma_sdm <- function(x, level = 0.95, ...) {
+    c5 <- edma_colors(5, "diverging")
+    z <- x$boot$Cval
+    a <- c((1-level)/2, 1-(1-level)/2)
+    ci <- quantile(z, a)
+    hist(z, xlab="C-values", main="",
+        col=c5[2L], border=c5[1L], ...)
+    abline(v=0, lwd=2, col=c5[5L])
+    abline(v=ci, lwd=2, col=c5[1L], lty=2)
+    invisible(x)
+}
+
 
