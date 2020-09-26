@@ -398,9 +398,45 @@ fit2 <- edma_fit(sim2, B=10)
     list(phi=phi_mat, ncp=ncp_mat)
 }
 
+## pairs of pairs of distances
+double_pairs <- function(A) {
+    n <- dim(A)[3L]
+    EuX <- EDMAinR:::.Eu2(A)$EuX
+    tmp = EuX[,,1]
+    tmp = tmp[lower.tri(tmp)]
+
+    ind = seq(1:length(tmp))
+    index.mat = expand.grid(ind,ind)
+    index.mat = subset(index.mat, index.mat[,1] < index.mat[,2])
+
+    tmp2 = cbind(tmp[index.mat[,1]],tmp[index.mat[,2]])
+
+    tmp3 = array(0, c(nrow(tmp2),2,n))
+    tmp3[,,1] = tmp2
+
+    for (i in seq_len(n)[-1]){
+        tmp = EuX[,,i]
+        tmp = tmp[lower.tri(tmp)]
+        tmp2 = cbind(tmp[index.mat[,1]],tmp[index.mat[,2]])
+        tmp3[,,i]=tmp2
+    }
+    tmp3
+}
+## means and covariances for bivariate normal
+double_mean_cov <- function(EuX3) {
+    m <- dim(EuX3)[1L]
+    mean_mat <- matrix(0, 2L, m)
+    cov_array <- array(0, c(2L, 2L, m))
+    for (i in seq_len(m)) {
+      mean_mat[,i] <- rowMeans(EuX3[i,,])
+      cov_array[,,i] <- cov(t(EuX3[i,,]))
+    }
+    list(means=mean_mat, covariances=cov_array)
+}
+
 ## calculates composite likelihood for ith bootstrap sample
-.get_cl <- function(x, fit, i=0) {
-    eu <- as.matrix(dist(x)^2)
+.get_cl <- function(x, fit, i=0, method=c("chisq", "bnorm", "norm")) {
+    method <- match.arg(method)
     if (i > 0) {
         if (is.null(fit$boot) || length(fit$boot) < i)
             stop("not enough bootstrap samples")
@@ -411,17 +447,33 @@ fit2 <- edma_fit(sim2, B=10)
         M <- Meanform(fit)
         A <- as.array(as.edma_data(fit))
     }
-    mat <- .get_mat(M, A)
-    eu_scaled <- eu / mat$phi
-    CL <- dchisq(
-        x=as.numeric(as.dist(eu_scaled)),
-        df=ncol(x),
-        ncp=pmax(0, as.numeric(as.dist(mat$ncp))),
-        log=TRUE)
-    sum(CL)
+    if (method == "chisq") {
+        mat <- .get_mat(M, A)
+        eu <- as.matrix(dist(x)^2)
+        eu_scaled <- eu / mat$phi
+        CL <- sum(dchisq(
+            x=as.numeric(as.dist(eu_scaled)),
+            df=ncol(x),
+            ncp=pmax(0, as.numeric(as.dist(mat$ncp))),
+            log=TRUE))
+    } else {
+        eu <- double_pairs(array(x, c(dim(x), 1L)))[,,1L]
+        mc <- double_mean_cov(double_pairs(A))
+        I <- if (method == "bnorm")
+            1 else diag(1, 2, 2)
+        CL <- sum(sapply(seq_len(nrow(eu)), function(i) {
+            mvtnorm::dmvnorm(
+                x=eu[i,],
+                mean=mc$means[,i],
+                sigma=I * mc$covariances[,,i],
+                log=TRUE)
+        }))
+    }
+    CL
 }
 ## composite likelihood ratio
-edma_clr <- function(x, fit1, fit2, boot=FALSE) {
+edma_clr <- function(x, fit1, fit2, boot=FALSE,
+                     method=c("chisq", "bnorm", "norm")) {
     if (inherits(x, "edma_data")) {
         if (dim(x)[3] > 1L)
             stop("provide a single specimen only when x is an edma_data object")
@@ -430,16 +482,16 @@ edma_clr <- function(x, fit1, fit2, boot=FALSE) {
     .compare_objects(fit1, fit2)
     if (!identical(dimnames(fit1)[1:2], dimnames(x)))
         stop("specimen dimnames must match the EDMA fit objects")
-    CL1 <- .get_cl(x, fit1)
-    CL2 <- .get_cl(x, fit2)
+    CL1 <- .get_cl(x, fit1, method=method)
+    CL2 <- .get_cl(x, fit2, method=method)
     BOOT <- NULL
     B1 <- length(fit1$boot)
     B2 <- length(fit2$boot)
     if (boot && (B1 < 1L || B2 < 1L))
         warning("no bootstrap samples found: boot=TRUE ignored")
     if (boot && B1 > 0L && B2 > 0L) {
-        CL1M <- sapply(seq_len(B1), function(i) .get_cl(x, fit1, i))
-        CL2M <- sapply(seq_len(B2), function(i) .get_cl(x, fit2, i))
+        CL1M <- sapply(seq_len(B1), function(i) .get_cl(x, fit1, i, method=method))
+        CL2M <- sapply(seq_len(B2), function(i) .get_cl(x, fit2, i, method=method))
         CLRM <- t(outer(CL2M, CL1M, "-"))
         BOOT <- data.frame(
             complik1=as.numeric(CL1M),
@@ -502,7 +554,7 @@ i <- 2
 B <- 0
 level <- 0.95
 
-loo <- function(x1, x2, B=0, level=0.95) {
+loo <- function(x1, x2, B=0, level=0.95, method=c("chisq", "bnorm", "norm")) {
     a <- c((1-level)/2, 1-(1-level)/2)
     x1 <- as.edma_data(x1)
     x2 <- as.edma_data(x2)
@@ -520,7 +572,7 @@ loo <- function(x1, x2, B=0, level=0.95) {
         i2 <- which(Class$group == 2 & Class$id != i)
         fit1 <- edma_fit(x12[,,i1], B=B)
         fit2 <- edma_fit(x12[,,i2], B=B)
-        h <- edma_clr(x, fit1, fit2, boot=B > 0)
+        h <- edma_clr(x, fit1, fit2, boot=B > 0, method=method)
         Class$complikr[i] <- h$complikr
         if (B > 0 && !is.null(h$boot)) {
             q <- quantile(c(h$complikr, h$boot$complikr), a, na.rm=TRUE)
@@ -533,42 +585,256 @@ loo <- function(x1, x2, B=0, level=0.95) {
     Class
 }
 
-
+error_rate <- function(l) {
+    cm <- table(l$group, l$class)
+    100*(1-sum(diag(cm)) / sum(cm))
+}
 ## Bookstein's schizophrenia data
 data(schizophrenia.dat)
 x1 <- as.edma_data(schizophrenia.dat[,,1:14]) # control
 x2 <- as.edma_data(schizophrenia.dat[,,15:28]) # schizo
-l <- loo(x1, x2)
-(cm <- table(l$group, l$class)) # confusion matrix
-round(100*(1-sum(diag(cm)) / sum(cm)), 2) # error rate
+cbind(x1=dim(x1), x2=dim(x2))
+l1 <- loo(x1, x2, method="chisq")
+l2 <- loo(x1, x2, method="bnorm")
+l3 <- loo(x1, x2, method="norm")
+schi <- c(proc=28.57, chisq=error_rate(l1),
+          bnorm=error_rate(l2), norm=error_rate(l3))
 
 ## Gorillas
 data(apes)
 x1 <- as.edma_data(apes$x[,,apes$group == "gorf"]) # females
 x2 <- as.edma_data(apes$x[,,apes$group == "gorm"]) # males
-l <- loo(x1, x2)
-(cm <- table(l$group, l$class)) # confusion matrix
-round(100*(1-sum(diag(cm)) / sum(cm)), 2) # error rate
+cbind(x1=dim(x1), x2=dim(x2))
+l1 <- loo(x1, x2, method="chisq")
+l2 <- loo(x1, x2, method="bnorm")
+l3 <- loo(x1, x2, method="norm")
+gor <- c(proc=0, chisq=error_rate(l1),
+          bnorm=error_rate(l2), norm=error_rate(l3))
 
 ## Chimps
 x1 <- as.edma_data(apes$x[,,apes$group == "panf"]) # females
 x2 <- as.edma_data(apes$x[,,apes$group == "panm"]) # males
-l <- loo(x1, x2)
-(cm <- table(l$group, l$class)) # confusion matrix
-round(100*(1-sum(diag(cm)) / sum(cm)), 2) # error rate
+cbind(x1=dim(x1), x2=dim(x2))
+c(x1=dim(x1)[3], x2=dim(x2)[3])
+l1 <- loo(x1, x2, method="chisq")
+l2 <- loo(x1, x2, method="bnorm")
+l3 <- loo(x1, x2, method="norm")
+chim <- c(proc=25.93, chisq=error_rate(l1),
+          bnorm=error_rate(l2), norm=error_rate(l3))
 
 ## Orangs
 x1 <- as.edma_data(apes$x[,,apes$group == "pongof"]) # females
 x2 <- as.edma_data(apes$x[,,apes$group == "pongom"]) # males
-l <- loo(x1, x2)
-(cm <- table(l$group, l$class)) # confusion matrix
-round(100*(1-sum(diag(cm)) / sum(cm)), 2) # error rate
+cbind(x1=dim(x1), x2=dim(x2))
+l1 <- loo(x1, x2, method="chisq")
+l2 <- loo(x1, x2, method="bnorm")
+l3 <- loo(x1, x2, method="norm")
+oran <- c(proc=3.7, chisq=error_rate(l1),
+          bnorm=error_rate(l2), norm=error_rate(l3))
 
 ## Mice
 data(mice)
 x1 <- as.edma_data(mice$x[,,mice$group == "l"]) # large
 x2 <- as.edma_data(mice$x[,,mice$group == "s"]) # small
-l <- loo(x1, x2)
-(cm <- table(l$group, l$class)) # confusion matrix
-round(100*(1-sum(diag(cm)) / sum(cm)), 2) # error rate
+cbind(x1=dim(x1), x2=dim(x2))
+l1 <- loo(x1, x2, method="chisq")
+l2 <- loo(x1, x2, method="bnorm")
+l3 <- loo(x1, x2, method="norm")
+mice <- c(proc=2.17, chisq=error_rate(l1),
+          bnorm=error_rate(l2), norm=error_rate(l3))
+
+round(rbind(schi, gor, chim, oran, mice), 2)
+
+## simulated
+M1 <- rbind(
+    L1=c(2, 0),
+    L2=c(0, 2),
+    L3=c(-2, 0),
+    L4=c(-1, -5),
+    L5=c(0, -6),
+    L6=c(1, -5)
+)
+colnames(M1) <- c("X", "Y")
+M1 <- 10 * M1
+
+## SigmaK
+S1 <- matrix(
+  c("s1", NA,  NA, NA,  NA, NA,
+    NA, "s1", NA, NA,  NA, NA,
+    NA,  NA, "s1", NA,  NA, NA,
+    NA,  NA,  NA, "s2", NA, NA,
+    NA,  NA,  NA, NA, "s2", NA,
+    NA,  NA,  NA, NA, NA, "s2"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S1) <- list(rownames(M1), rownames(M1))
+parm1 <- c("s1"=1, "s2"=5)
+SigmaK1 <- make_Sigma(parm1, S1)
+
+M2 <- M1
+M2[1,] <- c(2.2,0) * 10
+#M2[6,] <- c(2,-4)* 10
+SigmaK2 <- SigmaK1
+
+
+
+n <- 20
+s <- 1:6
+
+plot(0, type="n", xlim=range(M1[,1], M2[,1]), ylim=range(M1[,2], M2[,2]))
+polygon(M1[s,])
+polygon(M2[s,], lty=2)
+
+x1 <- simulate_2d(n, M1[s,], SigmaK1[s,s])
+x2 <- simulate_2d(n, M2[s,], SigmaK2[s,s])
+l1 <- loo(x1, x2, method="chisq")
+l2 <- loo(x1, x2, method="bnorm")
+l3 <- loo(x1, x2, method="norm")
+c(chisq=error_rate(l1), bnorm=error_rate(l2), norm=error_rate(l3))
+
+
+
+
+l1 <- loo(x1, x2, B=99, method="chisq")
+l1$boot
+
+
+
+
+
+## simulated
+M1x <- rbind(
+    L1=c(2, 0),
+    L2=c(0, 2),
+    L3=c(-2, 0),
+    L4=c(-1, -5),
+    L5=c(0, -6),
+    L6=c(1, -5)
+)
+colnames(M1x) <- c("X", "Y")
+M1x <- 10 * M1x
+
+## SigmaK
+S1x <- matrix(
+  c("s1", NA,  NA, NA,  NA, NA,
+    NA, "s1", NA, NA,  NA, NA,
+    NA,  NA, "s1", NA,  NA, NA,
+    NA,  NA,  NA, "s2", NA, NA,
+    NA,  NA,  NA, NA, "s2", NA,
+    NA,  NA,  NA, NA, NA, "s2"),
+  nrow=6, ncol=6, byrow=TRUE)
+dimnames(S1x) <- list(rownames(M1x), rownames(M1x))
+parm1 <- c("s1"=1, "s2"=5)
+SigmaK1x <- make_Sigma(parm1, S1x)
+
+M2x <- M1x
+#M2[1,] <- c(2.2,0) * 10
+SigmaK2x <- make_Sigma(parm1*1.5, S1x)
+
+n <- 20
+B <- 100
+x1 <- simulate_2d(n, M1x, SigmaK1x)
+x2 <- simulate_2d(n, M2x, SigmaK2x)
+
+f1 <- edma_fit(x1, B=B)
+f2 <- edma_fit(x2, B=B)
+
+## use TLS to get scaling factor C
+## Y=vec(FM1), X=vec(FM2)
+df <- stack(as.dist(f1))
+colnames(df)[3L] <- "FM1"
+df$FM2 <- as.numeric(as.dist(f2))
+Cval <- tlsXY(FM1, FM2)
+attr(df, "Cval") <- Cval
+## d_{ij,A}=c*d_{ij,B} for some c > 0 and for all {ij}
+## Now FM is S: S1=FM1, S2=Cval*FM2
+df$S1 <- df$FM1
+df$S2 <- Cval * df$FM2
+## Shape difference matrix: S1-S2
+df$SDM <- df$S1 - df$S2
+## Min and Max of SDM
+Range <- range(df$SDM)
+Z <- Range[which.max(abs(Range))]
+attr(df, "Z") <- Z
+
+.tlsXY <- function(X, Y) {
+    if (missing(Y)) {
+        XY <- X
+    } else {
+        XY <- cbind(X, Y)
+    }
+    lambda <- tail(eigen(t(XY) %*% XY)$values, 1L)
+    as.numeric(solve(t(X) %*% X - lambda) %*% t(X) %*% Y)
+}
+.getZ <- function(M1, M2) {
+    S1 <- as.numeric(dist(M1))
+    S2 <- as.numeric(dist(M2))
+    Cval <- .tlsXY(S1, S2) # Cval for S1 = 1
+    S2 <- Cval * S2
+    SDM <- S1 - S2
+    Range <- range(SDM)
+    Zval <- Range[which.max(abs(Range))]
+    list(SDM=SDM, Zval=Zval, Cval=Cval)
+}
+
+.Z_test <- function(f1, f2) {
+    if (is.null(f1$boot) || is.null(f2$boot))
+        stop("Z-test requires bootstrapped EDMA fit objects")
+    B <- min(length(f1$boot), length(f2$boot))
+    res <- c(list(.getZ(Meanform(f1), Meanform(f2))),
+        lapply(seq_len(B), function(i) {
+            .getZ(f1$boot[[i]]$M, f2$boot[[i]]$M)
+        }))
+    SDM <- sapply(res, "[[","SDM")
+    Zval <- sapply(res, "[[", "Zval")
+    Cval <- 1 - sapply(res, "[[", "Cval")
+    list(SDM=SDM, Zval=Zval, Cval=Cval, B=B)
+}
+
+## Z-test for 2 edma_fit objects
+## based on Lele & Cole 1996, Journal of Human Evolution 31:193-212.
+
+Z_test <- function (object1, object2, ...) UseMethod("Z_test")
+Z_test.edma_fit <- function (object1, object2, ...) {
+    .compare_data(as.edma_data(object1), as.edma_data(object2))
+    out <- .Z_test(object1, object2)
+    out$object1 <- object1
+    out$object2 <- object2
+    class(out) <- c("edma_Ztest", "edma_test")
+    out
+}
+print.edma_Ztest <- function(x, level = 0.95, ...) {
+    a <- c((1-level)/2, 1-(1-level)/2)
+    Zci <- quantile(x$Zval, a)
+    Cci <- quantile(x$Cval, a)
+    cat("Bootstrap based EDMA Z-test\n", x$B,
+        " bootstrap runs\n\n", sep="")
+    print(rbind("Z (shape)"=Zci, "C (scale)"=Cci),
+         digits=getOption("digits")-3, ...)
+    invisible(x)
+}
+## CI based on the 2x input object boot sample
+confint.edma_Ztest <- function (object, parm, level=0.95, ...) {
+    d <- stack(as.dist(object$object1))
+    if (missing(parm))
+        parm <- seq_len(nrow(d))
+    a <- c((1-level)/2, 1-(1-level)/2)
+    out <- t(apply(object$SDM, 1, quantile, a))
+    if (object$B < 1)
+        out[] <- NA
+    rownames(out) <- paste0(as.character(d$row), "-", as.character(d$col))
+    out[parm,,drop=FALSE]
+}
+plot_ci.edma_Ztest <- function(x, ...)
+    .plot_ci(get_gdm(x), ylab="GDM Ratio", ...)
+
+x <- Z_test(f1, f2)
+x
+confint(x)
+## copy structure of cor.test
+## shape (Z), scale (C = 1- Cval)
+## confint method for local testing
+## plots etc like for T_test
+## need to call it edma_sdm: shape difference and change classes
+## and have Z_test, confint etc methods
+
 
