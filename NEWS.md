@@ -1,3 +1,7 @@
+# Version 0.1-5, 2020-09-26
+
+* Shape difference matrix (SDM) calculation added.
+
 # Version 0.1-4, 2020-08-23
 
 * `.edma_fit_np` is more preformant (original implementation

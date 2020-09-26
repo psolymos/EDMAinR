@@ -154,10 +154,12 @@ S3method("plot_ci", "edma_fdm")
 S3method("print", "edma_sdm")
 S3method("Z_test", "edma_sdm")
 S3method("get_sdm", "edma_sdm")
+S3method("confint", "edma_sdm")
 S3method("landmarks", "edma_sdm")
 S3method("dimensions", "edma_sdm")
 ## plot methods
 S3method("plot_ci", "edma_sdm")
+S3method("plot_Ztest", "edma_sdm")
 
 ## edma_influence methods
 S3method("plot", "edma_influence")

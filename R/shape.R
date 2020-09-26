@@ -13,43 +13,51 @@
 ## d_{ij,A}=c*d_{ij,B} for some c > 0 and for all {ij}
 ## Now FM is S: S1=FM1, S2=Cval*FM2
 ## Shape difference matrix: S1-S2
-.get_sdm <- function(M1, M2) {
+.get_sdm <- function(M1, M2, log=TRUE) {
     S1 <- as.numeric(dist(M1))
     S2 <- as.numeric(dist(M2))
-    Cval <- .tlsXY(S1, S2) # Cval for S1 = 1
-    S2 <- Cval * S2
+    C1 <- 1
+    C2 <- .tlsXY(S1, S2) # Cval for S1 = 1
+    S2 <- C2 * S2
+    if (log) {
+        S1 <- log(S1)
+        S2 <- log(S2)
+        C1 <- log(C1)
+        C2 <- log(C2)
+    }
     SDM <- S1 - S2
     Range <- range(SDM)
     Zval <- Range[which.max(abs(Range))]
-    list(sdm=SDM, Zval=Zval, Cval=Cval)
+    list(sdm=SDM, Zval=Zval, Cval=C1-C2)
 }
 
-.edma_sdm <- function(f1, f2) {
+.edma_sdm <- function(f1, f2, log=TRUE) {
     if (is.null(f1$boot) || is.null(f2$boot))
         stop("SDM requires bootstrapped EDMA fit objects")
     B <- min(length(f1$boot), length(f2$boot))
-    res <- c(list(.get_sdm(Meanform(f1), Meanform(f2))),
+    res <- c(list(.get_sdm(Meanform(f1), Meanform(f2), log=log)),
         lapply(seq_len(B), function(i) {
-            .get_sdm(f1$boot[[i]]$M, f2$boot[[i]]$M)
+            .get_sdm(f1$boot[[i]]$M, f2$boot[[i]]$M, log=log)
         }))
     SDM <- sapply(res, "[[","sdm")
     Zval <- sapply(res, "[[", "Zval")
-    Cval <- 1 - sapply(res, "[[", "Cval")
+    Cval <- sapply(res, "[[", "Cval")
     list(sdm=SDM, Zval=Zval, Cval=Cval)
 }
 
 
 ## shape difference matrix with bootstrap
-edma_sdm <- function(a, b) {
+edma_sdm <- function(a, b, log=TRUE) {
     .compare_objects(a, b)
     d <- stack(as.dist(a))[,1:2]
-    res <- .edma_sdm(a, b)
+    res <- .edma_sdm(a, b, log=log)
     d$sdm <- res$sdm[,1L]
     out <- list(
         call=match.call(),
         a=a,
         b=b,
         dm=d,
+        log=log,
         B=length(res$Zval)-1L,
         boot=res)
     class(out) <- c("edma_sdm", "edma_dm", class(out))
@@ -62,7 +70,9 @@ print.edma_sdm <- function(x, level = 0.95, ...) {
     Cci <- quantile(x$boot$Cval, a)
     cat("EDMA shape difference matrix\n",
         "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
-        "\n", x$B, " bootstrap runs\n\n", sep="")
+        "\n", x$B, " bootstrap runs",
+        if (x$log) " (difference of logarithms)" else "",
+        "\n\n", sep="")
     print(rbind("Z (shape)"=Zci, "C (scale)"=Cci),
         digits=getOption("digits")-2L, ...)
     invisible(x)
@@ -90,22 +100,22 @@ level = 0.95, ...) {
     out$lower <- ci[,1L]
     out$upper <- ci[,2L]
     if (sort)
-        out <- out[order(out$dist, ...),]
+        out <- out[order(out$sdm, ...),]
     class(out) <- c("fdm", class(out))
     attr(out, "level") <- level
     out
 }
 
-Z_test <- function (x, ...) UseMethod("Z_test")
-Z_test.edma_sdm <- function(x, level = 0.95, ...) {
+Z_test <- function (object, ...) UseMethod("Z_test")
+Z_test.edma_sdm <- function(object, level = 0.95, ...) {
     a <- c((1-level)/2, 1-(1-level)/2)
-    Zci <- quantile(x$boot$Zval, a)
-    Cci <- quantile(x$boot$Cval, a)
-    cat("Bootstrap based EDMA Z-test\n", x$B,
+    Zci <- quantile(object$boot$Zval, a)
+    Cci <- quantile(object$boot$Cval, a)
+    cat("Bootstrap based EDMA Z-test\n", object$B,
         " bootstrap runs\n\n", sep="")
     print(rbind("Z (shape)"=Zci, "C (scale)"=Cci),
          digits=getOption("digits")-3, ...)
-    invisible(x)
+    invisible(object)
 }
 
 landmarks.edma_sdm <- function(x, ...)
