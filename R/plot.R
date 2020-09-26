@@ -661,25 +661,20 @@ plot_tb <- function(x, mar=c(1,1,1,4), ...) {
 ## Global plots for shape difference
 
 plot_Ztest <- function (x,...) UseMethod("plot_Ztest")
-plot_Ctest <- function (x,...) UseMethod("plot_Ctest")
 
-plot_Ztest.edma_sdm <- function(x, level = 0.95, ...) {
+plot_Ztest.edma_sdm <- function(x, statistic=c("Z", "C"), level = 0.95, ...) {
+    statistic <- match.arg(statistic)
     c5 <- edma_colors(5, "diverging")
-    z <- x$boot$Zval
+    if (statistic == "Z") {
+        xlab <- "Z-values"
+        z <- x$boot$Zval
+    } else {
+        xlab <- "C-values"
+        z <- x$boot$Cval
+    }
     a <- c((1-level)/2, 1-(1-level)/2)
     ci <- quantile(z, a)
-    hist(z, xlab="Z-values", main="",
-        col=c5[2L], border=c5[1L], ...)
-    abline(v=0, lwd=2, col=c5[5L])
-    abline(v=ci, lwd=2, col=c5[1L], lty=2)
-    invisible(x)
-}
-plot_Ctest.edma_sdm <- function(x, level = 0.95, ...) {
-    c5 <- edma_colors(5, "diverging")
-    z <- x$boot$Cval
-    a <- c((1-level)/2, 1-(1-level)/2)
-    ci <- quantile(z, a)
-    hist(z, xlab="C-values", main="",
+    hist(z, xlab=xlab, main="",
         col=c5[2L], border=c5[1L], ...)
     abline(v=0, lwd=2, col=c5[5L])
     abline(v=ci, lwd=2, col=c5[1L], lty=2)

@@ -96,7 +96,7 @@ level = 0.95, ...) {
     out
 }
 
-Z_test <- function (object1, object2, ...) UseMethod("Z_test")
+Z_test <- function (x, ...) UseMethod("Z_test")
 Z_test.edma_sdm <- function(x, level = 0.95, ...) {
     a <- c((1-level)/2, 1-(1-level)/2)
     Zci <- quantile(x$boot$Zval, a)

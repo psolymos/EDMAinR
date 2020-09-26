@@ -5,6 +5,7 @@ export(
     "write_xyz",
     "edma_fit",
     "edma_fdm",
+    "edma_sdm",
     "edma_gm",
     "edma_gdm",
     "SigmaK_fit",
@@ -35,9 +36,11 @@ export(
     "SigmaKfull",
     "get_fm",
     "get_fdm",
+    "get_sdm",
     "get_gm",
     "get_gdm",
     "T_test",
+    "Z_test",
     "sensitivity",
     "get_influence",
     "as.edma_data",
@@ -56,12 +59,13 @@ export(
     "plot_ord",
     "plot_clust",
     "plot_Ttest",
+    "plot_Ztest",
     "plot_ci"
 )
 
 ## imports
 importFrom("utils",
-    "stack", "read.table", "read.csv")
+    "stack", "read.table", "read.csv", "tail")
 importFrom("stats",
     "as.dist", "dist", "optim", "quantile", "rnorm",
     "cmdscale", "confint", "prcomp", "runif", "hclust",
@@ -145,6 +149,15 @@ S3method("dimensions", "edma_fdm")
 S3method("plot_ord", "edma_fdm")
 S3method("plot_clust", "edma_fdm")
 S3method("plot_ci", "edma_fdm")
+
+## edma_sdm methods
+S3method("print", "edma_sdm")
+S3method("Z_test", "edma_sdm")
+S3method("get_sdm", "edma_sdm")
+S3method("landmarks", "edma_sdm")
+S3method("dimensions", "edma_sdm")
+## plot methods
+S3method("plot_ci", "edma_sdm")
 
 ## edma_influence methods
 S3method("plot", "edma_influence")

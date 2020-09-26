@@ -727,7 +727,7 @@ parm1 <- c("s1"=1, "s2"=5)
 SigmaK1x <- make_Sigma(parm1, S1x)
 
 M2x <- M1x
-#M2[1,] <- c(2.2,0) * 10
+M2x[1,] <- c(3,0) * 10
 SigmaK2x <- make_Sigma(parm1*1.5, S1x)
 
 n <- 20
