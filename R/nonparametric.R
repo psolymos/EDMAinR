@@ -276,7 +276,7 @@ confint.edma_fit <- function (object, parm, level=0.95, ...) {
     out <- t(apply(b, 1, quantile, a))
     if (is.null(object$boot))
         out[] <- NA
-    rownames(out) <- rownames(d)
+    rownames(out) <- paste0(as.character(d$row), "-", as.character(d$col))
     out[parm,,drop=FALSE]
 }
 

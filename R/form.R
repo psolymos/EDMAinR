@@ -160,7 +160,7 @@ T_test <- function (object, ...) UseMethod("T_test")
     out <- list(statistic = Tval[1L], parameter = PARAMETER,
         p.value = if (PARAMETER > 0) PVAL else NA,
         method = METHOD, data.name = DNAME, Tvals=Tval)
-    class(out) <- c("edma_test", "htest")
+    class(out) <- c("edma_Ttest", "edma_test", "htest")
     out
 }
 T_test.edma_fdm <- function (object, ...)
@@ -175,7 +175,7 @@ confint.edma_dm <- function (object, parm, level=0.95, ...) {
     out <- t(apply(object$boot, 1, quantile, a))
     if (object$B < 1)
         out[] <- NA
-    rownames(out) <- rownames(d)
+    rownames(out) <- paste0(as.character(d$row), "-", as.character(d$col))
     out[parm,,drop=FALSE]
 }
 
