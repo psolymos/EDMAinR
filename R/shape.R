@@ -123,4 +123,42 @@ landmarks.edma_sdm <- function(x, ...)
 dimensions.edma_sdm <- function(x, ...)
     dimensions(x$a)
 
+## influential landmarks
+.influence2 <- function(i, object, statistic=c("Z", "C")) {
+    ls <- landmarks(object)
+    names(ls) <- ls
+    i <- ls[i]
+    lsd <- ls[!(ls %in% i)]
+    a <- object$a
+    b <- object$b
+    a$M <- a$M[lsd,]
+    b$M <- b$M[lsd,]
+    for (j in seq_len(object$B)) {
+        a$boot[[j]]$M <- a$boot[[j]]$M[lsd,]
+        b$boot[[j]]$M <- b$boot[[j]]$M[lsd,]
+    }
+    val <- .edma_sdm(a, b, log=object$log)
+    val[[paste0(statistic, "val")]]
+}
+
+## this is the quick version with CIs (no refitting)
+get_influence.edma_sdm <- function (object, statistic=c("Z", "C"), level=0.95, ...) {
+    statistic <- match.arg(statistic)
+    ls <- landmarks(object)
+    val <- if (statistic == "Z")
+        object$boot$Zval[1L] else object$boot$Cval[1L]
+    vals <- lapply(ls, .influence2, object=object, statistic=statistic)
+    a <- c((1-level)/2, 1-(1-level)/2)
+    vals <- t(sapply(vals, function(z) c(z[1L], quantile(z, a))))
+    colnames(vals) <- c(paste0(statistic, "drop"), "lower", "upper")
+    out <- data.frame(landmark=ls, vals)
+    rownames(out) <- NULL
+    attr(out, paste0(statistic, "val")) <- val
+    attr(out, "level") <- level
+    attr(out, "quick") <- FALSE
+    attr(out, "statistic") <- statistic
+    attr(out, "null") <- 0
+    class(out) <- c("edma_influence", class(out))
+    out
+}
 

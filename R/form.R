@@ -231,6 +231,8 @@ get_influence.edma_dm <- function (object, level=0.95, ...) {
     attr(out, "Tval") <- Tval
     attr(out, "level") <- level
     attr(out, "quick") <- quick
+    attr(out, "statistic") <- "T"
+    attr(out, "null") <- 1
     class(out) <- c("edma_influence", class(out))
     out
 }

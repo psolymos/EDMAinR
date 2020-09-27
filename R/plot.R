@@ -345,25 +345,27 @@ plot_Ttest.edma_dm <- function(x, ...) {
 
 .plot_influence <- function(x, xlab="", ylab="",
     bottom=1.5, xcex=0.5, xshow=TRUE, ...) {
-    x <- x[order(x$Tdrop),]
+    WHAT <- paste0(attr(x, "statistic"), "val")
+    DROP <- paste0(attr(x, "statistic"), "drop")
+    x <- x[order(x[[DROP]]),]
     k <- nrow(x)
     xv <- seq_len(k)
-    r <- range(x$Tdrop, x$lower, x$upper, 1, na.rm=TRUE)
+    r <- range(x[[DROP]], x$lower, x$upper, attr(x, "null"), na.rm=TRUE)
     op <- par(srt=90, xpd = TRUE, mar=par()$mar*c(bottom, 1, 1, 1))
     on.exit(par(op), add=TRUE)
     c5 <- edma_colors(5, "diverging")
-    plot(xv, x$Tdrop, ylim=r, type="n",
+    plot(xv, x[[DROP]], ylim=r, type="n",
         xlab=xlab, ylab=ylab, axes=FALSE)
     polygon(c(xv, rev(xv)), c(x$lower, rev(x$upper)), border=NA,
         col=c5[2L])
-    lines(xv, rep(1, k), col=c5[3L])
-    Tv <- attr(x, "Tval")
+    lines(xv, rep(attr(x, "null"), k), col=c5[3L])
+    Tv <- attr(x, WHAT)
     for (i in seq_len(k))
         if (!is.na(x$upper[i]) && !is.na(x$lower[i]))
         lines(xv[i]+c(-0.5, 0.5), c(Tv, Tv),
             col=if (Tv > x$upper[i] ||
                     Tv < x$lower[i]) c5[5L] else c5[3L])
-    lines(xv, x$Tdrop, col=c5[1L])
+    lines(xv, x[[DROP]], col=c5[1L])
     axis(2)
     if (xshow) {
         lab <- x$landmark
@@ -372,7 +374,8 @@ plot_Ttest.edma_dm <- function(x, ...) {
     invisible(x)
 }
 plot.edma_influence <- function(x, ...) {
-    .plot_influence(x, ylab="T-value", ...)
+    ylab <- paste0(attr(x, "statistic"), "-value")
+    .plot_influence(x, ylab=ylab, ...)
     invisible(x)
 }
 
