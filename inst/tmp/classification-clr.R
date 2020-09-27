@@ -735,15 +735,19 @@ B <- 100
 x1 <- simulate_2d(n, M1x, SigmaK1x)
 x2 <- simulate_2d(n, M2x, SigmaK2x)
 
+
 f1 <- edma_fit(x1, B=B)
 f2 <- edma_fit(x2, B=B)
+
+z <- edma_sdm(f1, f2, log=TRUE)
+z
 
 ## use TLS to get scaling factor C
 ## Y=vec(FM1), X=vec(FM2)
 df <- stack(as.dist(f1))
 colnames(df)[3L] <- "FM1"
 df$FM2 <- as.numeric(as.dist(f2))
-Cval <- tlsXY(FM1, FM2)
+Cval <- EDMAinR:::.tlsXY(df$FM1, df$FM2)
 attr(df, "Cval") <- Cval
 ## d_{ij,A}=c*d_{ij,B} for some c > 0 and for all {ij}
 ## Now FM is S: S1=FM1, S2=Cval*FM2

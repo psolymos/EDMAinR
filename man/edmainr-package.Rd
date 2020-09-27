@@ -19,6 +19,8 @@ Form difference: \code{\link{edma_fdm}}
 
 Growth and growth difference:
 \code{\link{edma_gm}}, \code{\link{edma_gdm}}
+
+Shape difference: \code{\link{edma_sdm}}
 }
 \author{
 \packageAuthor{EDMAinR}
@@ -53,5 +55,11 @@ Hu, L., 2007. Euclidean Distance Matrix Analysis of Landmarks Data:
 Estimation of Variance. Thesis, Master of Science in Statistics,
 Department of Mathematical and Statistical Sciences,
 University of Alberta, Edmonton, Alberta, Canada. Pp. 49.
+
+Lele, S. R., and Cole, T. M. III., 1996.
+A new test for shape differences when
+variance-covariance matrices are unequal.
+Journal of Human Evolution 31:193--212.
+<doi:10.1006/jhev.1996.0057>
 }
 \keyword{ package }
