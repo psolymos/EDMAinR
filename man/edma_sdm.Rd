@@ -11,6 +11,7 @@
 \alias{confint.edma_sdm}
 \alias{landmarks.edma_sdm}
 \alias{dimensions.edma_sdm}
+\alias{get_influence.edma_sdm}
 \title{
 Shape difference
 }
@@ -31,6 +32,8 @@ Z_test(object, ...)
 \method{dimensions}{edma_sdm}(x, ...)
 
 \method{confint}{edma_sdm}(object, parm, level=0.95, ...)
+\method{get_influence}{edma_sdm}(object, statistic=c("Z", "C"),
+    level=0.95, ...)
 
 plot_Ztest(x, ...)
 \method{plot_Ztest}{edma_sdm}(x, statistic=c("Z", "C"),
@@ -123,8 +126,12 @@ head(get_sdm(sdm))
 head(get_sdm(sdm, sort=TRUE, decreasing=TRUE))
 head(get_sdm(sdm, sort=TRUE, decreasing=FALSE))
 
+get_influence(sdm)
+
 plot_Ztest(sdm, "Z")
 plot_Ztest(sdm, "C")
 plot_ci(sdm)
+
+plot(get_influence(sdm))
 }
 \keyword{ models }
