@@ -71,8 +71,8 @@ other arguments passed to other functions.
 \details{
 Shape difference matrix (SDM) is defined as
 the difference between the scaled form matrices S(A) and S(B).
-S(A) = C(A) * FM(A), S(B) = C(B) * FM(B),
-where C(A) = 1 and C(B) is calculated using  TLS to get the scaling factor C.
+S(A) = C * FM(A), S(B) = FM(B),
+where C is a scaling factor and is calculated using  TLS.
 Shape difference matrix is S(A) - S(B) when \code{log=FALSE}
 and log(S(A)) - log(S(B)) when \code{log=TRUE}.
 

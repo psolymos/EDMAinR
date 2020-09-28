@@ -16,19 +16,16 @@
 .get_sdm <- function(M1, M2, log=TRUE) {
     S1 <- as.numeric(dist(M1))
     S2 <- as.numeric(dist(M2))
-    C1 <- 1
-    C2 <- .tlsXY(S1, S2) # Cval for S1 = 1
-    S2 <- C2 * S2
+    C2 <- .tlsXY(S1, S2) # C1 = 1
+    S1 <- C2 * S1
     if (log) {
         S1 <- log(S1)
         S2 <- log(S2)
-        C1 <- log(C1)
-        C2 <- log(C2)
     }
     SDM <- S1 - S2
     Range <- range(SDM)
     Zval <- Range[which.max(abs(Range))]
-    list(sdm=SDM, Zval=Zval, Cval=C1-C2)
+    list(sdm=SDM, Zval=Zval, Cval=C2)
 }
 
 .edma_sdm <- function(f1, f2, log=TRUE) {
@@ -157,7 +154,7 @@ get_influence.edma_sdm <- function (object, statistic=c("Z", "C"), level=0.95, .
     attr(out, "level") <- level
     attr(out, "quick") <- FALSE
     attr(out, "statistic") <- statistic
-    attr(out, "null") <- 0
+    attr(out, "null") <- if (statistic == "Z") 0 else 1
     class(out) <- c("edma_influence", class(out))
     out
 }
