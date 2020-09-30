@@ -80,7 +80,7 @@ Lele (1991), Lele and Richtsmeier (1991) and Hu (2007)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
       </span>
     </div>
 
@@ -166,6 +166,8 @@ Lele (1991), Lele and Richtsmeier (1991) and Hu (2007).</p>
 <span class='fu'>get_fm</span>(<span class='no'>object</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.95</span>, <span class='no'>...</span>)
 <span class='co'># S3 method for edma_fit</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='no'>object</span>, <span class='no'>parm</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.95</span>, <span class='no'>...</span>)
+<span class='co'># S3 method for edma_fit</span>
+<span class='fu'><a href='edma_data.html'>as.edma_data</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'>## plot methods</span>
 <span class='fu'>plot_3d</span>(<span class='no'>x</span>, <span class='no'>...</span>)
@@ -288,7 +290,8 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
     <div class='dont-index'><p>EDMA data: <code><a href='edma_data.html'>read_xyz</a></code></p>
 <p>Parametric fit: <code><a href='SigmaK_fit.html'>SigmaK_fit</a></code></p>
 <p>Form difference: <code><a href='edma_fdm.html'>edma_fdm</a></code></p>
-<p>Growth difference: <code><a href='edma_gdm.html'>edma_gdm</a></code></p></div>
+<p>Growth difference: <code><a href='edma_gdm.html'>edma_gdm</a></code></p>
+<p>Shape difference: <code><a href='edma_sdm.html'>edma_sdm</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>file</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(
@@ -301,7 +304,7 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_fit</span>(<span class='no'>x</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>9</span>)
 <span class='no'>fit</span></div><div class='output co'>#&gt; EDMA nonparametric fit: Crouzon P0 MUT
 #&gt; Call: edma_fit(x = x, B = 9)
-#&gt; 3 dimensions, 47 landmarks, 10 replicates, 9 bootstrap runs</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'>Meanform</span>(<span class='no'>fit</span>))</div><div class='output co'>#&gt;  num [1:47, 1:3] -0.753 -4.25 0.54 2.79 1.979 ...
+#&gt; 47 landmarks, 3 dimensions, 10 specimens, 9 bootstrap runs</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'>Meanform</span>(<span class='no'>fit</span>))</div><div class='output co'>#&gt;  num [1:47, 1:3] -0.753 -4.25 0.54 2.79 1.979 ...
 #&gt;  - attr(*, "dimnames")=List of 2
 #&gt;   ..$ : chr [1:47] "amsph" "bas" "cpsh" "ethma" ...
 #&gt;   ..$ : chr [1:3] "X" "Y" "Z"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'>SigmaKstar</span>(<span class='no'>fit</span>))</div><div class='output co'>#&gt;  num [1:47, 1:47] -0.000789 -0.000863 -0.002257 -0.00254 -0.000231 ...
@@ -320,24 +323,24 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
 #&gt;  $ col : Factor w/ 46 levels "amsph","bas",..: 1 1 1 1 1 1 1 1 1 1 ...
 #&gt;  $ dist: num  3.56 1.54 3.61 2.84 4.44 ...</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fm</span>(<span class='no'>fit</span>))</div><div class='output co'>#&gt;     row   col     dist    lower    upper
-#&gt; 1   bas amsph 3.564776 3.519652 3.599500
-#&gt; 2  cpsh amsph 1.536155 1.515508 1.575590
-#&gt; 3 ethma amsph 3.611062 3.580715 3.635385
-#&gt; 4 ethmp amsph 2.844704 2.818132 2.869864
-#&gt; 5 laalf amsph 4.439686 4.408412 4.480552
-#&gt; 6 lasph amsph 1.685653 1.658461 1.720895</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fm</span>(<span class='no'>fit</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;       row   col     dist    lower    upper
-#&gt; 435 rnsla  locc 10.44243 10.31159 10.52986
-#&gt; 357   opi lnsla 10.43767 10.33100 10.52484
-#&gt; 855 rnsla   opi 10.43731 10.31358 10.52496
-#&gt; 364  rocc lnsla 10.42825 10.29299 10.52153
-#&gt; 342  locc lnsla 10.41463 10.29985 10.50194
-#&gt; 854 rmaxi   opi 10.40513 10.34993 10.49313</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fm</span>(<span class='no'>fit</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;       row   col      dist     lower     upper
-#&gt; 400 rnslp lnslp 0.1360938 0.1264484 0.1512832
-#&gt; 362 rnsla lnsla 0.2260131 0.2004465 0.2279538
-#&gt; 977  roci  rocc 0.5124857 0.4770010 0.5295113
-#&gt; 416  loci  locc 0.5153279 0.4825952 0.5262041
-#&gt; 127  rpsh  cpsh 0.5253504 0.5015436 0.5496708
-#&gt; 105  lpsh  cpsh 0.5722943 0.5498048 0.5989530</div><div class='input'>
+#&gt; 1   bas amsph 3.564776 3.506298 3.606688
+#&gt; 2  cpsh amsph 1.536155 1.510952 1.565455
+#&gt; 3 ethma amsph 3.611062 3.580443 3.666278
+#&gt; 4 ethmp amsph 2.844704 2.791872 2.897530
+#&gt; 5 laalf amsph 4.439686 4.384380 4.517434
+#&gt; 6 lasph amsph 1.685653 1.645735 1.729624</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fm</span>(<span class='no'>fit</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;       row   col     dist    lower    upper
+#&gt; 435 rnsla  locc 10.44243 10.26834 10.59839
+#&gt; 357   opi lnsla 10.43767 10.27852 10.58901
+#&gt; 855 rnsla   opi 10.43731 10.26579 10.59746
+#&gt; 364  rocc lnsla 10.42825 10.24924 10.58395
+#&gt; 342  locc lnsla 10.41463 10.25157 10.55881
+#&gt; 854 rmaxi   opi 10.40513 10.25966 10.56651</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fm</span>(<span class='no'>fit</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;       row   col      dist     lower     upper
+#&gt; 400 rnslp lnslp 0.1360938 0.1309606 0.1425667
+#&gt; 362 rnsla lnsla 0.2260131 0.2130297 0.2443385
+#&gt; 977  roci  rocc 0.5124857 0.4996445 0.5249374
+#&gt; 416  loci  locc 0.5153279 0.4999382 0.5295319
+#&gt; 127  rpsh  cpsh 0.5253504 0.5084763 0.5437204
+#&gt; 105  lpsh  cpsh 0.5722943 0.5521739 0.5864519</div><div class='input'>
 <span class='fu'><a href='edma_data.html'>plot_ord</a></span>(<span class='no'>fit</span>)</div><div class='img'><img src='edma_fit-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span>(<span class='no'>fit</span>)</div><div class='img'><img src='edma_fit-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>fit</span>)</div><div class='input'><span class='fu'><a href='edma_data.html'>plot_2d</a></span>(<span class='no'>fit</span>)</div><div class='img'><img src='edma_fit-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
     <span class='fu'>plot_3d</span>(<span class='no'>fit</span>)</div></pre>
   </div>

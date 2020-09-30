@@ -80,7 +80,7 @@ Lele and Richtsmeier (1992, 1995)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
       </span>
     </div>
 
@@ -211,7 +211,7 @@ bootstrap comparing to the other object).</p></td>
       <th>mix</th>
       <td><p>logical, to use mixed bootstrap (numeriator and denominator
 populations are mixed with replacement) or not
-(only the non-reference population is resampled with replacement).</p></td>
+(only the reference population is resampled with replacement).</p></td>
     </tr>
     <tr>
       <th>x, object</th>
@@ -295,7 +295,8 @@ American Journal of Physical Anthropology 98:73--86.
 
     <div class='dont-index'><p>Nonparametric fit: <code><a href='edma_fit.html'>edma_fit</a></code></p>
 <p>Parametric fit: <code><a href='SigmaK_fit.html'>SigmaK_fit</a></code></p>
-<p>Growth difference: <code><a href='edma_gdm.html'>edma_gdm</a></code></p></div>
+<p>Growth difference: <code><a href='edma_gdm.html'>edma_gdm</a></code></p>
+<p>Shape difference: <code><a href='edma_sdm.html'>edma_sdm</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>file1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/crouzon/Crouzon_P0_Global_MUT.xyz"</span>,
@@ -307,7 +308,7 @@ American Journal of Physical Anthropology 98:73--86.
 <span class='no'>x2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span>(<span class='no'>file2</span>)
 
 <span class='no'>numerator</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>x1</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
-<span class='no'>denominator</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>x2</span>)
+<span class='no'>denominator</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>x2</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
 
 <span class='no'>fdm</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_fdm</span>(<span class='no'>numerator</span>, <span class='no'>denominator</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
 <span class='no'>fdm2</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_fdm</span>(<span class='no'>numerator</span>, <span class='no'>denominator</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>ref_denom</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
@@ -319,25 +320,25 @@ American Journal of Physical Anthropology 98:73--86.
 #&gt;     ref_denom = FALSE)
 #&gt; 10 bootstrap runs (ref: numerator)
 #&gt; T = 1.5981, p &lt; 2.22e-16</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fdm</span>(<span class='no'>fdm</span>))</div><div class='output co'>#&gt;     row   col      dist     lower    upper
-#&gt; 1   bas amsph 1.0425379 0.9895193 1.038136
-#&gt; 2  cpsh amsph 0.9823765 0.9837019 1.024815
-#&gt; 3 ethma amsph 1.0037761 0.9885992 1.013843
-#&gt; 4 ethmp amsph 0.9401242 0.9528469 1.012303
-#&gt; 5 laalf amsph 0.9878983 0.9882541 1.015671
-#&gt; 6 lasph amsph 1.0161844 0.9865507 1.014231</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fdm</span>(<span class='no'>fdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;       row   col     dist     lower    upper
-#&gt; 136 ethmp ethma 1.377873 0.9493096 1.302569
-#&gt; 697  rpto  lpto 1.131002 0.9579460 1.115589
-#&gt; 179 laalf ethmp 1.095672 0.9854365 1.080215
-#&gt; 200 raalf ethmp 1.094267 0.9870368 1.079082
-#&gt; 881  rpmx raalf 1.080811 0.9881082 1.068312
-#&gt; 607  rpns  lpns 1.078698 0.9739351 1.065791</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fdm</span>(<span class='no'>fdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;        row   col      dist     lower    upper
-#&gt; 527   lsqu  lpfl 0.8622059 0.8741076 1.092315
-#&gt; 1022  rsqu  rpfl 0.8781312 0.8954033 1.084721
-#&gt; 93   ethmp  cpsh 0.9034404 0.9240062 1.013471
-#&gt; 212   rpsh ethmp 0.9177018 0.9342931 1.018504
-#&gt; 190   lpsh ethmp 0.9181652 0.9356321 1.015978
-#&gt; 4    ethmp amsph 0.9401242 0.9528469 1.012303</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fdm</span>(<span class='no'>fdm</span>))</div><div class='output co'>#&gt;     row   col      dist     lower     upper
+#&gt; 1   bas amsph 1.0425379 1.0360237 1.0433102
+#&gt; 2  cpsh amsph 0.9823765 0.9708950 0.9938123
+#&gt; 3 ethma amsph 1.0037761 0.9878770 1.0205368
+#&gt; 4 ethmp amsph 0.9401242 0.9300510 0.9497171
+#&gt; 5 laalf amsph 0.9878983 0.9785729 0.9950328
+#&gt; 6 lasph amsph 1.0161844 0.9964933 1.0239495</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fdm</span>(<span class='no'>fdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;       row   col     dist    lower    upper
+#&gt; 136 ethmp ethma 1.377873 1.251872 1.503326
+#&gt; 697  rpto  lpto 1.131002 1.108440 1.190761
+#&gt; 179 laalf ethmp 1.095672 1.068121 1.117369
+#&gt; 200 raalf ethmp 1.094267 1.063290 1.116186
+#&gt; 881  rpmx raalf 1.080811 1.067125 1.094158
+#&gt; 607  rpns  lpns 1.078698 1.057970 1.105520</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_fdm</span>(<span class='no'>fdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;        row   col      dist     lower     upper
+#&gt; 527   lsqu  lpfl 0.8622059 0.8313488 0.9250714
+#&gt; 1022  rsqu  rpfl 0.8781312 0.8356334 0.9012937
+#&gt; 93   ethmp  cpsh 0.9034404 0.8800482 0.9144600
+#&gt; 212   rpsh ethmp 0.9177018 0.8967081 0.9313495
+#&gt; 190   lpsh ethmp 0.9181652 0.8975328 0.9336090
+#&gt; 4    ethmp amsph 0.9401242 0.9300510 0.9497171</div><div class='input'>
 <span class='fu'>T_test</span>(<span class='no'>fdm</span>)</div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
@@ -349,20 +350,20 @@ American Journal of Physical Anthropology 98:73--86.
 #&gt; data:  form difference matrix
 #&gt; T-value = 1.5981, B = 10, p-value &lt; 2.2e-16
 #&gt; </div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='no'>fdm</span>))</div><div class='output co'>#&gt;        2.5%    97.5%
-#&gt; 1 0.9895193 1.038136
-#&gt; 2 0.9837019 1.024815
-#&gt; 3 0.9885992 1.013843
-#&gt; 4 0.9528469 1.012303
-#&gt; 5 0.9882541 1.015671
-#&gt; 6 0.9865507 1.014231</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='no'>fdm</span>))</div><div class='output co'>#&gt;                  2.5%     97.5%
+#&gt; bas-amsph   1.0360237 1.0433102
+#&gt; cpsh-amsph  0.9708950 0.9938123
+#&gt; ethma-amsph 0.9878770 1.0205368
+#&gt; ethmp-amsph 0.9300510 0.9497171
+#&gt; laalf-amsph 0.9785729 0.9950328
+#&gt; lasph-amsph 0.9964933 1.0239495</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>infl</span> <span class='kw'>&lt;-</span> <span class='fu'>get_influence</span>(<span class='no'>fdm</span>))</div><div class='output co'>#&gt;   landmark    Tdrop    lower    upper
-#&gt; 1    amsph 1.598078 1.093983 1.496751
-#&gt; 2      bas 1.598078 1.093983 1.496751
-#&gt; 3     cpsh 1.598078 1.093983 1.496751
-#&gt; 4    ethma 1.311754 1.064764 1.282008
-#&gt; 5    ethmp 1.311754 1.065404 1.282008
-#&gt; 6    laalf 1.598078 1.093983 1.496751</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>infl</span>)</div><div class='img'><img src='edma_fdm-1.png' alt='' width='700' height='433' /></div><div class='input'>
+#&gt; 1    amsph 1.598078 1.048075 1.495167
+#&gt; 2      bas 1.598078 1.048075 1.495167
+#&gt; 3     cpsh 1.598078 1.048075 1.495167
+#&gt; 4    ethma 1.311754 1.048075 1.280424
+#&gt; 5    ethmp 1.311754 1.048075 1.280424
+#&gt; 6    laalf 1.598078 1.048075 1.495167</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>infl</span>)</div><div class='img'><img src='edma_fdm-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='fu'><a href='edma_data.html'>plot_ord</a></span>(<span class='no'>fdm</span>)</div><div class='img'><img src='edma_fdm-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span>(<span class='no'>fdm</span>)</div><div class='img'><img src='edma_fdm-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_Ttest</span>(<span class='no'>fdm</span>)</div><div class='img'><img src='edma_fdm-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_ci</span>(<span class='no'>fdm</span>)</div><div class='img'><img src='edma_fdm-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_2d</a></span>(<span class='no'>fdm</span>)</div><div class='img'><img src='edma_fdm-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
     <span class='fu'><a href='edma_fit.html'>plot_3d</a></span>(<span class='no'>fdm</span>)</div></pre>
   </div>

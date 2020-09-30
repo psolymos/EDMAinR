@@ -80,7 +80,7 @@ partly based on Hu (2007)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
       </span>
     </div>
 
@@ -153,7 +153,7 @@ partly based on Hu (2007).</p>
 
 <span class='co'>## estimation</span>
 <span class='fu'>SigmaK_fit</span>(<span class='no'>object</span>, <span class='no'>pattern</span>,
-    <span class='kw'>twostep</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>check</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='no'>...</span>)
+    <span class='kw'>twostep</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>check</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='no'>...</span>)
 
 <span class='fu'>sensitivity</span>(<span class='no'>object</span>, <span class='no'>...</span>)
 
@@ -243,9 +243,17 @@ be symmetric or <code>NA</code>. See Examples.</p>
 <p><code>SigmaKfull</code> calculates the 'full' parametric estimate according to
 Hu (2007). <code>SigmaK</code> uses the <code>pattern</code> matrix to
 constrain the parametric estimates in an additional optimization step
-(thus the name 2-step). We minimize sum((SigmaKfull - SigmaK_hat)^2).</p>
-<p>The 1-step approach minimizes
-sum((SigmaKstar - (H %*% SigmaK_hat %*% H))^2)</p>
+(thus the name 2-step). This approach minimizes
+the loss function sum((SigmaKfull - SigmaK_hat)^2).
+This loss function does not allow the comparison of
+different parametrizations because the SigmaKfull depends on
+the pattern.</p>
+<p>The 1-step approach minimizes the loss function
+sum((SigmaKstar - (H %*% SigmaK_hat %*% H))^2)
+using the SigmaKfull matrix to provide starting values for the optimization.
+The 1-step approach (<code>twostep=FALSE</code>) is the default because
+the loss function value makes it possible to compare support for
+different parametrizations (SigmaKstar does not depend on the pattern).</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>read_pattern</code> reads in a csv or xls/xlsx file with the
@@ -265,7 +273,8 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
     <div class='dont-index'><p>EDMA data: <code><a href='edma_data.html'>read_xyz</a></code></p>
 <p>Nonparametric fit: <code><a href='edma_fit.html'>edma_fit</a></code></p>
 <p>Form difference: <code><a href='edma_fdm.html'>edma_fdm</a></code></p>
-<p>Growth difference: <code><a href='edma_gdm.html'>edma_gdm</a></code></p></div>
+<p>Growth difference: <code><a href='edma_gdm.html'>edma_gdm</a></code></p>
+<p>Shape difference: <code><a href='edma_sdm.html'>edma_sdm</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## read pattern matrix in cs or xls/xlsx format</span>
@@ -305,34 +314,34 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>sim</span>)
 <span class='co'>## parametric fit</span>
 <span class='no'>o</span> <span class='kw'>&lt;-</span> <span class='fu'>SigmaK_fit</span>(<span class='no'>fit</span>, <span class='no'>p</span>)
-<span class='no'>o</span></div><div class='output co'>#&gt; EDMA parametric fit (2-step): Simulated landmark data
+<span class='no'>o</span></div><div class='output co'>#&gt; EDMA parametric fit (1-step): Simulated landmark data
 #&gt; Call: SigmaK_fit(object = fit, pattern = p)
-#&gt; 2 dimensions, 4 landmarks, 500 replicates, no bootstrap</div><div class='input'>
+#&gt; 4 landmarks, 2 dimensions, 500 specimens, no bootstrap</div><div class='input'>
 <span class='co'>## estimates</span>
 <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>true</span><span class='kw'>=</span><span class='no'>parm</span>, <span class='kw'>est</span><span class='kw'>=</span><span class='no'>o</span>$<span class='no'>results</span>$<span class='no'>par</span>[<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>parm</span>)])</div><div class='output co'>#&gt;   true       est
-#&gt; a 0.25 0.2532938
-#&gt; b 0.35 0.3282014</div><div class='input'><span class='fu'>SigmaK</span>(<span class='no'>o</span>) <span class='co'># constrained parametric estimate</span></div><div class='output co'>#&gt;           [,1]      [,2]      [,3]      [,4]
-#&gt; [1,] 0.2532938 0.0000000 0.0000000 0.0000000
-#&gt; [2,] 0.0000000 0.2532938 0.0000000 0.0000000
-#&gt; [3,] 0.0000000 0.0000000 0.3282014 0.0000000
-#&gt; [4,] 0.0000000 0.0000000 0.0000000 0.3282014</div><div class='input'><span class='fu'>SigmaKfull</span>(<span class='no'>o</span>) <span class='co'># full set of estimates</span></div><div class='output co'>#&gt;           L1        L2        L3        L4
+#&gt; a 0.25 0.2545087
+#&gt; b 0.35 0.3269886</div><div class='input'><span class='fu'>SigmaK</span>(<span class='no'>o</span>) <span class='co'># constrained parametric estimate</span></div><div class='output co'>#&gt;           [,1]      [,2]      [,3]      [,4]
+#&gt; [1,] 0.2545087 0.0000000 0.0000000 0.0000000
+#&gt; [2,] 0.0000000 0.2545087 0.0000000 0.0000000
+#&gt; [3,] 0.0000000 0.0000000 0.3269886 0.0000000
+#&gt; [4,] 0.0000000 0.0000000 0.0000000 0.3269886</div><div class='input'><span class='fu'>SigmaKfull</span>(<span class='no'>o</span>) <span class='co'># full set of estimates</span></div><div class='output co'>#&gt;           L1        L2        L3        L4
 #&gt; L1 0.2448985 0.0000000 0.0000000 0.0000000
 #&gt; L2 0.0000000 0.2616891 0.0000000 0.0000000
 #&gt; L3 0.0000000 0.0000000 0.3110522 0.0000000
 #&gt; L4 0.0000000 0.0000000 0.0000000 0.3453506</div><div class='input'>
 <span class='co'>## sensitivity analysis</span>
 <span class='fu'>sensitivity</span>(<span class='no'>o</span>)</div><div class='output co'>#&gt;           par_a     par_b        value
-#&gt;  [1,] 0.2532938 0.3282014 0.000000e+00
-#&gt;  [2,] 0.2533356 0.3281743 2.480501e-09
-#&gt;  [3,] 0.2530379 0.3280253 9.651787e-08
-#&gt;  [4,] 0.2533448 0.3281900 2.730780e-09
-#&gt;  [5,] 0.2532235 0.3282358 6.123049e-09
-#&gt;  [6,] 0.2534423 0.3281905 2.215197e-08
-#&gt;  [7,] 0.2532846 0.3281106 8.318615e-09
-#&gt;  [8,] 0.2531534 0.3281094 2.818334e-08
-#&gt;  [9,] 0.2531554 0.3281919 1.925317e-08
-#&gt; [10,] 0.2533493 0.3280589 2.337840e-08
-#&gt; [11,] 0.2533374 0.3282215 2.299874e-09</div></pre>
+#&gt;  [1,] 0.2545087 0.3269886 0.0006900395
+#&gt;  [2,] 0.2545104 0.3270741 0.0006900490
+#&gt;  [3,] 0.2546629 0.3270748 0.0006900859
+#&gt;  [4,] 0.2545171 0.3269475 0.0006900414
+#&gt;  [5,] 0.2549270 0.3273294 0.0006904771
+#&gt;  [6,] 0.2544405 0.3271203 0.0006900627
+#&gt;  [7,] 0.2544267 0.3270775 0.0006900541
+#&gt;  [8,] 0.2545331 0.3268087 0.0006900780
+#&gt;  [9,] 0.2544849 0.3267305 0.0006901256
+#&gt; [10,] 0.2545282 0.3268420 0.0006900650
+#&gt; [11,] 0.2544859 0.3269755 0.0006900404</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

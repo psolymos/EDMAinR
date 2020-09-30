@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
       </span>
     </div>
 
@@ -116,7 +116,7 @@
 <a class="sourceLine" id="cb1-5" data-line-number="5">}</a></code></pre></div>
 <p>We can now load the <strong>EDMAinR</strong> package:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(EDMAinR)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; EDMAinR 0.1-4     2020-08-17</span></a></code></pre></div>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; EDMAinR 0.1-5     2020-09-26</span></a></code></pre></div>
 </div>
 <div id="landmark-data" class="section level1">
 <h1 class="hasAnchor">
@@ -146,7 +146,7 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/edma_data.html">read_xyz</a></span>(file)</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">x</a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; 3 dimensions, 47 landmarks, 28 specimens</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; 47 landmarks, 3 dimensions, 28 specimens</span></a></code></pre></div>
 <blockquote>
 <p><em>Note</em>: find more information <a href="#turning-3d-arrays-into-edma-data-objects">below</a> about reading in other morphometrics file formats.</p>
 </blockquote>
@@ -223,16 +223,16 @@
 <p>The most general way to subset the data sets is <em>via</em> the <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> function (i.e. <code>x[i, j, k]</code>), the 3 indices inside the brackets refer to the landmarks (<code>i</code>), dimensions (<code>j</code>), and specimens (<code>k</code>). Imagine the data as a 3D data cube and the square brackets allow us to slice the cube from 3 different directions.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">x[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, , ]  <span class="co"># select the 1st 10 landmarks</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; 3 dimensions, 10 landmarks, 28 specimens</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; 10 landmarks, 3 dimensions, 28 specimens</span></a>
 <a class="sourceLine" id="cb7-4" data-line-number="4">x[ , <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, ]  <span class="co"># select 2 of the 2 dimensions</span></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; 2 dimensions, 47 landmarks, 28 specimens</span></a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; 47 landmarks, 2 dimensions, 28 specimens</span></a>
 <a class="sourceLine" id="cb7-7" data-line-number="7">x[ , , <span class="dv">11</span><span class="op">:</span><span class="dv">20</span>] <span class="co"># select individuals from 11 to 20</span></a>
 <a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; 3 dimensions, 47 landmarks, 10 specimens</span></a>
+<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; 47 landmarks, 3 dimensions, 10 specimens</span></a>
 <a class="sourceLine" id="cb7-10" data-line-number="10">x[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, , <span class="dv">1</span><span class="op">:</span><span class="dv">20</span>] <span class="co"># combine multiple indices</span></a>
 <a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; 3 dimensions, 10 landmarks, 20 specimens</span></a></code></pre></div>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; 10 landmarks, 3 dimensions, 20 specimens</span></a></code></pre></div>
 <p>Read more about how to use square brackets to extract parts of the data object: <code><a href="https://rdrr.io/r/base/Extract.html">?Extract</a></code> (see section ‘Matrices and arrays’). The most important thing to keep in mind is that the empty index (e.g. <code>x[,,]</code>) means ‘select everything’.</p>
 <p>We can take subsets using:</p>
 <ul>
@@ -271,11 +271,11 @@
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">xnew &lt;-<span class="st"> </span><span class="kw"><a href="../reference/edma_data.html">as.edma_data</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(x))</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">xnew</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; EDMA data: Landmark data</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; 3 dimensions, 47 landmarks, 28 specimens</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="co">#&gt; 47 landmarks, 3 dimensions, 28 specimens</span></a>
 <a class="sourceLine" id="cb10-5" data-line-number="5">xnew<span class="op">$</span>name &lt;-<span class="st"> "This is the same data as before"</span></a>
 <a class="sourceLine" id="cb10-6" data-line-number="6">xnew</a>
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; EDMA data: This is the same data as before</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; 3 dimensions, 47 landmarks, 28 specimens</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; 47 landmarks, 3 dimensions, 28 specimens</span></a></code></pre></div>
 <blockquote>
 <p><em>Note</em>: the <strong>geomorph</strong> package needs to be installed separately using <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("geomorph")</a></code>.</p>
 </blockquote>
@@ -383,10 +383,10 @@
 <a class="sourceLine" id="cb23-3" data-line-number="3">tmp &lt;-<span class="st"> </span><span class="kw"><a href="../reference/edma_data.html">read_xyz</a></span>(<span class="dt">file=</span>f)         <span class="co"># read back the data</span></a>
 <a class="sourceLine" id="cb23-4" data-line-number="4">x                               <span class="co"># original data</span></a>
 <a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
-<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt; 3 dimensions, 47 landmarks, 28 specimens</span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt; 47 landmarks, 3 dimensions, 28 specimens</span></a>
 <a class="sourceLine" id="cb23-7" data-line-number="7">tmp                             <span class="co"># this should be the same too</span></a>
 <a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; EDMA data: Crouzon P0 MUT</span></a>
-<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 3 dimensions, 47 landmarks, 28 specimens</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; 47 landmarks, 3 dimensions, 28 specimens</span></a>
 <a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">## test if the all the dimnames are the same</span></a>
 <a class="sourceLine" id="cb23-11" data-line-number="11"><span class="kw"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/identical.html">identical</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(x), <span class="kw"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(tmp)))</a>
 <a class="sourceLine" id="cb23-12" data-line-number="12"><span class="kw"><a href="https://rdrr.io/r/base/unlink.html">unlink</a></span>(f)                       <span class="co"># delete temp file</span></a></code></pre></div>
