@@ -1,6 +1,10 @@
-# Version 0.1-5, 2020-09-26
+# Version 0.1-5, 2020-09-29
 
 * Shape difference matrix (SDM) calculation added.
+* CI calculation (local FDM, GM, GDM, SDM testing) calculations use
+  2-sample bootstrap.
+* Global FDM, GM, GDM testing (T-test) uses the mixed or the reference
+  bootstrap, globel Z-test for FDM is based on 2-sample bootstrap.
 
 # Version 0.1-4, 2020-08-23
 
