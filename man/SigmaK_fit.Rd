@@ -24,7 +24,7 @@ read_pattern(file, ...)
 
 ## estimation
 SigmaK_fit(object, pattern,
-    twostep=TRUE, check=TRUE, ...)
+    twostep=FALSE, check=TRUE, ...)
 
 sensitivity(object, ...)
 
@@ -97,10 +97,18 @@ be symmetric or \code{NA}. See Examples.
 \code{SigmaKfull} calculates the 'full' parametric estimate according to
 Hu (2007). \code{SigmaK} uses the \code{pattern} matrix to
 constrain the parametric estimates in an additional optimization step
-(thus the name 2-step). We minimize sum((SigmaKfull - SigmaK_hat)^2).
+(thus the name 2-step). This approach minimizes
+the loss function sum((SigmaKfull - SigmaK_hat)^2).
+This loss function does not allow the comparison of
+different parametrizations because the SigmaKfull depends on
+the pattern.
 
-The 1-step approach minimizes
+The 1-step approach minimizes the loss function
 sum((SigmaKstar - (H \%*\% SigmaK_hat \%*\% H))^2)
+using the SigmaKfull matrix to provide starting values for the optimization.
+The 1-step approach (\code{twostep=FALSE}) is the default because
+the loss function value makes it possible to compare support for
+different parametrizations (SigmaKstar does not depend on the pattern).
 }
 \value{
 \code{read_pattern} reads in a csv or xls/xlsx file with the

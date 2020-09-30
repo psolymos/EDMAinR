@@ -70,7 +70,7 @@ bootstrap comparing to the other object).
   \item{mix}{
 logical, to use mixed bootstrap (numeriator and denominator
 populations are mixed with replacement) or not
-(only the non-reference population is resampled with replacement).
+(only the reference population is resampled with replacement).
 }
   \item{x, object}{
 an EDMA FDM object of class 'edma_fdm'.
@@ -178,7 +178,7 @@ file2 <- system.file("extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz",
 x2 <- read_xyz(file2)
 
 numerator <- edma_fit(x1, B=10)
-denominator <- edma_fit(x2)
+denominator <- edma_fit(x2, B=10)
 
 fdm <- edma_fdm(numerator, denominator, B=10)
 fdm2 <- edma_fdm(numerator, denominator, B=10, ref_denom=FALSE)

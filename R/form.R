@@ -44,10 +44,8 @@
     } else {
         if (ref_denom) {
             d2$data <- d1$data[sample(seq_len(n1), n2, replace=TRUE)]
-            d1$data <- d1$data[sample(seq_len(n1), n1, replace=TRUE)]
         } else {
             d1$data <- d2$data[sample(seq_len(n2), n1, replace=TRUE)]
-            d2$data <- d2$data[sample(seq_len(n2), n2, replace=TRUE)]
         }
     }
     names(d1$data) <- s1
@@ -92,6 +90,19 @@ edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
     .compare_objects(numerator, denominator)
     fd <- stack(.formdiff(Meanform(numerator), Meanform(denominator)))
     b <- .Ttest_fit(numerator, denominator, B=B, ref_denom=ref_denom, mix=mix)
+
+    if (B > 0 && (is.null(numerator$boot) || is.null(denominator$boot)))
+    stop("B > 0 requires bootstrapped EDMA fit objects")
+    f1 <- if (ref_denom)
+        numerator else denominator
+    f2 <- if (ref_denom)
+        denominator else numerator
+    B <- min(length(f1$boot), length(f2$boot))
+    res <- cbind(.formdiff(Meanform(f1), Meanform(f2)),
+        sapply(seq_len(B), function(i) {
+            .formdiff(f1$boot[[i]]$M, f2$boot[[i]]$M)
+        }))
+
     out <- list(
         call=match.call(),
         numerator=numerator,
@@ -100,7 +111,8 @@ edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
         mix=mix,
         dm=fd,
         B=B,
-        boot=b)
+        boot=b,    # mixed or reference bootstrap for global testing
+        boot2=res) # 2-sample bootstrap for local testing (CI)
     class(out) <- c("edma_fdm", "edma_dm", class(out))
     out
 }
@@ -168,14 +180,14 @@ T_test.edma_fdm <- function (object, ...)
 
 ## CI based on the 2x input object boot sample
 confint.edma_dm <- function (object, parm, level=0.95, ...) {
-    d <- object$dm
     if (missing(parm))
-        parm <- seq_len(nrow(d))
+        parm <- seq_len(nrow(object$dm))
     a <- c((1-level)/2, 1-(1-level)/2)
-    out <- t(apply(object$boot, 1, quantile, a))
+    out <- t(apply(object$boot2, 1, quantile, a))
     if (object$B < 1)
         out[] <- NA
-    rownames(out) <- paste0(as.character(d$row), "-", as.character(d$col))
+    rownames(out) <- paste0(as.character(object$dm$row), "-",
+        as.character(object$dm$col))
     out[parm,,drop=FALSE]
 }
 

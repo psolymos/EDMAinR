@@ -121,8 +121,8 @@ a2 <- read_xyz(file_a2)[l,,]
 a1
 a2
 
-fit_a1 <- edma_fit(a1)
-fit_a2 <- edma_fit(a2)
+fit_a1 <- edma_fit(a1, B=10)
+fit_a2 <- edma_fit(a2, B=10)
 
 ## --- growth matrix ---
 
@@ -154,8 +154,8 @@ b2 <- read_xyz(file_b2)[l,,]
 b1
 b2
 
-fit_b1 <- edma_fit(b1)
-fit_b2 <- edma_fit(b2)
+fit_b1 <- edma_fit(b1, B=10)
+fit_b2 <- edma_fit(b2, B=10)
 
 gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_b1, b2=fit_b2, B=10)
 gdm

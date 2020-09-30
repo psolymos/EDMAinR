@@ -47,8 +47,8 @@ a2
 We first estimate the mean forms (no bootstrap replicates are necessary).
 
 ```{r}
-fit_a1 <- edma_fit(a1)
-fit_a2 <- edma_fit(a2)
+fit_a1 <- edma_fit(a1, B=25)
+fit_a2 <- edma_fit(a2, B=25)
 ```
 
 Growth matrices ($GM$) are formed as pairwise Euclidean distances
@@ -173,8 +173,8 @@ b2 <- read_xyz(file_b2)[l,,]
 b1
 b2
 
-fit_b1 <- edma_fit(b1)
-fit_b2 <- edma_fit(b2)
+fit_b1 <- edma_fit(b1, B=25)
+fit_b2 <- edma_fit(b2, B=25)
 ```
 
 Growth matrices ($GM$) are formed as pairwise Euclidean distances

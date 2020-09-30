@@ -40,8 +40,8 @@ x2 <- read_xyz(file2)
 We first estimate the mean forms (no bootstrap replicates are necessary).
 
 ```{r}
-numerator <- edma_fit(x1)
-denominator <- edma_fit(x2)
+numerator <- edma_fit(x1, B=25)
+denominator <- edma_fit(x2, B=25)
 ```
 
 Form matrices ($FM$) are formed as pairwise Euclidean distances

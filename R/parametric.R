@@ -137,7 +137,7 @@ make_Sigma <- function(params, pattern) {
 }
 
 .SigmaK_fit <- function(SigmaKstar, pattern, init,
-method = "Nelder-Mead", control = list(), twostep=TRUE, check=TRUE) {
+method = "Nelder-Mead", control = list(), twostep=FALSE, check=TRUE) {
     K <- nrow(SigmaKstar)
     if (K < 3)
         stop("K must be at least 3")
@@ -277,7 +277,7 @@ read_pattern <- function(file, ...) {
     x
 }
 
-SigmaK_fit <- function(object, pattern, twostep=TRUE, check=TRUE, ...) {
+SigmaK_fit <- function(object, pattern, twostep=FALSE, check=TRUE, ...) {
     pattern <- .check_pattern(object, pattern)
     o <- .SigmaK_fit(object$SigmaKstar, pattern, twostep=twostep, check=check, ...)
     id <- o$id

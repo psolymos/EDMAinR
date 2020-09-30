@@ -23,12 +23,13 @@ edma_gdm <- function (a1, a2, b1, b2, ...) {
     # ref is a1 an b1
     gma <- edma_fdm(numerator=a2, denominator=a1, ...)
     gmb <- edma_fdm(numerator=b2, denominator=b1, ...)
-    B <- gma$B * gmb$B
+    B <- gma$B # gma$B = gmb$B
     gdm <- gma$dm
     gdm$dist <- gmb$dm$dist / gma$dm$dist
-    ii <- expand.grid(a=seq_len(gma$B), b=seq_len(gmb$B))
-    b <- cbind(gdm$dist,
-        gmb$boot[,ii$b+1,drop=FALSE] / gma$boot[,ii$a+1,drop=FALSE])
+    #ii <- expand.grid(a=seq_len(gma$B), b=seq_len(gmb$B))
+    #b <- cbind(gdm$dist,
+    #    gmb$boot[,ii$b+1,drop=FALSE] / gma$boot[,ii$a+1,drop=FALSE])
+    b <- cbind(gdm$dist, gmb$boot / gma$boot)
     attr(b, "mix") <- attr(gma$boot, "mix")
     out <- list(
         call=match.call(),
@@ -36,7 +37,8 @@ edma_gdm <- function (a1, a2, b1, b2, ...) {
         B=B,
         ref_denom=gma$ref_denom,
         dm=gdm,
-        boot=b)
+        boot=b,
+        boot2=gma$boot2 / gmb$boot2)
     attr(out$boot, "Tval") <- apply(out$boot, 2, max) / apply(out$boot, 2, min)
     class(out) <- c("edma_gdm", "edma_dm", class(out))
     out
