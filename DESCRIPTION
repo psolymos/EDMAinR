@@ -27,6 +27,6 @@ Description: A coordinate-free approach for comparing
 License: GPL-2
 LazyLoad: yes
 LazyData: true
-Imports: pbapply, readxl, ape
+Imports: pbapply, readxl, ape, mvtnorm
 Suggests: knitr, rmarkdown, rgl, ggplot2, ggdendro
 VignetteBuilder: knitr

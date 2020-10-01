@@ -568,6 +568,8 @@ method=c("cip", "chisq", "bnorm", "norm")) {
     }
     Class$class <- ifelse(Class$complikr > 0, 2, 1)
     Class$signif <- !(Class$lower < 0 & Class$upper > 0)
+    cm <- table(Class$group, Class$class)
+    attr(Class, "accuracy") <- sum(diag(cm)) / sum(cm)
     Class
 }
 

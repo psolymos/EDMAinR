@@ -10,7 +10,9 @@ export(
     "edma_gdm",
     "SigmaK_fit",
     "read_pattern",
-    "make_Sigma"
+    "make_Sigma",
+    "loo",
+    "edma_class"
 )
 
 ## export necessary internals
@@ -69,7 +71,7 @@ importFrom("utils",
 importFrom("stats",
     "as.dist", "dist", "optim", "quantile", "rnorm",
     "cmdscale", "confint", "prcomp", "runif", "hclust",
-    "cov.wt", "qf", "sd")
+    "cov.wt", "qf", "sd", "cov", "dchisq", "dnorm", "var")
 importFrom("graphics",
     "abline", "axis", "lines", "par", "plot", "polygon",
     "text", "hist", "points", "segments", "title")
