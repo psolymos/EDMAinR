@@ -399,7 +399,7 @@ fit2 <- edma_fit(sim2, B=10)
 }
 
 ## pairs of pairs of distances
-double_pairs <- function(A) {
+.double_pairs <- function(A) {
     n <- dim(A)[3L]
     EuX <- EDMAinR:::.Eu2(A)$EuX
     tmp = EuX[,,1]
@@ -423,19 +423,19 @@ double_pairs <- function(A) {
     tmp3
 }
 ## means and covariances for bivariate normal
-double_mean_cov <- function(EuX3) {
-    m <- dim(EuX3)[1L]
+.double_mean_cov <- function(x) {
+    m <- dim(x)[1L]
     mean_mat <- matrix(0, 2L, m)
     cov_array <- array(0, c(2L, 2L, m))
     for (i in seq_len(m)) {
-      mean_mat[,i] <- rowMeans(EuX3[i,,])
-      cov_array[,,i] <- cov(t(EuX3[i,,]))
+      mean_mat[,i] <- rowMeans(x[i,,])
+      cov_array[,,i] <- cov(t(x[i,,]))
     }
     list(means=mean_mat, covariances=cov_array)
 }
 
 ## calculates composite likelihood for ith bootstrap sample
-.get_cl <- function(x, fit, i=0, method=c("chisq", "bnorm", "norm")) {
+.get_cl <- function(x, fit, i=0, method=c("cip", "chisq", "bnorm", "norm")) {
     method <- match.arg(method)
     if (i > 0) {
         if (is.null(fit$boot) || length(fit$boot) < i)
@@ -447,6 +447,8 @@ double_mean_cov <- function(EuX3) {
         M <- Meanform(fit)
         A <- as.array(as.edma_data(fit))
     }
+    K <- dim(A)[1L]
+    n <- dim(A)[3L]
     if (method == "chisq") {
         mat <- .get_mat(M, A)
         eu <- as.matrix(dist(x)^2)
@@ -456,24 +458,49 @@ double_mean_cov <- function(EuX3) {
             df=ncol(x),
             ncp=pmax(0, as.numeric(as.dist(mat$ncp))),
             log=TRUE))
-    } else {
-        eu <- double_pairs(array(x, c(dim(x), 1L)))[,,1L]
-        mc <- double_mean_cov(double_pairs(A))
-        I <- if (method == "bnorm")
-            1 else diag(1, 2, 2)
+    }
+    if (method == "bnorm") {
+        eu <- .double_pairs(array(x, c(dim(x), 1L)))[,,1L]
+        mc <- .double_mean_cov(.double_pairs(A))
         CL <- sum(sapply(seq_len(nrow(eu)), function(i) {
             mvtnorm::dmvnorm(
                 x=eu[i,],
                 mean=mc$means[,i],
-                sigma=I * mc$covariances[,,i],
+                sigma=mc$covariances[,,i],
                 log=TRUE)
         }))
     }
+    if (method == "norm") {
+        dm1 <- as.numeric(dist(x))^2
+        dm <- sapply(seq_len(n), function(i) as.numeric(dist(A[,,i]))^2)
+        Means <- rowMeans(dm)
+        Vars <- apply(dm, 1, sd)^2
+        CL <- sum(dnorm(dm1,
+            mean=rowMeans(dm),
+            sd=apply(dm, 1, sd),
+            log=TRUE))
+    }
+    if (method == "cip") {
+        CM <- apply(A, c(2, 3), scale, scale=FALSE)
+        j <- !upper.tri(matrix(0, K, K))
+        CIP <- sapply(seq_len(n), function(i) {
+            (CM[,,i] %*% t(CM[,,i]))[j]
+        })
+        Ex <- apply(CIP, 1L, mean)
+        Va <- apply(CIP, 1L, var)
+        Cnew <- scale(x, scale=FALSE)
+        CIPnew <- (Cnew %*% t(Cnew))[j]
+        d <- CIPnew - Ex
+        # taking the negative here to align with other CL types
+        CL <- -as.numeric(t(d) %*% diag(Va^-1) %*% d + sum(log(Va)))
+    }
     CL
 }
+
+
 ## composite likelihood ratio
 edma_clr <- function(x, fit1, fit2, boot=FALSE,
-                     method=c("chisq", "bnorm", "norm")) {
+method=c("cip", "chisq", "bnorm", "norm")) {
     if (inherits(x, "edma_data")) {
         if (dim(x)[3] > 1L)
             stop("provide a single specimen only when x is an edma_data object")
@@ -512,6 +539,56 @@ edma_clr <- function(x, fit1, fit2, boot=FALSE,
     out
 }
 
+loo <- function(x1, x2, B=0, level=0.95,
+method=c("cip", "chisq", "bnorm", "norm")) {
+    a <- c((1-level)/2, 1-(1-level)/2)
+    x1 <- as.edma_data(x1)
+    x2 <- as.edma_data(x2)
+    n1 <- dim(x1)[3L]
+    n2 <- dim(x2)[3L]
+    x12 <- combine_data(x1, x2)
+    Class <- data.frame(
+        group=rep(1:2, c(n1, n2)),
+        specimen=c(seq_len(n1), seq_len(n2)),
+        id=seq_len(n1 + n2),
+        complikr=NA, lower=NA, upper=NA)
+    for (i in seq_len(n1 + n2)) {
+        x <- x12$data[[i]]
+        i1 <- which(Class$group == 1 & Class$id != i)
+        i2 <- which(Class$group == 2 & Class$id != i)
+        fit1 <- edma_fit(x12[,,i1], B=B)
+        fit2 <- edma_fit(x12[,,i2], B=B)
+        h <- edma_clr(x, fit1, fit2, boot=B > 0, method=method)
+        Class$complikr[i] <- h$complikr
+        if (B > 0 && !is.null(h$boot)) {
+            q <- quantile(c(h$complikr, h$boot$complikr), a, na.rm=TRUE)
+            Class$lower[i] <- q[1L]
+            Class$upper[i] <- q[2L]
+        }
+    }
+    Class$class <- ifelse(Class$complikr > 0, 2, 1)
+    Class$signif <- !(Class$lower < 0 & Class$upper > 0)
+    Class
+}
+
+error_rate <- function(l) {
+    cm <- table(l$group, l$class)
+    100*(1-sum(diag(cm)) / sum(cm))
+}
+cl_all <- function(x1, x2) {
+    t1 <- system.time({l1 <- loo(x1, x2, method="chisq")})
+    t2 <- system.time({l2 <- loo(x1, x2, method="bnorm")})
+    t3 <- system.time({l3 <- loo(x1, x2, method="norm")})
+    t4 <- system.time({l4 <- loo(x1, x2, method="cip")})
+    list(error=c(chisq=error_rate(l1),
+          bnorm=error_rate(l2),
+          norm=error_rate(l3),
+          Nfast=error_rate(l4)),
+      time=c(chisq=t1[3],
+          bnorm=t2[3],
+          norm=t3[3],
+          Nfast=t4[3]))
+}
 
 
 h <- edma_clr(x, fit1, fit2, boot=TRUE)
@@ -554,96 +631,43 @@ i <- 2
 B <- 0
 level <- 0.95
 
-loo <- function(x1, x2, B=0, level=0.95, method=c("chisq", "bnorm", "norm")) {
-    a <- c((1-level)/2, 1-(1-level)/2)
-    x1 <- as.edma_data(x1)
-    x2 <- as.edma_data(x2)
-    n1 <- dim(x1)[3L]
-    n2 <- dim(x2)[3L]
-    x12 <- combine_data(x1, x2)
-    Class <- data.frame(
-        group=rep(1:2, c(n1, n2)),
-        specimen=c(seq_len(n1), seq_len(n2)),
-        id=seq_len(n1 + n2),
-        complikr=NA, lower=NA, upper=NA)
-    for (i in seq_len(n1 + n2)) {
-        x <- x12$data[[i]]
-        i1 <- which(Class$group == 1 & Class$id != i)
-        i2 <- which(Class$group == 2 & Class$id != i)
-        fit1 <- edma_fit(x12[,,i1], B=B)
-        fit2 <- edma_fit(x12[,,i2], B=B)
-        h <- edma_clr(x, fit1, fit2, boot=B > 0, method=method)
-        Class$complikr[i] <- h$complikr
-        if (B > 0 && !is.null(h$boot)) {
-            q <- quantile(c(h$complikr, h$boot$complikr), a, na.rm=TRUE)
-            Class$lower[i] <- q[1L]
-            Class$upper[i] <- q[2L]
-        }
-    }
-    Class$class <- ifelse(Class$complikr > 0, 2, 1)
-    Class$signif <- !(Class$lower < 0 & Class$upper > 0)
-    Class
-}
 
-error_rate <- function(l) {
-    cm <- table(l$group, l$class)
-    100*(1-sum(diag(cm)) / sum(cm))
-}
 ## Bookstein's schizophrenia data
 data(schizophrenia.dat)
 x1 <- as.edma_data(schizophrenia.dat[,,1:14]) # control
 x2 <- as.edma_data(schizophrenia.dat[,,15:28]) # schizo
-cbind(x1=dim(x1), x2=dim(x2))
-l1 <- loo(x1, x2, method="chisq")
-l2 <- loo(x1, x2, method="bnorm")
-l3 <- loo(x1, x2, method="norm")
-schi <- c(proc=28.57, chisq=error_rate(l1),
-          bnorm=error_rate(l2), norm=error_rate(l3))
+v <- cl_all(x1, x2)
+schi <- c(proc=28.57, v$error, time=v$time)
+data.frame(schi)
 
 ## Gorillas
 data(apes)
 x1 <- as.edma_data(apes$x[,,apes$group == "gorf"]) # females
 x2 <- as.edma_data(apes$x[,,apes$group == "gorm"]) # males
-cbind(x1=dim(x1), x2=dim(x2))
-l1 <- loo(x1, x2, method="chisq")
-l2 <- loo(x1, x2, method="bnorm")
-l3 <- loo(x1, x2, method="norm")
-gor <- c(proc=0, chisq=error_rate(l1),
-          bnorm=error_rate(l2), norm=error_rate(l3))
+v <- cl_all(x1, x2)
+gor <- c(proc=0, v$error, time=v$time)
 
 ## Chimps
 x1 <- as.edma_data(apes$x[,,apes$group == "panf"]) # females
 x2 <- as.edma_data(apes$x[,,apes$group == "panm"]) # males
-cbind(x1=dim(x1), x2=dim(x2))
-c(x1=dim(x1)[3], x2=dim(x2)[3])
-l1 <- loo(x1, x2, method="chisq")
-l2 <- loo(x1, x2, method="bnorm")
-l3 <- loo(x1, x2, method="norm")
-chim <- c(proc=25.93, chisq=error_rate(l1),
-          bnorm=error_rate(l2), norm=error_rate(l3))
+v <- cl_all(x1, x2)
+chim <- c(proc=25.93, v$error, time=v$time)
 
 ## Orangs
 x1 <- as.edma_data(apes$x[,,apes$group == "pongof"]) # females
 x2 <- as.edma_data(apes$x[,,apes$group == "pongom"]) # males
-cbind(x1=dim(x1), x2=dim(x2))
-l1 <- loo(x1, x2, method="chisq")
-l2 <- loo(x1, x2, method="bnorm")
-l3 <- loo(x1, x2, method="norm")
-oran <- c(proc=3.7, chisq=error_rate(l1),
-          bnorm=error_rate(l2), norm=error_rate(l3))
+v <- cl_all(x1, x2)
+oran <- c(proc=3.7, v$error, time=v$time)
 
 ## Mice
 data(mice)
 x1 <- as.edma_data(mice$x[,,mice$group == "l"]) # large
 x2 <- as.edma_data(mice$x[,,mice$group == "s"]) # small
-cbind(x1=dim(x1), x2=dim(x2))
-l1 <- loo(x1, x2, method="chisq")
-l2 <- loo(x1, x2, method="bnorm")
-l3 <- loo(x1, x2, method="norm")
-mice <- c(proc=2.17, chisq=error_rate(l1),
-          bnorm=error_rate(l2), norm=error_rate(l3))
+v <- cl_all(x1, x2)
+mice <- c(proc=2.17, v$error, time=v$time)
 
-round(rbind(schi, gor, chim, oran, mice), 2)
+round(rbind(schi, gor, chim, oran, mice)[,1:6], 2)
+data.frame(sec=colMeans(rbind(schi, gor, chim, oran, mice)[,7:11]))
 
 ## simulated
 M1 <- rbind(
