@@ -2,7 +2,7 @@
 \alias{edma_class}
 \alias{loo}
 \title{
-CLassification
+Classification
 }
 \description{
 Classification
