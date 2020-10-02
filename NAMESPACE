@@ -12,7 +12,8 @@ export(
     "read_pattern",
     "make_Sigma",
     "loo",
-    "edma_class"
+    "edma_class",
+    "predict_landmarks"
 )
 
 ## export necessary internals
@@ -69,7 +70,7 @@ export(
 importFrom("utils",
     "stack", "read.table", "read.csv", "tail")
 importFrom("stats",
-    "as.dist", "dist", "optim", "quantile", "rnorm",
+    "as.dist", "dist", "optim", "quantile", "rnorm", "predict",
     "cmdscale", "confint", "prcomp", "runif", "hclust",
     "cov.wt", "qf", "sd", "cov", "dchisq", "dnorm", "var")
 importFrom("graphics",
@@ -81,6 +82,8 @@ importFrom("readxl",
     "read_excel")
 importFrom("ape",
     "as.phylo")
+importFrom("e1071",
+    "svm")
 #importFrom("rgl",
 #    "plot3d", "lines3d")
 importFrom("grDevices",

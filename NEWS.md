@@ -1,6 +1,11 @@
+# Version 0.1-6, 2020-10-01
+
+* Missing landmark prediction added: `predict_landmarks`.
+* Classification added: `edma_class` and `loo`.
+
 # Version 0.1-5, 2020-09-29
 
-* Shape difference matrix (SDM) calculation added.
+* Shape difference matrix (SDM) calculation added: `edma_sdm`.
 * CI calculation (local FDM, GM, GDM, SDM testing) calculations use
   2-sample bootstrap.
 * Global FDM, GM, GDM testing (T-test) uses the mixed or the reference
