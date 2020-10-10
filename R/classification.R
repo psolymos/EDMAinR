@@ -106,10 +106,34 @@
     }
     CL
 }
+.svm_class <- function(x, fit1, fit2, i=0) {
+    if (i > 0) {
+        if (is.null(fit1$boot) || length(fit1$boot) < i)
+            stop("not enough bootstrap samples")
+        if (is.null(fit2$boot) || length(fit2$boot) < i)
+            stop("not enough bootstrap samples")
+        s1 <- attr(fit1$boot, "samples")[,i]
+        s2 <- attr(fit1$boot, "samples")[,i]
+        A1 <- as.array(as.edma_data(fit1)[,,s1])
+        A2 <- as.array(as.edma_data(fit2)[,,s2])
+    } else {
+        A1 <- as.array(as.edma_data(fit1))
+        A2 <- as.array(as.edma_data(fit2))
+    }
+    d <- rbind(
+        data.frame(y=1, x=t(apply(A1, 3, dist))),
+        data.frame(y=2, x=t(apply(A2, 3, dist))))
+    d$y <- as.factor(d$y)
+    dnew <- data.frame(x=t(as.vector(dist(x))))
+    m <- svm(y ~ ., data=d)
+    pr <- predict(m, newdata=dnew)
+    as.integer(pr)
+}
+
 
 ## composite likelihood ratio and CIP
 edma_class <- function(x, fit1, fit2, boot=FALSE,
-method=c("cip", "chisq", "bnorm", "norm")) {
+method=c("cip", "chisq", "bnorm", "norm", "svm")) {
     if (inherits(x, "edma_data")) {
         if (dim(x)[3] > 1L)
             stop("provide a single specimen only when x is an edma_data object")
@@ -118,21 +142,40 @@ method=c("cip", "chisq", "bnorm", "norm")) {
     .compare_objects(fit1, fit2)
     if (!identical(dimnames(fit1)[1:2], dimnames(x)))
         stop("specimen dimnames must match the EDMA fit objects")
-    CL1 <- .get_cl(x, fit1, method=method)
-    CL2 <- .get_cl(x, fit2, method=method)
+    method <- match.arg(method)
     BOOT <- NULL
     B1 <- length(fit1$boot)
     B2 <- length(fit2$boot)
     if (boot && (B1 < 1L || B2 < 1L))
         warning("no bootstrap samples found: boot=TRUE ignored")
-    if (boot && B1 > 0L && B2 > 0L) {
-        CL1M <- sapply(seq_len(B1), function(i) .get_cl(x, fit1, i, method=method))
-        CL2M <- sapply(seq_len(B2), function(i) .get_cl(x, fit2, i, method=method))
-        CLRM <- t(outer(CL2M, CL1M, "-"))
-        BOOT <- data.frame(
-            complik1=as.numeric(CL1M),
-            complik2=as.numeric(CL2M),
-            complikr=as.numeric(CLRM))
+    if (method == "svm") {
+        h <- .svm_class(x, fit1, fit2)
+        CL1 <- NA
+        CL2 <- NA
+        if (boot && B1 > 0L && B2 > 0L) {
+            CLM <- sapply(seq_len(min(B1, B2)),
+                function(i) .svm_class(x, fit1, fit2, i))
+            BOOT <- data.frame(
+                complik1=NA_real_,
+                complik2=NA_real_,
+                complikr=NA_real_,
+                class=CLM)
+        }
+    } else {
+        CL1 <- .get_cl(x, fit1, method=method)
+        CL2 <- .get_cl(x, fit2, method=method)
+        if (boot && B1 > 0L && B2 > 0L) {
+            CL1M <- sapply(seq_len(B1),
+                function(i) .get_cl(x, fit1, i, method=method))
+            CL2M <- sapply(seq_len(B2),
+                function(i) .get_cl(x, fit2, i, method=method))
+            CLRM <- t(outer(CL2M, CL1M, "-"))
+            BOOT <- data.frame(
+                complik1=as.numeric(CL1M),
+                complik2=as.numeric(CL2M),
+                complikr=as.numeric(CLRM),
+                class=ifelse(CL2M > CL1M, 2L, 1L))
+        }
     }
     ## CLR > 0 => x belongs to fit2
     ## CLR < 0 => x belongs to fit1
@@ -143,6 +186,7 @@ method=c("cip", "chisq", "bnorm", "norm")) {
         complik1=CL1,
         complik2=CL2,
         complikr=CL2 - CL1,
+        class=if (method == "svm") h else ifelse(CL2 > CL1, 2L, 1L),
         boot=BOOT)
     class(out) <- "edma_class"
     out
@@ -150,7 +194,7 @@ method=c("cip", "chisq", "bnorm", "norm")) {
 
 ## leave-one-out cross validation
 loo <- function(fit1, fit2, B=0, level=0.95,
-method=c("cip", "chisq", "bnorm", "norm")) {
+method=c("cip", "chisq", "bnorm", "norm", "svm")) {
     x1 <- as.edma_data(fit1)
     x2 <- as.edma_data(fit2)
     n1 <- dim(x1)[3L]
@@ -161,7 +205,7 @@ method=c("cip", "chisq", "bnorm", "norm")) {
         group=rep(1:2, c(n1, n2)),
         specimen=c(seq_len(n1), seq_len(n2)),
         id=seq_len(n1 + n2),
-        complikr=NA, lower=NA, upper=NA)
+        complikr=NA, lower=NA, upper=NA, p1=NA)
     for (i in seq_len(n1 + n2)) {
         x <- x12$data[[i]]
         i1 <- which(Class$group == 1 & Class$id != i)
@@ -170,16 +214,18 @@ method=c("cip", "chisq", "bnorm", "norm")) {
         fit2 <- edma_fit(x12[,,i2], B=B)
         h <- edma_class(x, fit1, fit2, boot=B > 0, method=method)
         Class$complikr[i] <- h$complikr
+        Class$class[i] <- h$class
         if (B > 0 && !is.null(h$boot)) {
             q <- quantile(c(h$complikr, h$boot$complikr), a, na.rm=TRUE)
             Class$lower[i] <- q[1L]
             Class$upper[i] <- q[2L]
+            Class$p1 <- sim(h$boot$class == 1L) / B
         }
     }
-    Class$class <- ifelse(Class$complikr > 0, 2, 1)
     Class$signif <- !(Class$lower < 0 & Class$upper > 0)
     cm <- table(Class$group, Class$class)
     attr(Class, "accuracy") <- sum(diag(cm)) / sum(cm)
     class(Class) <- c("edma_loo", class(Class))
     Class
 }
+

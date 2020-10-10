@@ -9,10 +9,10 @@ Classification
 }
 \usage{
 edma_class(x, fit1, fit2, boot=FALSE,
-    method=c("cip", "chisq", "bnorm", "norm"))
+    method=c("cip", "chisq", "bnorm", "norm", "svm"))
 
 loo(fit1, fit2, B=0, level=0.95,
-    method=c("cip", "chisq", "bnorm", "norm"))
+    method=c("cip", "chisq", "bnorm", "norm", "svm"))
 }
 \arguments{
   \item{x}{
