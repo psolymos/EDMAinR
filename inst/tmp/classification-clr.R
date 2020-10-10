@@ -582,14 +582,17 @@ cl_all <- function(x1, x2) {
     t2 <- system.time({l2 <- loo(x1, x2, method="bnorm")})
     t3 <- system.time({l3 <- loo(x1, x2, method="norm")})
     t4 <- system.time({l4 <- loo(x1, x2, method="cip")})
+    t5 <- system.time({l5 <- loo(x1, x2, method="svm")})
     list(error=c(chisq=error_rate(l1),
           bnorm=error_rate(l2),
           norm=error_rate(l3),
-          Nfast=error_rate(l4)),
+          cip=error_rate(l4),
+          svm=error_rate(l5)),
       time=c(chisq=t1[3],
           bnorm=t2[3],
           norm=t3[3],
-          Nfast=t4[3]))
+          cip=t4[3],
+          svm=t5[3]))
 }
 
 
