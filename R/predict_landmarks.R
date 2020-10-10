@@ -16,7 +16,7 @@ predict_landmarks <- function(A) {
         col=col(tmp)[lower.tri(tmp)])
     RC$id <- seq_len(nrow(RC))
 
-    ## where NAs are: row says which pair, col sais specimen
+    ## where NAs are: row says which pair, col says which specimen
     NAS <- which(is.na(DM))
     NAS <- data.frame(id=NAS, row=row(DM)[NAS], col=col(DM)[NAS])
 
