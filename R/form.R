@@ -27,7 +27,8 @@
     r
 }
 
-## this does the fixed or mixed test once, d2 = denominator
+## this does the fixed or mixed test once,
+## d1: numerator, d2: denominator
 ## d1 and d2 are data objects
 .Ttest_data <- function(d1, d2, ref_denom=TRUE, mix=FALSE) {
     n1 <- dim(d1)[3L]
@@ -44,8 +45,10 @@
     } else {
         if (ref_denom) {
             d2$data <- d1$data[sample(seq_len(n1), n2, replace=TRUE)]
+            d1$data <- d1$data[sample(seq_len(n1), n1, replace=TRUE)]
         } else {
             d1$data <- d2$data[sample(seq_len(n2), n1, replace=TRUE)]
+            d2$data <- d2$data[sample(seq_len(n2), n2, replace=TRUE)]
         }
     }
     names(d1$data) <- s1
