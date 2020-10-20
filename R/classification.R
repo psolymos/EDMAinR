@@ -219,7 +219,7 @@ method=c("cip", "chisq", "bnorm", "norm", "svm")) {
             q <- quantile(c(h$complikr, h$boot$complikr), a, na.rm=TRUE)
             Class$lower[i] <- q[1L]
             Class$upper[i] <- q[2L]
-            Class$p1 <- sim(h$boot$class == 1L) / B
+            Class$p1 <- sum(h$boot$class == 1L) / B
         }
     }
     Class$signif <- !(Class$lower < 0 & Class$upper > 0)
