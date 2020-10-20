@@ -6,6 +6,7 @@ export(
     "edma_fit",
     "edma_fdm",
     "edma_sdm",
+    "edma_sdm_clr",
     "edma_gm",
     "edma_gdm",
     "SigmaK_fit",
@@ -156,6 +157,7 @@ S3method("plot_clust", "edma_fdm")
 S3method("plot_ci", "edma_fdm")
 
 ## edma_sdm methods
+S3method("print", "edma_sdm_clr")
 S3method("print", "edma_sdm")
 S3method("Z_test", "edma_sdm")
 S3method("get_sdm", "edma_sdm")
