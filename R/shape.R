@@ -28,6 +28,7 @@
     list(sdm=SDM, Zval=Zval, Cval=C2)
 }
 
+## This function implements Lele & Cole's SDM test
 .edma_sdm <- function(f1, f2, log=TRUE) {
     if (is.null(f1$boot) || is.null(f2$boot))
         stop("SDM requires bootstrapped EDMA fit objects")
@@ -41,6 +42,205 @@
     Cval <- sapply(res, "[[", "Cval")
     list(sdm=SDM, Zval=Zval, Cval=Cval)
 }
+
+## Approximate composite likelihood approach
+## for testing shape difference
+##
+## log-Composite likelihood function:
+## This is based on the squared Euclidean distances.
+## But it could be based on centered inner product matrix as well.
+## We use the result that non-central chi-square distribution can be
+## approximated by a normal distribution when the non-centrality
+## parameter is large as compared to the variance.
+## The results are easy to apply to any dimension.
+## We will implement it to 2 and 3 dimensional objects.
+##
+## Notation:
+## delta_lm : squared Euclidean distance between landmarks l and m.
+## phi_lm : sigma_ll + sigma_mm - 2*sigma_lm.
+##   These are the entries in SigmaK matrix.
+##   SigmaD is assumed to be identity.
+## e_lm : Squared Euclidean distance between landmarks l and m
+##
+## Under the Gaussian perturbation model, e_lm is approximately
+## Normally distributed.
+##
+## 2 dimensional object:
+##   Mean = 2*phi_lm + delta_lm
+##   Variance = 4 * phi_lm^2 + 4 * delta_lm * phi_lm
+##
+## 3 dimensional object:
+##   Mean = 3*phi_lm + delta_lm = alpha_1
+##   Variance = 6 * phi_lm^2 + 4 * delta_lm * phi_lm = alpha_2
+##
+## We can use the method of moments to estimate these parameters.
+## We can also (potentially) improve them by one-step maximum
+## composite likelihood estimator.
+##
+## Notation: Let alpha_1_hat and alpha_2_hat denote the empirical
+## mean and empirical variance of the observed squared Euclidean distances.
+##
+## 2 dimensional object:
+##   delta_lm_hat = sqrt{(alpha_1_hat^2) - alpha_2_hat}
+##   Be aware that for small samples, this can be negative.
+##   phi_lm_hat = 0.5*(alpha_1_hat - delta_lm_hat)
+##
+## 3 dimensional object:
+##   delta_lm_hat = sqrt{(alpha_1_hat^2) - 1.5*alpha_2_hat}
+##   Be aware that for small samples, this can be negative.
+##   phi_lm_hat = 0.33*(alpha_1_hat - delta_lm_hat)
+##
+## EDMAinR spits out the relevant information, namely,
+## squared distances for the objects, their means and variances.
+.edma_sdm_clr <- function(data1,data2) {
+    ## Fit the data
+    #fit1_edma = edma_fit(data1,B=1)
+    #fit2_edma = edma_fit(data2,B=1)
+    ## This is needed to estimate 'C_hat'
+    #fit_sdm = edma_sdm(fit1_edma,fit2_edma)
+    #C_hat = fit_sdm$boot$Cval[1]
+    z_1 <- .edma_fit_np(data1, less=FALSE)
+    z_2 <- .edma_fit_np(data2, less=FALSE)
+    C_hat <- .get_sdm(z_1$M, z_2$M)$Cval
+    K <- dim(data1)[1L]
+    D <- dim(data1)[2L]
+    n1 <- dim(data1)[3L]
+    n2 <- dim(data2)[3L]
+    ## Need to put these into a matrix with rows
+    ## as the squared distances and columns as observations.
+    ## There might be way to avoid this do loop.
+    ## These are the observations for writing the composite likelihood.
+    Eu_1 <- matrix(0, length(dist(z_1$M)), n1)
+    for (i in seq_len(n1)) {
+        Eu_1[,i] <- z_1$EuX[,,i][lower.tri(z_1$EuX[,,i])]
+    }
+    Eu_2 <- matrix(0, length(dist(z_2$M)), n2)
+    for (i in seq_len(n2)) {
+        Eu_2[,i] <- z_2$EuX[,,i][lower.tri(z_2$EuX[,,i])]
+    }
+    ## Estimated parameters for writing the composite likelihood
+    delta_hat_1 <- as.vector(dist(z_1$M)^2)
+    delta_hat_2 <- as.vector(dist(z_2$M)^2)
+    phi_hat_1 <- (D/2)*(z_1$EuMean[lower.tri(z_1$EuMean)] - delta_hat_1)
+    phi_hat_2 <- (D/2)*(z_2$EuMean[lower.tri(z_2$EuMean)] - delta_hat_2)
+    ## Approximate composite likelihood can be computed using
+    ## the 'dnorm' function or exact composite likelihood
+    ## using the 'dchisq' function.
+    ##
+    ## Normal approximation based composite likelihood
+    mean_1 <- D*phi_hat_1 + delta_hat_1
+    var_1 <- 2*D*phi_hat_1^2 + 4*delta_hat_1*phi_hat_1
+    CL_1 <- sum(dnorm(Eu_1,mean=mean_1,sd=sqrt(var_1),log=T))
+    mean_2 <- D*phi_hat_2 + delta_hat_2
+    var_2 <- 2*D*phi_hat_2^2 + 4*delta_hat_2*phi_hat_2
+    CL_2 <- sum(dnorm(Eu_2,mean = mean_2,sd = sqrt(var_2),log=T))
+    ## Constrained CL with the mean forms are proportional to each other.
+    mean_2_const <- D*phi_hat_2 + (C_hat^2)*delta_hat_1
+    var_2_const <- 2*D*phi_hat_2^2 + 4*(C_hat^2)*delta_hat_1*phi_hat_2
+    CL_2_const <- sum(dnorm(Eu_2,
+                            mean = mean_2_const,
+                            sd = sqrt(var_2_const),
+                            log=TRUE))
+    ## Testing for shape difference can be done using the fact
+    ## that under the null hypothesis M_2 = c* M_1,
+    ## the corresponding parameters of the non-central chisquare
+    ## can be computed. It only affects delta_lm.
+    ## The method of moments estimators are available under
+    ## the full model and restricted model.
+    ## We can use parametric bootstrap to obtain the null distribution.
+    CLR <- 2*(CL_2 - CL_2_const)
+    list(CLR=CLR,
+        C_hat=C_hat,
+        M1=z_1$M,
+        n1=n1,
+        n2=n2,
+        SigmaK1star=z_1$SigmaKstar,
+        SigmaK2star=z_2$SigmaKstar)
+}
+
+## Now put a wrapper to do parametric bootstrap.
+## This function only does 1 run
+## x is list returned by .edma_sdm_clr
+.edma_sdm_clr_null1 <- function(x) {
+    M1star <- x$M1
+    C_hat <- x$C_hat
+    SigmaK1star <- x$SigmaK1star
+    SigmaK2star <- x$SigmaK2star
+    n1 <- x$n1
+    n2 <- x$n2
+    ## Generate the data.
+    ## The input is the estimates from fitting the original data.
+    ## SigmaKstar's are singular matrices.
+    ##
+    ## Generate centered matrix normal variates.
+    K <- nrow(M1star)
+    D <- ncol(M1star)
+    x1.c <- MixMatrix::rmatrixnorm(n1,
+        mean=M1star[-K,],
+        U=SigmaK1star[1:K-1,1:K-1],
+        V=diag(1, D))
+    tmp <- array(rep(0,K*D*n1),c(K,D,n1))
+    for (i in seq_len(n1)) {
+        tmp[,,i] <- rbind(x1.c[,,i], -apply(x1.c[,,i],2,sum))
+    }
+    x1.c <- tmp
+    ## This is the form matrix under the null.
+    M2star = C_hat * M1star
+    x2.c <- MixMatrix::rmatrixnorm(n1,
+        mean=M2star[-K,],
+        U=SigmaK2star[1:K-1,1:K-1],
+        V=diag(1,D))
+    tmp <- array(rep(0,K*D*n2), c(K,D,n2))
+    for (i in seq_len(n2)) {
+        tmp[,,i] <- rbind(x2.c[,,i],-apply(x2.c[,,i],2,sum))
+    }
+    x2.c <- tmp
+    # Now input these to the CLR function.
+    .edma_sdm_clr(as.edma_data(x1.c), as.edma_data(x2.c))$CLR
+}
+
+## CLR shape difference with parametric bootstrap
+edma_sdm_clr <- function(a, b, B=0) {
+    .compare_data(a, b)
+    res <- .edma_sdm_clr(a, b)
+    boot <- NULL
+    if (B > 0) {
+        boot <- pbapply::pbreplicate(B,
+            .edma_sdm_clr_null1(res))
+    }
+    out <- list(
+        call=match.call(),
+        a=a,
+        b=b,
+        results=res,
+        B=B,
+        boot=boot)
+    class(out) <- c("edma_sdm_clr", "edma_dm", class(out))
+    out
+}
+
+print.edma_sdm_clr <- function(x, level = 0.95, ...) {
+    a <- c((1-level)/2, 1-(1-level)/2)
+    ci <- unname(quantile(x$boot, a))
+    d <- getOption("digits")-2L
+    CI <- if (!is.null(x$boot)) {
+        c(" (", 100*round(level, 2), "% CI: ",
+            format(ci[1L], digits=d),
+            ", ", format(ci[2L], digits=d), ")")
+    } else ""
+    cat("EDMA shape difference matrix\n",
+        "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+        "\n", x$B, " parametric bootstrap runs\n",
+        "CLR = ", format(x$results$CLR, digits=d),
+        CI,
+        "\n", sep="")
+    invisible(x)
+}
+
+## TODO
+## - MixMax to Namespace
+## - rudimentary docs
+## - print method
 
 
 ## shape difference matrix with bootstrap
