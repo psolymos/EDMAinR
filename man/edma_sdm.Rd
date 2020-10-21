@@ -3,6 +3,10 @@
 \alias{print.edma_sdm}
 \alias{edma_sdm_clr}
 \alias{print.edma_sdm_clr}
+\alias{CLR_test}
+\alias{CLR_test.edma_sdm_clr}
+\alias{plot_CLRtest}
+\alias{plot_CLRtest.edma_sdm_clr}
 \alias{Z_test}
 \alias{Z_test.edma_sdm}
 \alias{plot_Ztest}
@@ -23,8 +27,11 @@ Lele and Cole (1996).
 }
 \usage{
 edma_sdm_clr(a, b, B=0)
-\method{print}{edma_sdm_clr}(x, level = 0.95, ...)
-
+\method{print}{edma_sdm_clr}(x, ...)
+CLR_test(object, ...)
+\method{CLR_test}{edma_sdm_clr}(object, ...)
+plot_CLRtest(x, ...)
+\method{plot_CLRtest}{edma_sdm_clr}(x, ...)
 
 edma_sdm(a, b, log=TRUE)
 get_sdm(object, ...)

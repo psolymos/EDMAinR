@@ -684,4 +684,17 @@ plot_Ztest.edma_sdm <- function(x, statistic=c("Z", "C"), level = 0.95, ...) {
     invisible(x)
 }
 
+plot_CLRtest <- function (x,...) UseMethod("plot_CLRtest")
+
+plot_CLRtest.edma_sdm_clr <- function(x, ...) {
+    c5 <- edma_colors(5, "diverging")
+    xlab <- "CLR-values"
+    z <- x$boot
+    hist(z, xlab=xlab, main="",
+        col=c5[2L], border=c5[1L], ...)
+    abline(v=x$results$CLR, lwd=2, col=c5[5L])
+    invisible(x)
+}
+
+
 

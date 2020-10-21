@@ -213,34 +213,46 @@ edma_sdm_clr <- function(a, b, B=0) {
         a=a,
         b=b,
         results=res,
+        pvalue=if (B > 0) sum(boot > res$CLR) / B else NA,
         B=B,
         boot=boot)
     class(out) <- c("edma_sdm_clr", "edma_dm", class(out))
     out
 }
 
-print.edma_sdm_clr <- function(x, level = 0.95, ...) {
-    a <- c((1-level)/2, 1-(1-level)/2)
-    ci <- unname(quantile(x$boot, a))
+CLR_test <- function (object, ...) UseMethod("CLR_test")
+CLR_test.edma_sdm_clr <- function (object, ...) {
+    METHOD <- "Parametric bootstrap based CLR shape test"
+    CLR <- object$results$CLR
+    PVAL <- object$pvalue
+    PARAMETER <- length(object$boot)
+    names(CLR) <- "CLR"
+    names(PARAMETER) <- "B"
+    out <- list(
+        statistic = CLR,
+        parameter = PARAMETER,
+        p.value = PVAL,
+        method = METHOD,
+        data.name = "shape difference matrix", Null=object$boot)
+    class(out) <- c("edma_CLRtest", "edma_test", "htest")
+    out
+}
+
+
+# think about using htest
+print.edma_sdm_clr <- function(x, ...) {
     d <- getOption("digits")-2L
-    CI <- if (!is.null(x$boot)) {
-        c(" (", 100*round(level, 2), "% CI: ",
-            format(ci[1L], digits=d),
-            ", ", format(ci[2L], digits=d), ")")
+    pval <- if (!is.null(x$boot)) {
+        paste(", p-value =", format(x$pvalue, digits=d))
     } else ""
     cat("EDMA shape difference matrix\n",
         "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n", x$B, " parametric bootstrap runs\n",
         "CLR = ", format(x$results$CLR, digits=d),
-        CI,
+        pval,
         "\n", sep="")
     invisible(x)
 }
-
-## TODO
-## - MixMax to Namespace
-## - rudimentary docs
-## - print method
 
 
 ## shape difference matrix with bootstrap
