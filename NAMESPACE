@@ -6,15 +6,11 @@ export(
     "edma_fit",
     "edma_fdm",
     "edma_sdm",
-    "edma_sdm_clr",
     "edma_gm",
     "edma_gdm",
     "SigmaK_fit",
     "read_pattern",
-    "make_Sigma",
-    "loo",
-    "edma_class",
-    "predict_landmarks"
+    "make_Sigma"
 )
 
 ## export necessary internals
@@ -45,7 +41,6 @@ export(
     "get_gdm",
     "T_test",
     "Z_test",
-    "CLR_test",
     "sensitivity",
     "get_influence",
     "as.edma_data",
@@ -65,7 +60,6 @@ export(
     "plot_clust",
     "plot_Ttest",
     "plot_Ztest",
-    "plot_CLRtest",
     "plot_ci"
 )
 
@@ -85,10 +79,6 @@ importFrom("readxl",
     "read_excel")
 importFrom("ape",
     "as.phylo")
-importFrom("e1071",
-    "svm")
-#importFrom("rgl",
-#    "plot3d", "lines3d")
 importFrom("grDevices",
     "hcl.colors", "colorRampPalette", "col2rgb", "hcl.pals", "rgb")
 
@@ -159,8 +149,6 @@ S3method("plot_clust", "edma_fdm")
 S3method("plot_ci", "edma_fdm")
 
 ## edma_sdm methods
-S3method("print", "edma_sdm_clr")
-S3method("CLR_test", "edma_sdm_clr")
 S3method("print", "edma_sdm")
 S3method("Z_test", "edma_sdm")
 S3method("get_sdm", "edma_sdm")

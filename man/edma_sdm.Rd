@@ -1,12 +1,6 @@
 \name{edma_sdm}
 \alias{edma_sdm}
 \alias{print.edma_sdm}
-\alias{edma_sdm_clr}
-\alias{print.edma_sdm_clr}
-\alias{CLR_test}
-\alias{CLR_test.edma_sdm_clr}
-\alias{plot_CLRtest}
-\alias{plot_CLRtest.edma_sdm_clr}
 \alias{Z_test}
 \alias{Z_test.edma_sdm}
 \alias{plot_Ztest}
@@ -26,13 +20,6 @@ Shape difference matrix based inference following
 Lele and Cole (1996).
 }
 \usage{
-edma_sdm_clr(a, b, B=0)
-\method{print}{edma_sdm_clr}(x, ...)
-CLR_test(object, ...)
-\method{CLR_test}{edma_sdm_clr}(object, ...)
-plot_CLRtest(x, ...)
-\method{plot_CLRtest}{edma_sdm_clr}(x, ...)
-
 edma_sdm(a, b, log=TRUE)
 get_sdm(object, ...)
 \method{get_sdm}{edma_sdm}(object, sort=FALSE,
@@ -55,9 +42,6 @@ plot_Ztest(x, ...)
 \arguments{
   \item{a, b}{
 EDMA fit object to compare shapes.
-}
-  \item{B}{
-number of parametric bootstrap runs.
 }
   \item{x, object}{
 a SDM object.
