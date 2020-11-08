@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Functions for EDMA data objects — edma_data" />
 <meta property="og:description" content="Functions for reading, simulating, and manipulating EDMA data." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -65,7 +68,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -79,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-6</span>
       </span>
     </div>
 
@@ -173,9 +176,9 @@ landmarks(x, ...)
 dimensions(x, ...)
 # S3 method for edma_data
 specimens(x, ...)
-landmarks(x) <- value
-dimensions(x) <- value
-specimens(x) <- value
+landmarks(x) &lt;- value
+dimensions(x) &lt;- value
+specimens(x) &lt;- value
 
 ## subsetting
 # S3 method for edma_data
@@ -348,6 +351,9 @@ dissimilarities among specimens and provide ordination
 based on square rooted dissimilarities and Cailliez's correction).
 and hierarchical cluster dendrogram (using the <code><a href='https://rdrr.io/r/stats/hclust.html'>hclust</a></code>
 function with Ward's clustering method).</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Peter Solymos</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code>plot.edma_data</code> for visualizing EDMA data objects.</p>
@@ -357,22 +363,24 @@ function with Ward's clustering method).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## read xyz files</span>
-<span class='no'>file</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(
+<span class='va'>file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span>
     <span class='st'>"extdata/crouzon/Crouzon_P0_Global_MUT.xyz"</span>,
-    <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"EDMAinR"</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>read_xyz</span>(<span class='no'>file</span>)
-<span class='no'>x</span></div><div class='output co'>#&gt; EDMA data: Crouzon P0 MUT
+    package<span class='op'>=</span><span class='st'>"EDMAinR"</span><span class='op'>)</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>read_xyz</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span>
+<span class='va'>x</span>
+</div><div class='output co'>#&gt; EDMA data: Crouzon P0 MUT
 #&gt; 47 landmarks, 3 dimensions, 28 specimens</div><div class='input'>
 <span class='co'>## test writing xyz file</span>
-<span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span>(<span class='kw'>fileext</span> <span class='kw'>=</span> <span class='st'>".xyz"</span>)
-<span class='fu'>write_xyz</span>(<span class='no'>x</span>, <span class='kw'>file</span><span class='kw'>=</span><span class='no'>f</span>)
-<span class='no'>tmp</span> <span class='kw'>&lt;-</span> <span class='fu'>read_xyz</span>(<span class='kw'>file</span><span class='kw'>=</span><span class='no'>f</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>x</span>), <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>tmp</span>)))
-<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span>(<span class='no'>f</span>)
+<span class='va'>f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span>fileext <span class='op'>=</span> <span class='st'>".xyz"</span><span class='op'>)</span>
+<span class='fu'>write_xyz</span><span class='op'>(</span><span class='va'>x</span>, file<span class='op'>=</span><span class='va'>f</span><span class='op'>)</span>
+<span class='va'>tmp</span> <span class='op'>&lt;-</span> <span class='fu'>read_xyz</span><span class='op'>(</span>file<span class='op'>=</span><span class='va'>f</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>tmp</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='va'>f</span><span class='op'>)</span>
 
 <span class='co'>## the orignal structure</span>
-<span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span>(<span class='no'>file</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='no'>l</span>[<span class='fl'>1</span>:<span class='fl'>10</span>], <span class='kw'>sep</span><span class='kw'>=</span><span class='st'>"\n"</span>)</div><div class='output co'>#&gt; Crouzon P0 MUT
+<span class='va'>l</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='va'>l</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>]</span>, sep<span class='op'>=</span><span class='st'>"\n"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Crouzon P0 MUT
 #&gt; XYZ
 #&gt; 47L 3 28 
 #&gt; amsph bas cpsh ethma ethmp laalf lasph lflac lnsla lnslp locc loci lpalf lpfl lpmx lpns lpsh lpsq lpto lptyp lsqu lsyn lzya lzygo lzyt opi raalf rasph rflac rmaxi rnsla rnslp rocc roci rpalf rpfl rpmx rpns rpsh rpsq rpto rptyp rsqu rsyn rzya rzygo rzyt 
@@ -381,7 +389,8 @@ function with Ward's clustering method).</p>
 #&gt; 6.85584 5.80958 3.3537
 #&gt; 9.10866 5.82195 3.91282
 #&gt; 8.2508 5.81294 3.77622
-#&gt; 10.0935 6.17677 3.65059</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='no'>l</span>[(<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>l</span>)-<span class='fl'>10</span>):<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>l</span>)], <span class='kw'>sep</span><span class='kw'>=</span><span class='st'>"\n"</span>)</div><div class='output co'>#&gt; CZCD1_37 Scanned on 010511
+#&gt; 10.0935 6.17677 3.65059</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='va'>l</span><span class='op'>[</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>l</span><span class='op'>)</span><span class='op'>-</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>l</span><span class='op'>)</span><span class='op'>]</span>, sep<span class='op'>=</span><span class='st'>"\n"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; CZCD1_37 Scanned on 010511
 #&gt; CZCD1_39 Scanned on 010511
 #&gt; CZCD1_40 Scanned on 010511
 #&gt; CZCD1_42 Scanned on 010511
@@ -393,9 +402,16 @@ function with Ward's clustering method).</p>
 #&gt; CZCD1_72 Scanned on 010311
 #&gt; CZCD1_73 Scanned on 010311</div><div class='input'>
 <span class='co'>## plots</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>x</span>[,,<span class='fl'>1</span>:<span class='fl'>5</span>]) <span class='co'># steps through all individuals</span></div><div class='img'><img src='edma_data-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-2.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-4.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-5.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_2d</span>(<span class='no'>x</span>) <span class='co'># all speciemns in 1 plot</span></div><div class='input'><span class='fu'>plot_2d</span>(<span class='no'>x</span>, <span class='kw'>which</span><span class='kw'>=</span><span class='fl'>2</span>) <span class='co'># show specimen #2</span></div><div class='img'><img src='edma_data-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_ord</span>(<span class='no'>x</span>)</div><div class='img'><img src='edma_data-8.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_clust</span>(<span class='no'>x</span>)</div><div class='img'><img src='edma_data-9.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span>,,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span> <span class='co'># steps through all individuals</span>
+</div><div class='img'><img src='edma_data-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-2.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-4.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-5.png' alt='' width='700' height='433' /></div><div class='img'><img src='edma_data-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_2d</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='co'># all speciemns in 1 plot</span>
+</div><div class='input'><span class='fu'>plot_2d</span><span class='op'>(</span><span class='va'>x</span>, which<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span> <span class='co'># show specimen #2</span>
+</div><div class='img'><img src='edma_data-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_ord</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_data-8.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_clust</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_data-9.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## dimensions and names</span>
-<span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] 47  3 28</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 47  3 28</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [[1]]
 #&gt;  [1] "amsph" "bas"   "cpsh"  "ethma" "ethmp" "laalf" "lasph" "lflac" "lnsla"
 #&gt; [10] "lnslp" "locc"  "loci"  "lpalf" "lpfl"  "lpmx"  "lpns"  "lpsh"  "lpsq" 
 #&gt; [19] "lpto"  "lptyp" "lsqu"  "lsyn"  "lzya"  "lzygo" "lzyt"  "opi"   "raalf"
@@ -412,62 +428,65 @@ function with Ward's clustering method).</p>
 #&gt; [13] "CZCD1_25" "CZCD1_28" "CZCD1_30" "CZCD1_32" "CZCD1_36" "CZCD1_37"
 #&gt; [19] "CZCD1_39" "CZCD1_40" "CZCD1_42" "CZCD1_53" "CZCD1_56" "CZCD1_59"
 #&gt; [25] "CZCD1_65" "CZCD1_66" "CZCD1_72" "CZCD1_73"
-#&gt; </div><div class='input'><span class='fu'>landmarks</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;  [1] "amsph" "bas"   "cpsh"  "ethma" "ethmp" "laalf" "lasph" "lflac" "lnsla"
+#&gt; </div><div class='input'><span class='fu'>landmarks</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1] "amsph" "bas"   "cpsh"  "ethma" "ethmp" "laalf" "lasph" "lflac" "lnsla"
 #&gt; [10] "lnslp" "locc"  "loci"  "lpalf" "lpfl"  "lpmx"  "lpns"  "lpsh"  "lpsq" 
 #&gt; [19] "lpto"  "lptyp" "lsqu"  "lsyn"  "lzya"  "lzygo" "lzyt"  "opi"   "raalf"
 #&gt; [28] "rasph" "rflac" "rmaxi" "rnsla" "rnslp" "rocc"  "roci"  "rpalf" "rpfl" 
 #&gt; [37] "rpmx"  "rpns"  "rpsh"  "rpsq"  "rpto"  "rptyp" "rsqu"  "rsyn"  "rzya" 
-#&gt; [46] "rzygo" "rzyt" </div><div class='input'><span class='fu'>specimens</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;  [1] "CZCD1_1"  "CZCD1_2"  "CZCD1_7"  "CZCD1_10" "CZCD1_11" "CZCD1_15"
+#&gt; [46] "rzygo" "rzyt" </div><div class='input'><span class='fu'>specimens</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1] "CZCD1_1"  "CZCD1_2"  "CZCD1_7"  "CZCD1_10" "CZCD1_11" "CZCD1_15"
 #&gt;  [7] "CZCD1_16" "CZCD1_18" "CZCD1_20" "CZCD1_21" "CZCD1_23" "CZCD1_24"
 #&gt; [13] "CZCD1_25" "CZCD1_28" "CZCD1_30" "CZCD1_32" "CZCD1_36" "CZCD1_37"
 #&gt; [19] "CZCD1_39" "CZCD1_40" "CZCD1_42" "CZCD1_53" "CZCD1_56" "CZCD1_59"
-#&gt; [25] "CZCD1_65" "CZCD1_66" "CZCD1_72" "CZCD1_73"</div><div class='input'><span class='fu'>dimensions</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] "X" "Y" "Z"</div><div class='input'>
+#&gt; [25] "CZCD1_65" "CZCD1_66" "CZCD1_72" "CZCD1_73"</div><div class='input'><span class='fu'>dimensions</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "X" "Y" "Z"</div><div class='input'>
 <span class='co'>## subsets</span>
-<span class='no'>x</span>[<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>2</span>:<span class='fl'>3</span>, <span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt; EDMA data: Crouzon P0 MUT
-#&gt; 10 landmarks, 2 dimensions, 5 specimens</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>x</span>, <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt; EDMA data: Crouzon P0 MUT
+<span class='va'>x</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; EDMA data: Crouzon P0 MUT
+#&gt; 10 landmarks, 2 dimensions, 5 specimens</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; EDMA data: Crouzon P0 MUT
 #&gt; 47 landmarks, 3 dimensions, 10 specimens</div><div class='input'>
 <span class='co'>## coercion</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt;  num [1:1316, 1:3] 5.85 2.79 6.86 9.11 8.25 ...
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  num [1:1316, 1:3] 5.85 2.79 6.86 9.11 8.25 ...
 #&gt;  - attr(*, "dimnames")=List of 2
 #&gt;   ..$ : chr [1:1316] "CZCD1_1_amsph" "CZCD1_1_bas" "CZCD1_1_cpsh" "CZCD1_1_ethma" ...
-#&gt;   ..$ : chr [1:3] "X" "Y" "Z"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; 'data.frame':	1316 obs. of  3 variables:
+#&gt;   ..$ : chr [1:3] "X" "Y" "Z"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 'data.frame':	1316 obs. of  3 variables:
 #&gt;  $ X: num  5.85 2.79 6.86 9.11 8.25 ...
 #&gt;  $ Y: num  5.98 6.24 5.81 5.82 5.81 ...
-#&gt;  $ Z: num  2.2 0.4 3.35 3.91 3.78 ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'><a href='https://rdrr.io/r/utils/stack.html'>stack</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt;  num [1:1316, 1:3] 5.85 2.79 6.86 9.11 8.25 ...
+#&gt;  $ Z: num  2.2 0.4 3.35 3.91 3.78 ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/stack.html'>stack</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  num [1:1316, 1:3] 5.85 2.79 6.86 9.11 8.25 ...
 #&gt;  - attr(*, "dimnames")=List of 2
 #&gt;   ..$ : chr [1:1316] "CZCD1_1_amsph" "CZCD1_1_bas" "CZCD1_1_cpsh" "CZCD1_1_ethma" ...
-#&gt;   ..$ : chr [1:3] "X" "Y" "Z"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>as.array</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt;  num [1:47, 1:3, 1:28] 5.85 2.79 6.86 9.11 8.25 ...
+#&gt;   ..$ : chr [1:3] "X" "Y" "Z"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>as.array</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  num [1:47, 1:3, 1:28] 5.85 2.79 6.86 9.11 8.25 ...
 #&gt;  - attr(*, "dimnames")=List of 3
 #&gt;   ..$ : chr [1:47] "amsph" "bas" "cpsh" "ethma" ...
 #&gt;   ..$ : chr [1:3] "X" "Y" "Z"
-#&gt;   ..$ : chr [1:28] "CZCD1_1" "CZCD1_2" "CZCD1_7" "CZCD1_10" ...</div><div class='input'><span class='fu'>as.edma_data</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>as.array</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; EDMA data: Landmark data
+#&gt;   ..$ : chr [1:28] "CZCD1_1" "CZCD1_2" "CZCD1_7" "CZCD1_10" ...</div><div class='input'><span class='fu'>as.edma_data</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>as.array</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; EDMA data: Landmark data
 #&gt; 47 landmarks, 3 dimensions, 28 specimens</div><div class='input'>
 <span class='co'>## simulate data</span>
-<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fl'>3</span> <span class='co'># number of landmarks</span>
-<span class='no'>D</span> <span class='kw'>&lt;-</span> <span class='fl'>2</span> <span class='co'># dimension, 2 or 3</span>
-<span class='no'>sig</span> <span class='kw'>&lt;-</span> <span class='fl'>0.75</span>
-<span class='no'>rho</span> <span class='kw'>&lt;-</span> <span class='fl'>0</span>
-<span class='no'>SigmaK</span> <span class='kw'>&lt;-</span> <span class='no'>sig</span>^<span class='fl'>2</span>*<span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fl'>1</span>, <span class='no'>K</span>, <span class='no'>K</span>) + <span class='no'>sig</span>^<span class='fl'>2</span>*<span class='no'>rho</span>*(<span class='fl'>1</span>-<span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span>(<span class='fl'>1</span>, <span class='no'>K</span>, <span class='no'>K</span>))
-<span class='no'>M</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span>), <span class='fl'>3</span>, <span class='fl'>2</span>)
-<span class='no'>M</span>[,<span class='fl'>1</span>] <span class='kw'>&lt;-</span> <span class='no'>M</span>[,<span class='fl'>1</span>] - <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>M</span>[,<span class='fl'>1</span>])
-<span class='no'>M</span>[,<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='no'>M</span>[,<span class='fl'>2</span>] - <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>M</span>[,<span class='fl'>2</span>])
-<span class='no'>M</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>*<span class='no'>M</span>
+<span class='va'>K</span> <span class='op'>&lt;-</span> <span class='fl'>3</span> <span class='co'># number of landmarks</span>
+<span class='va'>D</span> <span class='op'>&lt;-</span> <span class='fl'>2</span> <span class='co'># dimension, 2 or 3</span>
+<span class='va'>sig</span> <span class='op'>&lt;-</span> <span class='fl'>0.75</span>
+<span class='va'>rho</span> <span class='op'>&lt;-</span> <span class='fl'>0</span>
+<span class='va'>SigmaK</span> <span class='op'>&lt;-</span> <span class='va'>sig</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>*</span><span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='va'>K</span>, <span class='va'>K</span><span class='op'>)</span> <span class='op'>+</span> <span class='va'>sig</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>*</span><span class='va'>rho</span><span class='op'>*</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>-</span><span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='va'>K</span>, <span class='va'>K</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>1</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>0</span>,<span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>3</span>, <span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>M</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>M</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>M</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>
+<span class='va'>M</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='va'>M</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>M</span><span class='op'>[</span>,<span class='fl'>2</span><span class='op'>]</span><span class='op'>)</span>
+<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fl'>10</span><span class='op'>*</span><span class='va'>M</span>
 
-<span class='fu'>edma_simulate_data</span>(<span class='fl'>10</span>, <span class='no'>M</span>, <span class='no'>SigmaK</span>)</div><div class='output co'>#&gt; EDMA data: Simulated landmark data
+<span class='fu'>edma_simulate_data</span><span class='op'>(</span><span class='fl'>10</span>, <span class='va'>M</span>, <span class='va'>SigmaK</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; EDMA data: Simulated landmark data
 #&gt; 3 landmarks, 2 dimensions, 10 specimens</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Peter Solymos</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -478,7 +497,7 @@ function with Ward's clustering method).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

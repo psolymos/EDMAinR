@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +42,6 @@
 <meta property="og:title" content="Growth difference — edma_gdm" />
 <meta property="og:description" content="Growth matrix and growth difference matrix based inference based on
 Lele and Richtsmeier (1992, 1995)." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -66,7 +69,7 @@ Lele and Richtsmeier (1992, 1995)." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -80,7 +83,7 @@ Lele and Richtsmeier (1992, 1995)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-6</span>
       </span>
     </div>
 
@@ -148,33 +151,33 @@ Lele and Richtsmeier (1992, 1995)." />
 Lele and Richtsmeier (1992, 1995).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>edma_gm</span>(<span class='no'>a1</span>, <span class='no'>a2</span>, <span class='no'>...</span>)
-<span class='fu'>get_gm</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>edma_gm</span><span class='op'>(</span><span class='va'>a1</span>, <span class='va'>a2</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gm</span>
-<span class='fu'>get_gm</span>(<span class='no'>object</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.95</span>, <span class='no'>...</span>)
+<span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>object</span>, sort<span class='op'>=</span><span class='cn'>FALSE</span>, level<span class='op'>=</span><span class='fl'>0.95</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>edma_gdm</span>(<span class='no'>a1</span>, <span class='no'>a2</span>, <span class='no'>b1</span>, <span class='no'>b2</span>, <span class='no'>...</span>)
-<span class='fu'>get_gdm</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>edma_gdm</span><span class='op'>(</span><span class='va'>a1</span>, <span class='va'>a2</span>, <span class='va'>b1</span>, <span class='va'>b2</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'>get_gdm</span>(<span class='no'>object</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>level</span><span class='kw'>=</span><span class='fl'>0.95</span>, <span class='no'>...</span>)
+<span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>object</span>, sort<span class='op'>=</span><span class='cn'>FALSE</span>, level<span class='op'>=</span><span class='fl'>0.95</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for edma_gm</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gm</span>
-<span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'><a href='edma_data.html'>landmarks</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'><a href='edma_data.html'>landmarks</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'><a href='edma_data.html'>dimensions</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'><a href='edma_data.html'>dimensions</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'><a href='edma_data.html'>plot_ord</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'><a href='edma_data.html'>plot_ord</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'><a href='edma_data.html'>plot_clust</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='edma_data.html'>plot_clust</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -230,6 +233,12 @@ Euclidean distance matrix analysis: confidence intervals for
 form and growth differences.
 American Journal of Physical Anthropology 98:73--86.
 &lt;doi:10.1002/ajpa.1330980107&gt;</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Peter Solymos,
+Subhash R. Lele,
+Theodore M. Cole,
+Joan T. Richtsmeier</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Nonparametric fit: <code><a href='edma_fit.html'>edma_fit</a></code></p>
@@ -238,130 +247,145 @@ American Journal of Physical Anthropology 98:73--86.
 <p>Shape difference: <code><a href='edma_sdm.html'>edma_sdm</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>file_a1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/growth/CZEM_wt_global.xyz"</span>,
-    <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"EDMAinR"</span>)
-<span class='no'>file_a2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/growth/CZP0_wt_global.xyz"</span>,
-    <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"EDMAinR"</span>)
+    <pre class="examples"><div class='input'><span class='va'>file_a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/growth/CZEM_wt_global.xyz"</span>,
+    package<span class='op'>=</span><span class='st'>"EDMAinR"</span><span class='op'>)</span>
+<span class='va'>file_a2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/growth/CZP0_wt_global.xyz"</span>,
+    package<span class='op'>=</span><span class='st'>"EDMAinR"</span><span class='op'>)</span>
 
-<span class='no'>l</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"amsph"</span>, <span class='st'>"bas"</span>, <span class='st'>"loci"</span>, <span class='st'>"lpto"</span>, <span class='st'>"lsqu"</span>,
-        <span class='st'>"lsyn"</span>, <span class='st'>"roci"</span>, <span class='st'>"rpto"</span>, <span class='st'>"rsqu"</span>, <span class='st'>"rsyn"</span>)
+<span class='va'>l</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"amsph"</span>, <span class='st'>"bas"</span>, <span class='st'>"loci"</span>, <span class='st'>"lpto"</span>, <span class='st'>"lsqu"</span>,
+        <span class='st'>"lsyn"</span>, <span class='st'>"roci"</span>, <span class='st'>"rpto"</span>, <span class='st'>"rsqu"</span>, <span class='st'>"rsyn"</span><span class='op'>)</span>
 
-<span class='no'>a1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span>(<span class='no'>file_a1</span>)[<span class='no'>l</span>,,]
-<span class='no'>a2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span>(<span class='no'>file_a2</span>)[<span class='no'>l</span>,,]
-<span class='no'>a1</span></div><div class='output co'>#&gt; EDMA data: Crouzon unaffected embryonic mouse
-#&gt; 10 landmarks, 3 dimensions, 31 specimens</div><div class='input'><span class='no'>a2</span></div><div class='output co'>#&gt; EDMA data: Crouzon unaffected newborn mouse
+<span class='va'>a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span><span class='op'>(</span><span class='va'>file_a1</span><span class='op'>)</span><span class='op'>[</span><span class='va'>l</span>,,<span class='op'>]</span>
+<span class='va'>a2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span><span class='op'>(</span><span class='va'>file_a2</span><span class='op'>)</span><span class='op'>[</span><span class='va'>l</span>,,<span class='op'>]</span>
+<span class='va'>a1</span>
+</div><div class='output co'>#&gt; EDMA data: Crouzon unaffected embryonic mouse
+#&gt; 10 landmarks, 3 dimensions, 31 specimens</div><div class='input'><span class='va'>a2</span>
+</div><div class='output co'>#&gt; EDMA data: Crouzon unaffected newborn mouse
 #&gt; 10 landmarks, 3 dimensions, 11 specimens</div><div class='input'>
-<span class='no'>fit_a1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>a1</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
-<span class='no'>fit_a2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>a2</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
+<span class='va'>fit_a1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span><span class='op'>(</span><span class='va'>a1</span>, B<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>fit_a2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span><span class='op'>(</span><span class='va'>a2</span>, B<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
 
 <span class='co'>## --- growth matrix ---</span>
 
-<span class='no'>gm</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_gm</span>(<span class='kw'>a1</span><span class='kw'>=</span><span class='no'>fit_a1</span>, <span class='kw'>a2</span><span class='kw'>=</span><span class='no'>fit_a2</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
-<span class='no'>gm</span></div><div class='output co'>#&gt; EDMA growth matrix
+<span class='va'>gm</span> <span class='op'>&lt;-</span> <span class='fu'>edma_gm</span><span class='op'>(</span>a1<span class='op'>=</span><span class='va'>fit_a1</span>, a2<span class='op'>=</span><span class='va'>fit_a2</span>, B<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>gm</span>
+</div><div class='output co'>#&gt; EDMA growth matrix
 #&gt; Call: edma_gm(a1 = fit_a1, a2 = fit_a2, B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T = 1.259, p &lt; 2.22e-16</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>gm</span>)</div><div class='output co'>#&gt; 
+#&gt; T = 1.259, p &lt; 2.22e-16</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  growth matrix
 #&gt; T-value = 1.259, B = 10, p-value &lt; 2.2e-16
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='no'>gm</span>))</div><div class='output co'>#&gt;                2.5%    97.5%
-#&gt; bas-amsph  1.095769 1.126796
-#&gt; loci-amsph 1.089766 1.124191
-#&gt; lpto-amsph 1.125412 1.161154
-#&gt; lsqu-amsph 1.124715 1.168588
-#&gt; lsyn-amsph 1.111165 1.154884
-#&gt; roci-amsph 1.086226 1.120898</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>))</div><div class='output co'>#&gt;    row   col     dist    lower    upper
-#&gt; 1  bas amsph 1.116726 1.095769 1.126796
-#&gt; 2 loci amsph 1.112833 1.089766 1.124191
-#&gt; 3 lpto amsph 1.144189 1.125412 1.161154
-#&gt; 4 lsqu amsph 1.149705 1.124715 1.168588
-#&gt; 5 lsyn amsph 1.139680 1.111165 1.154884
-#&gt; 6 roci amsph 1.110515 1.086226 1.120898</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;     row  col     dist    lower    upper
-#&gt; 45 rsyn rsqu 1.196344 1.169107 1.209848
-#&gt; 31 lsyn lsqu 1.194661 1.164152 1.212048
-#&gt; 41 rsqu roci 1.159037 1.137619 1.166378
-#&gt; 35 rsyn lsqu 1.155865 1.131426 1.170519
-#&gt; 19 lsqu loci 1.155629 1.129071 1.163400
-#&gt; 16 rsqu  bas 1.155440 1.137880 1.163160</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gm</span>(<span class='no'>gm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;     row  col      dist     lower     upper
-#&gt; 28 rpto lpto 0.9502249 0.8902619 0.9886161
-#&gt; 34 rsqu lsqu 1.0364970 1.0166046 1.0466526
-#&gt; 21 roci loci 1.0365211 1.0109284 1.0493602
-#&gt; 27 roci lpto 1.0423805 1.0134596 1.0570419
-#&gt; 22 rpto loci 1.0515532 1.0209509 1.0633253
-#&gt; 29 rsqu lpto 1.0610708 1.0356696 1.0749844</div><div class='input'>
-<span class='fu'><a href='edma_data.html'>plot_ord</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_ci</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_2d</a></span>(<span class='no'>gm</span>)</div><div class='img'><img src='edma_gdm-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
-    <span class='fu'><a href='edma_fit.html'>plot_3d</a></span>(<span class='no'>gm</span>)
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                2.5%    97.5%
+#&gt; bas-amsph  1.112938 1.134678
+#&gt; loci-amsph 1.110562 1.136092
+#&gt; lpto-amsph 1.133626 1.169437
+#&gt; lsqu-amsph 1.143688 1.177828
+#&gt; lsyn-amsph 1.134963 1.172314
+#&gt; roci-amsph 1.106076 1.135636</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    row   col     dist    lower    upper
+#&gt; 1  bas amsph 1.116726 1.112938 1.134678
+#&gt; 2 loci amsph 1.112833 1.110562 1.136092
+#&gt; 3 lpto amsph 1.144189 1.133626 1.169437
+#&gt; 4 lsqu amsph 1.149705 1.143688 1.177828
+#&gt; 5 lsyn amsph 1.139680 1.134963 1.172314
+#&gt; 6 roci amsph 1.110515 1.106076 1.135636</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;     row  col     dist    lower    upper
+#&gt; 45 rsyn rsqu 1.196344 1.184346 1.222284
+#&gt; 31 lsyn lsqu 1.194661 1.180692 1.220504
+#&gt; 41 rsqu roci 1.159037 1.152771 1.190351
+#&gt; 35 rsyn lsqu 1.155865 1.146936 1.180752
+#&gt; 19 lsqu loci 1.155629 1.147343 1.178586
+#&gt; 16 rsqu  bas 1.155440 1.144844 1.175715</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;     row  col      dist     lower     upper
+#&gt; 28 rpto lpto 0.9502249 0.9187506 0.9824978
+#&gt; 34 rsqu lsqu 1.0364970 1.0287761 1.0518709
+#&gt; 21 roci loci 1.0365211 1.0274272 1.0495350
+#&gt; 27 roci lpto 1.0423805 1.0328540 1.0654307
+#&gt; 22 rpto loci 1.0515532 1.0378324 1.0690016
+#&gt; 29 rsqu lpto 1.0610708 1.0514065 1.0790671</div><div class='input'>
+<span class='fu'><a href='edma_data.html'>plot_ord</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_ci</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_2d</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='fu'><a href='edma_fit.html'>plot_3d</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
 
 <span class='co'>## --- growth difference matrix ---</span>
 
-<span class='no'>file_b1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/growth/CZEM_mut_global.xyz"</span>,
-    <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"EDMAinR"</span>)
-<span class='no'>file_b2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/growth/CZP0_mut_global.xyz"</span>,
-    <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"EDMAinR"</span>)
+<span class='va'>file_b1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/growth/CZEM_mut_global.xyz"</span>,
+    package<span class='op'>=</span><span class='st'>"EDMAinR"</span><span class='op'>)</span>
+<span class='va'>file_b2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/growth/CZP0_mut_global.xyz"</span>,
+    package<span class='op'>=</span><span class='st'>"EDMAinR"</span><span class='op'>)</span>
 
-<span class='no'>b1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span>(<span class='no'>file_b1</span>)[<span class='no'>l</span>,,]
-<span class='no'>b2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span>(<span class='no'>file_b2</span>)[<span class='no'>l</span>,,]
-<span class='no'>b1</span></div><div class='output co'>#&gt; EDMA data: Crouzon mutant embryonic mouse
-#&gt; 10 landmarks, 3 dimensions, 18 specimens</div><div class='input'><span class='no'>b2</span></div><div class='output co'>#&gt; EDMA data: Crouzon mutant newborn mouse
+<span class='va'>b1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span><span class='op'>(</span><span class='va'>file_b1</span><span class='op'>)</span><span class='op'>[</span><span class='va'>l</span>,,<span class='op'>]</span>
+<span class='va'>b2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_data.html'>read_xyz</a></span><span class='op'>(</span><span class='va'>file_b2</span><span class='op'>)</span><span class='op'>[</span><span class='va'>l</span>,,<span class='op'>]</span>
+<span class='va'>b1</span>
+</div><div class='output co'>#&gt; EDMA data: Crouzon mutant embryonic mouse
+#&gt; 10 landmarks, 3 dimensions, 18 specimens</div><div class='input'><span class='va'>b2</span>
+</div><div class='output co'>#&gt; EDMA data: Crouzon mutant newborn mouse
 #&gt; 10 landmarks, 3 dimensions, 11 specimens</div><div class='input'>
-<span class='no'>fit_b1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>b1</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
-<span class='no'>fit_b2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>b2</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
+<span class='va'>fit_b1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span><span class='op'>(</span><span class='va'>b1</span>, B<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>fit_b2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span><span class='op'>(</span><span class='va'>b2</span>, B<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
 
-<span class='no'>gdm</span> <span class='kw'>&lt;-</span> <span class='fu'>edma_gdm</span>(<span class='kw'>a1</span><span class='kw'>=</span><span class='no'>fit_a1</span>, <span class='kw'>a2</span><span class='kw'>=</span><span class='no'>fit_a2</span>, <span class='kw'>b1</span><span class='kw'>=</span><span class='no'>fit_b1</span>, <span class='kw'>b2</span><span class='kw'>=</span><span class='no'>fit_b2</span>, <span class='kw'>B</span><span class='kw'>=</span><span class='fl'>10</span>)
-<span class='no'>gdm</span></div><div class='output co'>#&gt; EDMA growth difference matrix
+<span class='va'>gdm</span> <span class='op'>&lt;-</span> <span class='fu'>edma_gdm</span><span class='op'>(</span>a1<span class='op'>=</span><span class='va'>fit_a1</span>, a2<span class='op'>=</span><span class='va'>fit_a2</span>, b1<span class='op'>=</span><span class='va'>fit_b1</span>, b2<span class='op'>=</span><span class='va'>fit_b2</span>, B<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>gdm</span>
+</div><div class='output co'>#&gt; EDMA growth difference matrix
 #&gt; Call: edma_gdm(a1 = fit_a1, a2 = fit_a2, b1 = fit_b1, b2 = fit_b2, 
 #&gt;     B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T = 1.1113, p = 0.090909</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span>(<span class='no'>gdm</span>)</div><div class='output co'>#&gt; 
+#&gt; T = 1.1113, p = 0.18182</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  growth difference matrix
-#&gt; T-value = 1.1113, B = 11, p-value = 0.09091
-#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span>(<span class='no'>gdm</span>))</div><div class='output co'>#&gt;                 2.5%    97.5%
-#&gt; bas-amsph  0.9844552 1.034942
-#&gt; loci-amsph 0.9753877 1.020817
-#&gt; lpto-amsph 0.9746006 1.035202
-#&gt; lsqu-amsph 0.9542549 1.018551
-#&gt; lsyn-amsph 0.9699317 1.042929
-#&gt; roci-amsph 0.9683627 1.018294</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>))</div><div class='output co'>#&gt;    row   col      dist     lower    upper
-#&gt; 1  bas amsph 0.9871097 0.9844552 1.034942
-#&gt; 2 loci amsph 0.9962675 0.9753877 1.020817
-#&gt; 3 lpto amsph 0.9935320 0.9746006 1.035202
-#&gt; 4 lsqu amsph 1.0057657 0.9542549 1.018551
-#&gt; 5 lsyn amsph 0.9844980 0.9699317 1.042929
-#&gt; 6 roci amsph 0.9981683 0.9683627 1.018294</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>TRUE</span>))</div><div class='output co'>#&gt;     row   col     dist     lower    upper
-#&gt; 39 rsyn  lsyn 1.040292 0.9107580 1.002828
-#&gt; 18 lpto  loci 1.013272 0.9466624 1.001184
-#&gt; 40 rpto  roci 1.010858 0.9443167 1.002868
-#&gt; 36 roci  lsyn 1.010448 0.9605497 1.001473
-#&gt; 21 roci  loci 1.008071 0.9743919 1.014454
-#&gt; 9  rsyn amsph 1.007449 0.9412511 1.025047</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>get_gdm</span>(<span class='no'>gdm</span>, <span class='kw'>sort</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>decreasing</span><span class='kw'>=</span><span class='fl'>FALSE</span>))</div><div class='output co'>#&gt;     row  col      dist     lower    upper
-#&gt; 43 rsqu rpto 0.9361207 1.0214453 1.083840
-#&gt; 25 lsqu lpto 0.9485414 1.0240883 1.075608
-#&gt; 29 rsqu lpto 0.9569724 1.0006016 1.071397
-#&gt; 33 rpto lsqu 0.9666629 0.9855108 1.045015
-#&gt; 41 rsqu roci 0.9766552 0.9760003 1.037170
-#&gt; 19 lsqu loci 0.9791661 0.9805447 1.032805</div><div class='input'>
-<span class='fu'><a href='edma_data.html'>plot_ord</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-8.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_ci</a></span>(<span class='no'>gdm</span>)</div><div class='img'><img src='edma_gdm-9.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_2d</a></span>(<span class='no'>gdm</span>) <span class='co'># need real data</span></div><div class='img'><img src='edma_gdm-10.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>())
-    <span class='fu'><a href='edma_fit.html'>plot_3d</a></span>(<span class='no'>gdm</span>)</div></pre>
+#&gt; T-value = 1.1113, B = 11, p-value = 0.1818
+#&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                 2.5%    97.5%
+#&gt; bas-amsph  0.9866966 1.027566
+#&gt; loci-amsph 0.9836812 1.020428
+#&gt; lpto-amsph 0.9829888 1.034542
+#&gt; lsqu-amsph 0.9600799 1.014814
+#&gt; lsyn-amsph 0.9934617 1.058107
+#&gt; roci-amsph 0.9845376 1.018629</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    row   col      dist     lower    upper
+#&gt; 1  bas amsph 0.9871097 0.9866966 1.027566
+#&gt; 2 loci amsph 0.9962675 0.9836812 1.020428
+#&gt; 3 lpto amsph 0.9935320 0.9829888 1.034542
+#&gt; 4 lsqu amsph 1.0057657 0.9600799 1.014814
+#&gt; 5 lsyn amsph 0.9844980 0.9934617 1.058107
+#&gt; 6 roci amsph 0.9981683 0.9845376 1.018629</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;     row   col     dist     lower    upper
+#&gt; 39 rsyn  lsyn 1.040292 0.9228383 1.011632
+#&gt; 18 lpto  loci 1.013272 0.9539187 1.012572
+#&gt; 40 rpto  roci 1.010858 0.9560082 1.025880
+#&gt; 36 roci  lsyn 1.010448 0.9747528 1.004151
+#&gt; 21 roci  loci 1.008071 0.9501396 1.027616
+#&gt; 9  rsyn amsph 1.007449 0.9595159 1.037049</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;     row  col      dist     lower    upper
+#&gt; 43 rsqu rpto 0.9361207 1.0366762 1.093046
+#&gt; 25 lsqu lpto 0.9485414 1.0071160 1.069307
+#&gt; 29 rsqu lpto 0.9569724 1.0318811 1.072843
+#&gt; 33 rpto lsqu 0.9666629 1.0269893 1.054418
+#&gt; 41 rsqu roci 0.9766552 0.9913284 1.047236
+#&gt; 19 lsqu loci 0.9791661 0.9834423 1.040605</div><div class='input'>
+<span class='fu'><a href='edma_data.html'>plot_ord</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-8.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_ci</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+</div><div class='img'><img src='edma_gdm-9.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_2d</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span> <span class='co'># need real data</span>
+</div><div class='img'><img src='edma_gdm-10.png' alt='' width='700' height='433' /></div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='fu'><a href='edma_fit.html'>plot_3d</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Peter Solymos,
-Subhash R. Lele,
-Theodore M. Cole,
-Joan T. Richtsmeier</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -372,7 +396,7 @@ Joan T. Richtsmeier</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cosmo/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +42,6 @@
 <meta property="og:title" content="Parametric EDMA fit — SigmaK_fit" />
 <meta property="og:description" content="Estimate parameters of a structured SigmaK,
 partly based on Hu (2007)." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -66,7 +69,7 @@ partly based on Hu (2007)." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -80,7 +83,7 @@ partly based on Hu (2007)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-6</span>
       </span>
     </div>
 
@@ -149,30 +152,30 @@ partly based on Hu (2007).</p>
     </div>
 
     <pre class="usage"><span class='co'>## read pattern file</span>
-<span class='fu'>read_pattern</span>(<span class='no'>file</span>, <span class='no'>...</span>)
+<span class='fu'>read_pattern</span><span class='op'>(</span><span class='va'>file</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'>## estimation</span>
-<span class='fu'>SigmaK_fit</span>(<span class='no'>object</span>, <span class='no'>pattern</span>,
-    <span class='kw'>twostep</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>check</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>SigmaK_fit</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>pattern</span>,
+    twostep<span class='op'>=</span><span class='cn'>FALSE</span>, check<span class='op'>=</span><span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>sensitivity</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>sensitivity</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'>## methods</span>
 <span class='co'># S3 method for edma_fit_p</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>x</span>, <span class='kw'>truncate</span><span class='kw'>=</span><span class='fl'>40</span>, <span class='no'>...</span>)
-<span class='fu'>SigmaK</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, truncate<span class='op'>=</span><span class='fl'>40</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>SigmaK</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_fit_p</span>
-<span class='fu'>SigmaK</span>(<span class='no'>object</span>, <span class='no'>...</span>)
-<span class='fu'>SigmaKfull</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>SigmaK</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>SigmaKfull</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_fit_p</span>
-<span class='fu'>SigmaKfull</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>SigmaKfull</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_fit_p</span>
-<span class='fu'>sensitivity</span>(<span class='no'>object</span>, <span class='kw'>m</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='no'>...</span>)
+<span class='fu'>sensitivity</span><span class='op'>(</span><span class='va'>object</span>, m<span class='op'>=</span><span class='fl'>10</span>, scale<span class='op'>=</span><span class='fl'>10</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>print_tb</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-<span class='fu'>plot_tb</span>(<span class='no'>x</span>, <span class='kw'>mar</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>4</span>), <span class='no'>...</span>)
+<span class='fu'>print_tb</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>plot_tb</span><span class='op'>(</span><span class='va'>x</span>, mar<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>4</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>make_Sigma</span>(<span class='no'>params</span>, <span class='no'>pattern</span>)</pre>
+<span class='fu'>make_Sigma</span><span class='op'>(</span><span class='va'>params</span>, <span class='va'>pattern</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -268,6 +271,10 @@ Estimation is done by <code><a href='https://rdrr.io/r/stats/optim.html'>optim</
 Estimation of Variance. Thesis, Master of Science in Statistics,
 Department of Mathematical and Statistical Sciences,
 University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Peter Solymos,
+Subhash R. Lele</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>EDMA data: <code><a href='edma_data.html'>read_xyz</a></code></p>
@@ -278,59 +285,68 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## read pattern matrix in cs or xls/xlsx format</span>
-<span class='fu'>read_pattern</span>(
-    <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/example.csv"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"EDMAinR"</span>))</div><div class='output co'>#&gt;   a   b   c  
+<span class='fu'>read_pattern</span><span class='op'>(</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/example.csv"</span>, package<span class='op'>=</span><span class='st'>"EDMAinR"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   a   b   c  
 #&gt; a "1" "2" NA 
 #&gt; b "2" "1" NA 
-#&gt; c NA  NA  "1"</div><div class='input'><span class='fu'>read_pattern</span>(
-    <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata/example.xlsx"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>"EDMAinR"</span>))</div><div class='output co'>#&gt;   a   b   c  
+#&gt; c NA  NA  "1"</div><div class='input'><span class='fu'>read_pattern</span><span class='op'>(</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/example.xlsx"</span>, package<span class='op'>=</span><span class='st'>"EDMAinR"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   a   b   c  
 #&gt; a "1" "2" NA 
 #&gt; b "2" "1" NA 
 #&gt; c NA  NA  "1"</div><div class='input'>
 <span class='co'>## here is a pattern matrix</span>
-<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(
-    <span class='st'>"a"</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>,
-    <span class='fl'>NA</span>, <span class='st'>"a"</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>,
-    <span class='fl'>NA</span>,  <span class='fl'>NA</span>, <span class='st'>"b"</span>, <span class='fl'>NA</span>,
-    <span class='fl'>NA</span>,  <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"b"</span>
-), <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>parm</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>a</span><span class='kw'>=</span><span class='fl'>0.25</span>, <span class='kw'>b</span><span class='kw'>=</span><span class='fl'>0.35</span>)
-<span class='fu'>print_tb</span>(<span class='no'>p</span>)</div><div class='output co'>#&gt;   A B C D
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+    <span class='st'>"a"</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>,
+    <span class='cn'>NA</span>, <span class='st'>"a"</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>,
+    <span class='cn'>NA</span>,  <span class='cn'>NA</span>, <span class='st'>"b"</span>, <span class='cn'>NA</span>,
+    <span class='cn'>NA</span>,  <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='st'>"b"</span>
+<span class='op'>)</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>parm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>a<span class='op'>=</span><span class='fl'>0.25</span>, b<span class='op'>=</span><span class='fl'>0.35</span><span class='op'>)</span>
+<span class='fu'>print_tb</span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   A B C D
 #&gt; A a . . .
 #&gt; B . a . .
 #&gt; C . . b .
-#&gt; D . . . b</div><div class='input'><span class='fu'>plot_tb</span>(<span class='no'>p</span>)</div><div class='img'><img src='SigmaK_fit-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='no'>SigmaK</span> <span class='kw'>&lt;-</span> <span class='fu'>make_Sigma</span>(<span class='no'>parm</span>, <span class='no'>p</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>p</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>SigmaK</span>)
+#&gt; D . . . b</div><div class='input'><span class='fu'>plot_tb</span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
+</div><div class='img'><img src='SigmaK_fit-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='va'>SigmaK</span> <span class='op'>&lt;-</span> <span class='fu'>make_Sigma</span><span class='op'>(</span><span class='va'>parm</span>, <span class='va'>p</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>SigmaK</span><span class='op'>)</span>
 
 <span class='co'>## mean form</span>
-<span class='no'>M</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(-<span class='fl'>2.5</span>, <span class='fl'>7.5</span>, -<span class='fl'>2.5</span>, -<span class='fl'>2.5</span>,
-    -<span class='fl'>7.5</span>, <span class='fl'>2.5</span>, <span class='fl'>2.5</span>, <span class='fl'>4.5</span>),
-    <span class='fl'>4</span>, <span class='fl'>2</span>)
+<span class='va'>M</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>2.5</span>, <span class='fl'>7.5</span>, <span class='op'>-</span><span class='fl'>2.5</span>, <span class='op'>-</span><span class='fl'>2.5</span>,
+    <span class='op'>-</span><span class='fl'>7.5</span>, <span class='fl'>2.5</span>, <span class='fl'>2.5</span>, <span class='fl'>4.5</span><span class='op'>)</span>,
+    <span class='fl'>4</span>, <span class='fl'>2</span><span class='op'>)</span>
 
 <span class='co'>## simulate data, so we know what the true values were</span>
-<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_data.html'>edma_simulate_data</a></span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='no'>M</span>, <span class='no'>SigmaK</span>)
+<span class='va'>sim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_data.html'>edma_simulate_data</a></span><span class='op'>(</span>n<span class='op'>=</span><span class='fl'>500</span>, <span class='va'>M</span>, <span class='va'>SigmaK</span><span class='op'>)</span>
 
 <span class='co'>## nonparametric fit</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span>(<span class='no'>sim</span>)
+<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='edma_fit.html'>edma_fit</a></span><span class='op'>(</span><span class='va'>sim</span><span class='op'>)</span>
 <span class='co'>## parametric fit</span>
-<span class='no'>o</span> <span class='kw'>&lt;-</span> <span class='fu'>SigmaK_fit</span>(<span class='no'>fit</span>, <span class='no'>p</span>)
-<span class='no'>o</span></div><div class='output co'>#&gt; EDMA parametric fit (1-step): Simulated landmark data
+<span class='va'>o</span> <span class='op'>&lt;-</span> <span class='fu'>SigmaK_fit</span><span class='op'>(</span><span class='va'>fit</span>, <span class='va'>p</span><span class='op'>)</span>
+<span class='va'>o</span>
+</div><div class='output co'>#&gt; EDMA parametric fit (1-step): Simulated landmark data
 #&gt; Call: SigmaK_fit(object = fit, pattern = p)
 #&gt; 4 landmarks, 2 dimensions, 500 specimens, no bootstrap</div><div class='input'>
 <span class='co'>## estimates</span>
-<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='kw'>true</span><span class='kw'>=</span><span class='no'>parm</span>, <span class='kw'>est</span><span class='kw'>=</span><span class='no'>o</span>$<span class='no'>results</span>$<span class='no'>par</span>[<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>parm</span>)])</div><div class='output co'>#&gt;   true       est
+<span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span>true<span class='op'>=</span><span class='va'>parm</span>, est<span class='op'>=</span><span class='va'>o</span><span class='op'>$</span><span class='va'>results</span><span class='op'>$</span><span class='va'>par</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='va'>parm</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   true       est
 #&gt; a 0.25 0.2545087
-#&gt; b 0.35 0.3269886</div><div class='input'><span class='fu'>SigmaK</span>(<span class='no'>o</span>) <span class='co'># constrained parametric estimate</span></div><div class='output co'>#&gt;           [,1]      [,2]      [,3]      [,4]
+#&gt; b 0.35 0.3269886</div><div class='input'><span class='fu'>SigmaK</span><span class='op'>(</span><span class='va'>o</span><span class='op'>)</span> <span class='co'># constrained parametric estimate</span>
+</div><div class='output co'>#&gt;           [,1]      [,2]      [,3]      [,4]
 #&gt; [1,] 0.2545087 0.0000000 0.0000000 0.0000000
 #&gt; [2,] 0.0000000 0.2545087 0.0000000 0.0000000
 #&gt; [3,] 0.0000000 0.0000000 0.3269886 0.0000000
-#&gt; [4,] 0.0000000 0.0000000 0.0000000 0.3269886</div><div class='input'><span class='fu'>SigmaKfull</span>(<span class='no'>o</span>) <span class='co'># full set of estimates</span></div><div class='output co'>#&gt;           L1        L2        L3        L4
+#&gt; [4,] 0.0000000 0.0000000 0.0000000 0.3269886</div><div class='input'><span class='fu'>SigmaKfull</span><span class='op'>(</span><span class='va'>o</span><span class='op'>)</span> <span class='co'># full set of estimates</span>
+</div><div class='output co'>#&gt;           L1        L2        L3        L4
 #&gt; L1 0.2448985 0.0000000 0.0000000 0.0000000
 #&gt; L2 0.0000000 0.2616891 0.0000000 0.0000000
 #&gt; L3 0.0000000 0.0000000 0.3110522 0.0000000
 #&gt; L4 0.0000000 0.0000000 0.0000000 0.3453506</div><div class='input'>
 <span class='co'>## sensitivity analysis</span>
-<span class='fu'>sensitivity</span>(<span class='no'>o</span>)</div><div class='output co'>#&gt;           par_a     par_b        value
+<span class='fu'>sensitivity</span><span class='op'>(</span><span class='va'>o</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;           par_a     par_b        value
 #&gt;  [1,] 0.2545087 0.3269886 0.0006900395
 #&gt;  [2,] 0.2545104 0.3270741 0.0006900490
 #&gt;  [3,] 0.2546629 0.3270748 0.0006900859
@@ -343,20 +359,10 @@ University of Alberta, Edmonton, Alberta, Canada. Pp. 49.</p>
 #&gt; [10,] 0.2545282 0.3268420 0.0006900650
 #&gt; [11,] 0.2544859 0.3269755 0.0006900404</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Peter Solymos,
-Subhash R. Lele</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -367,7 +373,7 @@ Subhash R. Lele</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
