@@ -20,7 +20,7 @@ Shape difference matrix based inference following
 Lele and Cole (1996).
 }
 \usage{
-edma_sdm(a, b, log=TRUE)
+edma_sdm(a, b, log=TRUE, size=TRUE)
 get_sdm(object, ...)
 \method{get_sdm}{edma_sdm}(object, sort=FALSE,
     level = 0.95, ...)
@@ -49,6 +49,10 @@ a SDM object.
   \item{log}{
 logical, if form matrix is to be log transformed before
 calculating the differences.
+}
+  \item{size}{
+logical, if size difference (C) is to be estimated (\code{TRUE})
+of fixed as 1 (\code{FALSE}).
 }
   \item{sort}{
 logical, if stacked distances are to be sorted, see Examples.

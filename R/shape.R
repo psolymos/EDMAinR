@@ -13,10 +13,12 @@
 ## d_{ij,A}=c*d_{ij,B} for some c > 0 and for all {ij}
 ## Now FM is S: S1=FM1, S2=Cval*FM2
 ## Shape difference matrix: S1-S2
-.get_sdm <- function(M1, M2, log=TRUE) {
+.get_sdm <- function(M1, M2, log=TRUE, size=TRUE) {
     S1 <- as.numeric(dist(M1))
     S2 <- as.numeric(dist(M2))
-    C2 <- .tlsXY(S1, S2) # C1 = 1
+    ## C1 = 1
+    C2 <- if (size)
+        .tlsXY(S1, S2) else 1
     S1 <- C2 * S1
     if (log) {
         S1 <- log(S1)
@@ -29,13 +31,13 @@
 }
 
 ## This function implements Lele & Cole's SDM test
-.edma_sdm <- function(f1, f2, log=TRUE) {
+.edma_sdm <- function(f1, f2, log=TRUE, size=TRUE) {
     if (is.null(f1$boot) || is.null(f2$boot))
         stop("SDM requires bootstrapped EDMA fit objects")
     B <- min(length(f1$boot), length(f2$boot))
-    res <- c(list(.get_sdm(Meanform(f1), Meanform(f2), log=log)),
+    res <- c(list(.get_sdm(Meanform(f1), Meanform(f2), log=log, size=size)),
         lapply(seq_len(B), function(i) {
-            .get_sdm(f1$boot[[i]]$M, f2$boot[[i]]$M, log=log)
+            .get_sdm(f1$boot[[i]]$M, f2$boot[[i]]$M, log=log, size=size)
         }))
     SDM <- sapply(res, "[[","sdm")
     Zval <- sapply(res, "[[", "Zval")
@@ -44,10 +46,10 @@
 }
 
 ## shape difference matrix with bootstrap
-edma_sdm <- function(a, b, log=TRUE) {
+edma_sdm <- function(a, b, log=TRUE, size=TRUE) {
     .compare_objects(a, b)
     d <- stack(as.dist(a))[,1:2]
-    res <- .edma_sdm(a, b, log=log)
+    res <- .edma_sdm(a, b, log=log, size=size)
     d$sdm <- res$sdm[,1L]
     out <- list(
         call=match.call(),
@@ -55,6 +57,7 @@ edma_sdm <- function(a, b, log=TRUE) {
         b=b,
         dm=d,
         log=log,
+        size=size,
         B=length(res$Zval)-1L,
         boot=res)
     class(out) <- c("edma_sdm", "edma_dm", class(out))
