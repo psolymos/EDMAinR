@@ -607,59 +607,6 @@ plot_3d.edma_dm <- function(x, ...) .plot_d_dm(x, d3=TRUE, ...)
 plot.edma_fit <- plot_2d.edma_fit
 plot.edma_dm <- plot_2d.edma_dm
 
-## this is SigmaK plotting
-
-print_tb <- function(x, ...) {
-    m <- nrow(x)
-    if (ncol(x) != m)
-        stop("tb can only be used for square matrices.")
-    if (!identical(rownames(x), colnames(x)))
-        stop("Row and column names must be identical.")
-    print(as.table(x), quote = FALSE,
-      na.print = ".", zero.print = ".", ...)
-}
-
-plot_tb <- function(x, mar=c(1,1,1,4), ...) {
-    m <- nrow(x)
-    if (ncol(x) != m)
-        stop("tb can only be used for square matrices.")
-    if (!identical(rownames(x), colnames(x)))
-        stop("Row and column names must be identical.")
-    z <- !is.na(x)
-    z[!is.na(x) & x == 0] <- FALSE
-    i <- row(x)[z]
-    j <- col(x)[z]
-    v <- x[z]
-    u <- unique(v)
-    q <- match(v, u)
-    col <- edma_colors(max(1L, length(u)), "qualitative")
-    op <- par(mar=mar)
-    on.exit(par(op))
-    lg <- edma_colors(3, "diverging")[2L]
-    plot(0, type="n", ann=FALSE, axes=FALSE, asp=1,
-        xlim=c(0, m+1), ylim=c(m+1, 0))
-    polygon(
-        c(0.5, 0.5, m+0.5, m+0.5),
-        c(0.5, m+0.5, m+0.5, 0.5), border=NA, col=lg)
-    for (ii in seq_len(m)) {
-        for (jj in seq_len(m)) {
-            polygon(
-                rep(ii, 4)+c(-0.5, -0.5, 0.5, 0.5),
-                rep(jj, 4)+c(-0.5, 0.5, 0.5, -0.5),
-                col=lg, border="white")
-        }
-    }
-    for (k in seq_len(sum(z))) {
-        polygon(
-            rep(i[k], 4)+c(-0.5, -0.5, 0.5, 0.5),
-            rep(j[k], 4)+c(-0.5, 0.5, 0.5, -0.5),
-            col=col[q[k]], border="white")
-        text(i[k], j[k], v[k])
-    }
-    text(rep(m+1, m), seq_len(m), rownames(x))
-    invisible(x)
-}
-
 
 ## Global plots for shape difference
 

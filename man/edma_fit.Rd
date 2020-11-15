@@ -154,8 +154,6 @@ Joan T. Richtsmeier
 \seealso{
 EDMA data: \code{\link{read_xyz}}
 
-Parametric fit: \code{\link{SigmaK_fit}}
-
 Form difference: \code{\link{edma_fdm}}
 
 Growth difference: \code{\link{edma_gdm}}

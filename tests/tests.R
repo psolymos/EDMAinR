@@ -69,7 +69,7 @@ head(get_fm(fit, sort=TRUE, decreasing=TRUE))
 head(get_fm(fit, sort=TRUE, decreasing=FALSE))
 
 ## --- parametric fit ---
-
+if (FALSE) {
 read_pattern(system.file("extdata/example.csv", package="EDMAinR"))
 read_pattern(system.file("extdata/example.xlsx", package="EDMAinR"))
 
@@ -103,7 +103,7 @@ sensitivity(o)
 
 plot_ord(o)
 plot_clust(o)
-
+}
 
 ## --- form difference matrix ---
 

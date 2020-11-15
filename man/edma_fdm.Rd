@@ -162,8 +162,6 @@ Joan T. Richtsmeier
 \seealso{
 Nonparametric fit: \code{\link{edma_fit}}
 
-Parametric fit: \code{\link{SigmaK_fit}}
-
 Growth difference: \code{\link{edma_gdm}}
 
 Shape difference: \code{\link{edma_sdm}}

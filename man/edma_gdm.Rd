@@ -101,8 +101,6 @@ Joan T. Richtsmeier
 \seealso{
 Nonparametric fit: \code{\link{edma_fit}}
 
-Parametric fit: \code{\link{SigmaK_fit}}
-
 Form difference: \code{\link{edma_fdm}}
 
 Shape difference: \code{\link{edma_sdm}}

@@ -7,10 +7,10 @@ export(
     "edma_fdm",
     "edma_sdm",
     "edma_gm",
-    "edma_gdm",
-    "SigmaK_fit",
-    "read_pattern",
-    "make_Sigma"
+    "edma_gdm"
+#    "SigmaK_fit",
+#    "read_pattern",
+#    "make_Sigma"
 )
 
 ## export necessary internals
@@ -21,8 +21,8 @@ export(
 
 ## export misc functions
 export(
-    "print_tb",
-    "plot_tb",
+#    "print_tb",
+#    "plot_tb",
     "combine_data",
     "combine_data4",
     "edma_colors",
@@ -32,8 +32,8 @@ export(
 export(
     "Meanform",
     "SigmaKstar",
-    "SigmaK",
-    "SigmaKfull",
+#    "SigmaK",
+#    "SigmaKfull",
     "get_fm",
     "get_fdm",
     "get_sdm",
@@ -41,7 +41,7 @@ export(
     "get_gdm",
     "T_test",
     "Z_test",
-    "sensitivity",
+#    "sensitivity",
     "get_influence",
     "as.edma_data",
     "landmarks",
@@ -117,10 +117,10 @@ S3method("confint", "edma_fit")
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
 ## edma_fit_p methods
-S3method("print", "edma_fit_p")
-S3method("SigmaK", "edma_fit_p")
-S3method("SigmaKfull", "edma_fit_p")
-S3method("sensitivity", "edma_fit_p")
+#S3method("print", "edma_fit_p")
+#S3method("SigmaK", "edma_fit_p")
+#S3method("SigmaKfull", "edma_fit_p")
+#S3method("sensitivity", "edma_fit_p")
 ## plot methods
 S3method("plot", "edma_fit")
 S3method("plot_2d", "edma_fit")
