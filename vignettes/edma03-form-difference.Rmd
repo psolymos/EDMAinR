@@ -71,9 +71,15 @@ fdm
 The global T-test is based on the pairwise distances in the $FM$s, 
 taking the max/min ratio of the distances.
 This is then done for all the `B` replicates, which provides the null
-distribution. The $p$ value for the T-test is calculated
-as the number of replicates where the bootstrap T value was higher than 
-or equal to the observed T value, divided by `B`.
+distribution. 
+
+Algorithm for global testing is as follows 
+(suppose population 1 is the 'reference' population):
+
+1. Resample $n_1$ observations from the **first** sample and compute $FM_1^*$.
+2. Resample $n_2$ observations from the **first** sample and compute $FM_2^*$.
+3. Compute the $FDM^* = FM_2^* / FM_1^*$ and $T^* = max(FDM^*) / min(FDM^*)$.
+4. Repeat the above three steps `B` times to get the p-value.
 
 `T_test` provides a summary of the test, `plot_Ttest` helps to visualize
 the null distribution (histogram) and the observed T statistic
@@ -93,6 +99,13 @@ the interpretation of the confidence intervals is different due to the
 different nature of the bootstrap distribution.
 Here the distribution characterizes the $FDM$ and not the $FM$.
 The confidence level can be changed through the `level` argument.
+
+The algorithm for confidence intervals for elements of the FDM is as follows:
+
+1. Resample $n_1$ observations from the **first** sample and compute $FM_1^*$.
+2. Resample $n_2$ observations from the **second** sample and compute $FM_2^*$.
+3. Compute the $FDM* = FM_2^* / FM_1^*$.
+4. Repeat the above three steps B times to get the confidence intervals for the elements of the $FDM$. 
 
 ```{r}
 head(get_fdm(fdm))

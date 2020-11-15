@@ -68,9 +68,10 @@ reference object (its form matrix is fixed when calculating
 bootstrap comparing to the other object).
 }
   \item{mix}{
-logical, to use mixed bootstrap (numeriator and denominator
+logical, to use mixed bootstrap (numerator and denominator
 populations are mixed with replacement) or not
-(only the reference population is resampled with replacement).
+(only the non-reference population is resampled with replacement,
+reference is fixed).
 }
   \item{x, object}{
 an EDMA FDM object of class 'edma_fdm'.
@@ -97,9 +98,16 @@ Lele and Richtsmeier (1992, 1995): FDM(A,B) = FM(B)/FM(A).
 Form matrices are formed as pairwise Euclidean distances
 between landmarks from EDMA fit objects using the estimated mean forms.
 
-Bootstrap distribution is based on fixing the
-reference FM and taking the ration between the reference FM
-and the bootstrap FMs from the other object.
+Bootstrap distribution is based on either 'mixed' or
+not mixed bootstrap distribution.
+The 'mixed' bootstrap means that the bootstrap distribution
+represents n1+n2 specimens from the pooled sample of the
+numerator and denominator populations.
+
+The default is \code{mix=FALSE} in which case we fix the
+reference FM and taking the ratio between the reference FM
+and the bootstrap FMs from the other non-reference object
+(depending on the \code{ref_denom} argument).
 
 The T-statistic is based on the pairwise distanced in the FM,
 taking the max/min of the distances. Confidence intervals for local testing
@@ -107,6 +115,20 @@ taking the max/min of the distances. Confidence intervals for local testing
 and T-test for global testing
 (via \code{T_test}, and \code{plot_Ttest})
 is based on the observed T-statistic and the bootstrap distribution.
+
+The global testing algorithm is as follows:
+Suppose population 1 is the 'reference' population.
+Step 1: Resample n1 observations from the first sample and compute FM1*.
+Step 2: Resample n2 observations from the first sample and compute FM2*.
+Step 3: Compute the FDM* = FM2*/FM1* and T* = max(FDM*)/min(FDM*)
+Step 4: Repeat the above three steps B times to get the p-value.
+
+Local testing (CI: confidence interval calculation)
+for elements of the FDM is based on the following algorithm:
+Step 1: Resample n1 observations from the first sample and compute FM1*.
+Step 2: Resample n2 observations from the second sample and compute FM2*.
+Step 3: Compute the FDM* = FM2*/FM1*
+Step 4: Repeat the above three steps B times to get the confidence intervals for the elements of the FDM.
 
 Influential landmarks are identified by leaving one landmark out,
 then comparing the T-statistic with the value based on all the

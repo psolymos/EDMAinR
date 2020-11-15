@@ -68,16 +68,7 @@ gm
 
 ## Global T-test
 
-The global T-test is based on the pairwise distances in the $FM$s, 
-taking the max/min ratio of the distances.
-This is then done for all the `B` replicates, which provides the null
-distribution. The $p$ value for the T-test is calculated
-as the number of replicates where the bootstrap T value was higher than 
-or equal to the observed T value, divided by `B`.
-
-`T_test` provides a summary of the test, `plot_Ttest` helps to visualize
-the null distribution (histogram) and the observed T statistic
-(vertical line):
+The global testing is explained on the form difference page:
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 T_test(gm)
@@ -86,10 +77,7 @@ plot_Ttest(gm)
 
 ## Local testing
 
-The local testing is done based on the
-confidence intervals using the stacked $GM$s from the bootstrap.
-Here the distribution characterizes the $GM$ and not the $FM$.
-The confidence level can be changed through the `level` argument.
+The local testing is explained on the form difference page:
 
 ```{r}
 head(confint(gm))
