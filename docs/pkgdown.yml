@@ -4,8 +4,7 @@ pkgdown_sha: ~
 articles:
   edma01-data: edma01-data.html
   edma02-form: edma02-form.html
-  edma03-parametric: edma03-parametric.html
-  edma04-form-difference: edma04-form-difference.html
-  edma05-growth: edma05-growth.html
-last_built: 2020-11-08T06:38Z
+  edma03-form-difference: edma03-form-difference.html
+  edma04-growth: edma04-growth.html
+last_built: 2020-11-15T02:00Z
 

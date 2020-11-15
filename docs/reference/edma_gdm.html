@@ -112,13 +112,10 @@ Lele and Richtsmeier (1992, 1995)." />
       <a href="../articles/edma02-form.html">EDMA form matrix</a>
     </li>
     <li>
-      <a href="../articles/edma03-parametric.html">Parametric estimation</a>
+      <a href="../articles/edma03-form-difference.html">EDMA form difference matrix</a>
     </li>
     <li>
-      <a href="../articles/edma04-form-difference.html">EDMA form difference matrix</a>
-    </li>
-    <li>
-      <a href="../articles/edma05-growth.html">EDMA growth matrix</a>
+      <a href="../articles/edma04-growth.html">EDMA growth matrix</a>
     </li>
   </ul>
 </li>
@@ -242,7 +239,6 @@ Joan T. Richtsmeier</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Nonparametric fit: <code><a href='edma_fit.html'>edma_fit</a></code></p>
-<p>Parametric fit: <code><a href='SigmaK_fit.html'>SigmaK_fit</a></code></p>
 <p>Form difference: <code><a href='edma_fdm.html'>edma_fdm</a></code></p>
 <p>Shape difference: <code><a href='edma_sdm.html'>edma_sdm</a></code></p></div>
 
@@ -280,33 +276,33 @@ Joan T. Richtsmeier</p>
 #&gt; T-value = 1.259, B = 10, p-value &lt; 2.2e-16
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                2.5%    97.5%
-#&gt; bas-amsph  1.112938 1.134678
-#&gt; loci-amsph 1.110562 1.136092
-#&gt; lpto-amsph 1.133626 1.169437
-#&gt; lsqu-amsph 1.143688 1.177828
-#&gt; lsyn-amsph 1.134963 1.172314
-#&gt; roci-amsph 1.106076 1.135636</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; bas-amsph  1.098430 1.125051
+#&gt; loci-amsph 1.095147 1.123565
+#&gt; lpto-amsph 1.136975 1.152445
+#&gt; lsqu-amsph 1.126585 1.163653
+#&gt; lsyn-amsph 1.121671 1.154571
+#&gt; roci-amsph 1.091326 1.125514</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    row   col     dist    lower    upper
-#&gt; 1  bas amsph 1.116726 1.112938 1.134678
-#&gt; 2 loci amsph 1.112833 1.110562 1.136092
-#&gt; 3 lpto amsph 1.144189 1.133626 1.169437
-#&gt; 4 lsqu amsph 1.149705 1.143688 1.177828
-#&gt; 5 lsyn amsph 1.139680 1.134963 1.172314
-#&gt; 6 roci amsph 1.110515 1.106076 1.135636</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; 1  bas amsph 1.116726 1.098430 1.125051
+#&gt; 2 loci amsph 1.112833 1.095147 1.123565
+#&gt; 3 lpto amsph 1.144189 1.136975 1.152445
+#&gt; 4 lsqu amsph 1.149705 1.126585 1.163653
+#&gt; 5 lsyn amsph 1.139680 1.121671 1.154571
+#&gt; 6 roci amsph 1.110515 1.091326 1.125514</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     row  col     dist    lower    upper
-#&gt; 45 rsyn rsqu 1.196344 1.184346 1.222284
-#&gt; 31 lsyn lsqu 1.194661 1.180692 1.220504
-#&gt; 41 rsqu roci 1.159037 1.152771 1.190351
-#&gt; 35 rsyn lsqu 1.155865 1.146936 1.180752
-#&gt; 19 lsqu loci 1.155629 1.147343 1.178586
-#&gt; 16 rsqu  bas 1.155440 1.144844 1.175715</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; 45 rsyn rsqu 1.196344 1.175513 1.204261
+#&gt; 31 lsyn lsqu 1.194661 1.174367 1.206219
+#&gt; 41 rsqu roci 1.159037 1.140381 1.171505
+#&gt; 35 rsyn lsqu 1.155865 1.135258 1.171503
+#&gt; 19 lsqu loci 1.155629 1.135669 1.162874
+#&gt; 16 rsqu  bas 1.155440 1.136684 1.163008</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gm</span><span class='op'>(</span><span class='va'>gm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     row  col      dist     lower     upper
-#&gt; 28 rpto lpto 0.9502249 0.9187506 0.9824978
-#&gt; 34 rsqu lsqu 1.0364970 1.0287761 1.0518709
-#&gt; 21 roci loci 1.0365211 1.0274272 1.0495350
-#&gt; 27 roci lpto 1.0423805 1.0328540 1.0654307
-#&gt; 22 rpto loci 1.0515532 1.0378324 1.0690016
-#&gt; 29 rsqu lpto 1.0610708 1.0514065 1.0790671</div><div class='input'>
+#&gt; 28 rpto lpto 0.9502249 0.9149535 0.9965635
+#&gt; 34 rsqu lsqu 1.0364970 1.0207179 1.0489527
+#&gt; 21 roci loci 1.0365211 1.0141819 1.0563928
+#&gt; 27 roci lpto 1.0423805 1.0288858 1.0615576
+#&gt; 22 rpto loci 1.0515532 1.0339927 1.0629644
+#&gt; 29 rsqu lpto 1.0610708 1.0491129 1.0719907</div><div class='input'>
 <span class='fu'><a href='edma_data.html'>plot_ord</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
 </div><div class='img'><img src='edma_gdm-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
 </div><div class='img'><img src='edma_gdm-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
@@ -338,41 +334,41 @@ Joan T. Richtsmeier</p>
 #&gt; Call: edma_gdm(a1 = fit_a1, a2 = fit_a2, b1 = fit_b1, b2 = fit_b2, 
 #&gt;     B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T = 1.1113, p = 0.18182</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+#&gt; T = 1.1113, p = 0.27273</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  growth difference matrix
-#&gt; T-value = 1.1113, B = 11, p-value = 0.1818
+#&gt; T-value = 1.1113, B = 11, p-value = 0.2727
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                 2.5%    97.5%
-#&gt; bas-amsph  0.9866966 1.027566
-#&gt; loci-amsph 0.9836812 1.020428
-#&gt; lpto-amsph 0.9829888 1.034542
-#&gt; lsqu-amsph 0.9600799 1.014814
-#&gt; lsyn-amsph 0.9934617 1.058107
-#&gt; roci-amsph 0.9845376 1.018629</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; bas-amsph  0.9885743 1.034031
+#&gt; loci-amsph 0.9757419 1.024270
+#&gt; lpto-amsph 0.9887894 1.017427
+#&gt; lsqu-amsph 0.9711763 1.019318
+#&gt; lsyn-amsph 0.9821322 1.042103
+#&gt; roci-amsph 0.9762465 1.022787</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    row   col      dist     lower    upper
-#&gt; 1  bas amsph 0.9871097 0.9866966 1.027566
-#&gt; 2 loci amsph 0.9962675 0.9836812 1.020428
-#&gt; 3 lpto amsph 0.9935320 0.9829888 1.034542
-#&gt; 4 lsqu amsph 1.0057657 0.9600799 1.014814
-#&gt; 5 lsyn amsph 0.9844980 0.9934617 1.058107
-#&gt; 6 roci amsph 0.9981683 0.9845376 1.018629</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; 1  bas amsph 0.9871097 0.9885743 1.034031
+#&gt; 2 loci amsph 0.9962675 0.9757419 1.024270
+#&gt; 3 lpto amsph 0.9935320 0.9887894 1.017427
+#&gt; 4 lsqu amsph 1.0057657 0.9711763 1.019318
+#&gt; 5 lsyn amsph 0.9844980 0.9821322 1.042103
+#&gt; 6 roci amsph 0.9981683 0.9762465 1.022787</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     row   col     dist     lower    upper
-#&gt; 39 rsyn  lsyn 1.040292 0.9228383 1.011632
-#&gt; 18 lpto  loci 1.013272 0.9539187 1.012572
-#&gt; 40 rpto  roci 1.010858 0.9560082 1.025880
-#&gt; 36 roci  lsyn 1.010448 0.9747528 1.004151
-#&gt; 21 roci  loci 1.008071 0.9501396 1.027616
-#&gt; 9  rsyn amsph 1.007449 0.9595159 1.037049</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; 39 rsyn  lsyn 1.040292 0.9418121 1.002843
+#&gt; 18 lpto  loci 1.013272 0.9590981 1.018357
+#&gt; 40 rpto  roci 1.010858 0.9463685 1.017769
+#&gt; 36 roci  lsyn 1.010448 0.9710276 1.011671
+#&gt; 21 roci  loci 1.008071 0.9630444 1.021071
+#&gt; 9  rsyn amsph 1.007449 0.9615352 1.025836</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_gdm</span><span class='op'>(</span><span class='va'>gdm</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     row  col      dist     lower    upper
-#&gt; 43 rsqu rpto 0.9361207 1.0366762 1.093046
-#&gt; 25 lsqu lpto 0.9485414 1.0071160 1.069307
-#&gt; 29 rsqu lpto 0.9569724 1.0318811 1.072843
-#&gt; 33 rpto lsqu 0.9666629 1.0269893 1.054418
-#&gt; 41 rsqu roci 0.9766552 0.9913284 1.047236
-#&gt; 19 lsqu loci 0.9791661 0.9834423 1.040605</div><div class='input'>
+#&gt; 43 rsqu rpto 0.9361207 1.0488548 1.078077
+#&gt; 25 lsqu lpto 0.9485414 1.0237336 1.072594
+#&gt; 29 rsqu lpto 0.9569724 1.0210587 1.063120
+#&gt; 33 rpto lsqu 0.9666629 0.9976321 1.054663
+#&gt; 41 rsqu roci 0.9766552 0.9878100 1.051442
+#&gt; 19 lsqu loci 0.9791661 0.9830242 1.040839</div><div class='input'>
 <span class='fu'><a href='edma_data.html'>plot_ord</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
 </div><div class='img'><img src='edma_gdm-6.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
 </div><div class='img'><img src='edma_gdm-7.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_fdm.html'>plot_Ttest</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>

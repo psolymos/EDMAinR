@@ -112,13 +112,10 @@ Lele (1991), Lele and Richtsmeier (1991) and Hu (2007)." />
       <a href="../articles/edma02-form.html">EDMA form matrix</a>
     </li>
     <li>
-      <a href="../articles/edma03-parametric.html">Parametric estimation</a>
+      <a href="../articles/edma03-form-difference.html">EDMA form difference matrix</a>
     </li>
     <li>
-      <a href="../articles/edma04-form-difference.html">EDMA form difference matrix</a>
-    </li>
-    <li>
-      <a href="../articles/edma05-growth.html">EDMA growth matrix</a>
+      <a href="../articles/edma04-growth.html">EDMA growth matrix</a>
     </li>
   </ul>
 </li>
@@ -298,7 +295,6 @@ Joan T. Richtsmeier</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>EDMA data: <code><a href='edma_data.html'>read_xyz</a></code></p>
-<p>Parametric fit: <code><a href='SigmaK_fit.html'>SigmaK_fit</a></code></p>
 <p>Form difference: <code><a href='edma_fdm.html'>edma_fdm</a></code></p>
 <p>Growth difference: <code><a href='edma_gdm.html'>edma_gdm</a></code></p>
 <p>Shape difference: <code><a href='edma_sdm.html'>edma_sdm</a></code></p></div>
@@ -339,26 +335,26 @@ Joan T. Richtsmeier</p>
 #&gt;  $ dist: num  3.56 1.54 3.61 2.84 4.44 ...</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_fm</span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     row   col     dist    lower    upper
-#&gt; 1   bas amsph 3.564776 3.521681 3.624272
-#&gt; 2  cpsh amsph 1.536155 1.509457 1.548660
-#&gt; 3 ethma amsph 3.611062 3.578948 3.633837
-#&gt; 4 ethmp amsph 2.844704 2.821754 2.881977
-#&gt; 5 laalf amsph 4.439686 4.395908 4.470741
-#&gt; 6 lasph amsph 1.685653 1.638983 1.717090</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_fm</span><span class='op'>(</span><span class='va'>fit</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; 1   bas amsph 3.564776 3.516261 3.587429
+#&gt; 2  cpsh amsph 1.536155 1.508225 1.539719
+#&gt; 3 ethma amsph 3.611062 3.573480 3.632278
+#&gt; 4 ethmp amsph 2.844704 2.806941 2.868721
+#&gt; 5 laalf amsph 4.439686 4.378683 4.475302
+#&gt; 6 lasph amsph 1.685653 1.654556 1.724334</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_fm</span><span class='op'>(</span><span class='va'>fit</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;       row   col     dist    lower    upper
-#&gt; 435 rnsla  locc 10.44243 10.34298 10.52361
-#&gt; 357   opi lnsla 10.43767 10.35694 10.51866
-#&gt; 855 rnsla   opi 10.43731 10.34119 10.51773
-#&gt; 364  rocc lnsla 10.42825 10.33690 10.50542
-#&gt; 342  locc lnsla 10.41463 10.33263 10.49807
-#&gt; 854 rmaxi   opi 10.40513 10.33077 10.48761</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_fm</span><span class='op'>(</span><span class='va'>fit</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+#&gt; 435 rnsla  locc 10.44243 10.28720 10.52429
+#&gt; 357   opi lnsla 10.43767 10.30818 10.51090
+#&gt; 855 rnsla   opi 10.43731 10.28352 10.52620
+#&gt; 364  rocc lnsla 10.42825 10.29649 10.50351
+#&gt; 342  locc lnsla 10.41463 10.28214 10.48119
+#&gt; 854 rmaxi   opi 10.40513 10.28303 10.48390</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_fm</span><span class='op'>(</span><span class='va'>fit</span>, sort<span class='op'>=</span><span class='cn'>TRUE</span>, decreasing<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;       row   col      dist     lower     upper
-#&gt; 400 rnslp lnslp 0.1360938 0.1306917 0.1446946
-#&gt; 362 rnsla lnsla 0.2260131 0.2186968 0.2476504
-#&gt; 977  roci  rocc 0.5124857 0.4956301 0.5257110
-#&gt; 416  loci  locc 0.5153279 0.5079255 0.5370125
-#&gt; 127  rpsh  cpsh 0.5253504 0.5092263 0.5466579
-#&gt; 105  lpsh  cpsh 0.5722943 0.5479218 0.5931449</div><div class='input'>
+#&gt; 400 rnslp lnslp 0.1360938 0.1319258 0.1510975
+#&gt; 362 rnsla lnsla 0.2260131 0.2167708 0.2405299
+#&gt; 977  roci  rocc 0.5124857 0.4891130 0.5342502
+#&gt; 416  loci  locc 0.5153279 0.5062823 0.5336424
+#&gt; 127  rpsh  cpsh 0.5253504 0.4871100 0.5446070
+#&gt; 105  lpsh  cpsh 0.5722943 0.5437545 0.6010516</div><div class='input'>
 <span class='fu'><a href='edma_data.html'>plot_ord</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
 </div><div class='img'><img src='edma_fit-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='edma_data.html'>plot_clust</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
 </div><div class='img'><img src='edma_fit-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
