@@ -148,7 +148,7 @@ Lele and Cole (1996)." />
 Lele and Cole (1996).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>edma_sdm</span><span class='op'>(</span><span class='va'>a</span>, <span class='va'>b</span>, log<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>edma_sdm</span><span class='op'>(</span><span class='va'>a</span>, <span class='va'>b</span>, log<span class='op'>=</span><span class='cn'>TRUE</span>, size<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'>get_sdm</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_sdm</span>
 <span class='fu'>get_sdm</span><span class='op'>(</span><span class='va'>object</span>, sort<span class='op'>=</span><span class='cn'>FALSE</span>,
@@ -190,6 +190,11 @@ Lele and Cole (1996).</p>
       <th>log</th>
       <td><p>logical, if form matrix is to be log transformed before
 calculating the differences.</p></td>
+    </tr>
+    <tr>
+      <th>size</th>
+      <td><p>logical, if size difference (C) is to be estimated (<code>TRUE</code>)
+of fixed as 1 (<code>FALSE</code>).</p></td>
     </tr>
     <tr>
       <th>sort</th>
