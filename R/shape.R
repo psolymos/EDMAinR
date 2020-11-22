@@ -11,8 +11,9 @@
     as.numeric(solve(t(X) %*% X - lambda) %*% t(X) %*% Y)
 }
 
-## d_{ij,A}=c*d_{ij,B} for some c > 0 and for all {ij}
-## Now FM is S: S1=FM1, S2=Cval*FM2
+## d_{ij,1}=c*d_{ij,2} for some c > 0 and for all {ij}
+## Now FM is S: S2=C1*FM2, S1=C2*FM1
+## C1=1, C2=d2_ij/d1_ij or based on TLS
 ## Shape difference matrix: S1-S2
 .get_sdm <- function(M1, M2, log=TRUE, size=TRUE, C2=NULL) {
     S1 <- as.numeric(dist(M1))
@@ -63,13 +64,14 @@ edma_sdm <- function(a, b, log=TRUE, size=TRUE, edge=NULL) {
         if (is.numeric(edge))
             edge <- landmarks(a)[edge]
         edge <- as.character(edge)
-        if (length(edge) != 1L)
+        if (length(edge) != 2L)
             stop("Provide 2 landmarks for edge argument")
         da <- stack(dist(Meanform(a)))
         db <- stack(dist(Meanform(b)))
         i <- which(da$row == edge[1L] & da$col == edge[2L])
         if (!length(i))
             i <- which(da$row == edge[2L] & da$col == edge[1L])
+        ## S1 = C2*FM1=(d2_ij/d1_ij)*FM1
         C2 <- db$dist[i]/da$dist[i]
     }
     d <- stack(dist(Meanform(a)))[,1:2]
