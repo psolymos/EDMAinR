@@ -1,6 +1,7 @@
-# Version 0.1-6, 2020-11-07
+# Version 0.1-6, 2020-11-20
 
 * Shape difference matrix (SDM) calculation added: `edma_sdm`.
+* `edma_sdm` can be set to assume same size, use TLS, or a particular edge.
 * CI calculation (local FDM, GM, GDM, SDM testing) calculations use
   2-sample bootstrap.
 * Global FDM, GM, GDM testing (T-test) uses the mixed or the reference

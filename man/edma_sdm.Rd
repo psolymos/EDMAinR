@@ -20,7 +20,7 @@ Shape difference matrix based inference following
 Lele and Cole (1996).
 }
 \usage{
-edma_sdm(a, b, log=TRUE, size=TRUE)
+edma_sdm(a, b, log=TRUE, size=TRUE, edge = NULL)
 get_sdm(object, ...)
 \method{get_sdm}{edma_sdm}(object, sort=FALSE,
     level = 0.95, ...)
@@ -54,6 +54,12 @@ calculating the differences.
 logical, if size difference (C) is to be estimated (\code{TRUE})
 of fixed as 1 (\code{FALSE}).
 }
+  \item{edge}{
+numeric or character, numeric IDs or the name of the 2 landmarks
+to be used to calculate C (C=db/da, where da and db are the edge distances
+between the two landmarks for object a and b respectively).
+C is calculated using total least squares (TLS) when \code{edge=NULL}.
+}
   \item{sort}{
 logical, if stacked distances are to be sorted, see Examples.
 }
@@ -76,11 +82,17 @@ other arguments passed to other functions.
 Shape difference matrix (SDM) is defined as
 the difference between the scaled form matrices S(A) and S(B).
 S(A) = C * FM(A), S(B) = FM(B),
-where C is a scaling factor and is calculated using  TLS.
-Shape difference matrix is S(A) - S(B) when \code{log=FALSE}
+where C is a scaling factor and is calculated using total least
+squares (TLS). Shape difference matrix is S(A) - S(B) when \code{log=FALSE}
 and log(S(A)) - log(S(B)) when \code{log=TRUE}.
 
 Inference and visualization is similar to how it is done for FDMs.
+
+Note: the original implementation is usinga particular edge
+to calculate the size (C) parameter (\code{size=TRUE} and
+\code{edge} not \code{NULL}). \code{edge=NULL} uses total least
+squares to estimate C based on all the edges of all the landmarks.
+When \code{size=FALSE} we set C=1, assuming sizez are the same.
 }
 \value{
 \code{edma_sdm} compares 2 EDMA fit objects and calculates SDM.

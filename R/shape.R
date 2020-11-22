@@ -1,3 +1,4 @@
+## Total Least Squares
 ## use TLS to get scaling factor C
 ## Y=vec(FM1), X=vec(FM2)
 .tlsXY <- function(X, Y) {
@@ -13,12 +14,18 @@
 ## d_{ij,A}=c*d_{ij,B} for some c > 0 and for all {ij}
 ## Now FM is S: S1=FM1, S2=Cval*FM2
 ## Shape difference matrix: S1-S2
-.get_sdm <- function(M1, M2, log=TRUE, size=TRUE) {
+.get_sdm <- function(M1, M2, log=TRUE, size=TRUE, C2=NULL) {
     S1 <- as.numeric(dist(M1))
     S2 <- as.numeric(dist(M2))
     ## C1 = 1
-    C2 <- if (size)
-        .tlsXY(S1, S2) else 1
+    ## C2 is supplied or estimate by TLS
+    ## size=FALSE --> C2=1
+    if (size) {
+        C2 <- if (is.null(C2))
+            .tlsXY(S1, S2) else C2
+    } else {
+        C2 <- 1
+    }
     S1 <- C2 * S1
     if (log) {
         S1 <- log(S1)
@@ -31,13 +38,15 @@
 }
 
 ## This function implements Lele & Cole's SDM test
-.edma_sdm <- function(f1, f2, log=TRUE, size=TRUE) {
+.edma_sdm <- function(f1, f2, log=TRUE, size=TRUE, C2=NULL) {
     if (is.null(f1$boot) || is.null(f2$boot))
         stop("SDM requires bootstrapped EDMA fit objects")
     B <- min(length(f1$boot), length(f2$boot))
-    res <- c(list(.get_sdm(Meanform(f1), Meanform(f2), log=log, size=size)),
+    res <- c(list(.get_sdm(Meanform(f1), Meanform(f2),
+                           log=log, size=size, C2=C2)),
         lapply(seq_len(B), function(i) {
-            .get_sdm(f1$boot[[i]]$M, f2$boot[[i]]$M, log=log, size=size)
+            .get_sdm(f1$boot[[i]]$M, f2$boot[[i]]$M,
+                     log=log, size=size, C2=C2)
         }))
     SDM <- sapply(res, "[[","sdm")
     Zval <- sapply(res, "[[", "Zval")
@@ -46,10 +55,25 @@
 }
 
 ## shape difference matrix with bootstrap
-edma_sdm <- function(a, b, log=TRUE, size=TRUE) {
+edma_sdm <- function(a, b, log=TRUE, size=TRUE, edge=NULL) {
     .compare_objects(a, b)
-    d <- stack(as.dist(a))[,1:2]
-    res <- .edma_sdm(a, b, log=log, size=size)
+    if (is.null(edge)) {
+        C2 <- NULL
+    } else {
+        if (is.numeric(edge))
+            edge <- landmarks(a)[edge]
+        edge <- as.character(edge)
+        if (length(edge) != 1L)
+            stop("Provide 2 landmarks for edge argument")
+        da <- stack(dist(Meanform(a)))
+        db <- stack(dist(Meanform(b)))
+        i <- which(da$row == edge[1L] & da$col == edge[2L])
+        if (!length(i))
+            i <- which(da$row == edge[2L] & da$col == edge[1L])
+        C2 <- db$dist[i]/da$dist[i]
+    }
+    d <- stack(dist(Meanform(a)))[,1:2]
+    res <- .edma_sdm(a, b, log=log, size=size, C2)
     d$sdm <- res$sdm[,1L]
     out <- list(
         call=match.call(),
@@ -58,6 +82,8 @@ edma_sdm <- function(a, b, log=TRUE, size=TRUE) {
         dm=d,
         log=log,
         size=size,
+        edge=edge,
+        C2=C2,
         B=length(res$Zval)-1L,
         boot=res)
     class(out) <- c("edma_sdm", "edma_dm", class(out))
