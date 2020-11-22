@@ -148,7 +148,7 @@ Lele and Cole (1996)." />
 Lele and Cole (1996).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>edma_sdm</span><span class='op'>(</span><span class='va'>a</span>, <span class='va'>b</span>, log<span class='op'>=</span><span class='cn'>TRUE</span>, size<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>edma_sdm</span><span class='op'>(</span><span class='va'>a</span>, <span class='va'>b</span>, log<span class='op'>=</span><span class='cn'>TRUE</span>, size<span class='op'>=</span><span class='cn'>TRUE</span>, edge <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 <span class='fu'>get_sdm</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_sdm</span>
 <span class='fu'>get_sdm</span><span class='op'>(</span><span class='va'>object</span>, sort<span class='op'>=</span><span class='cn'>FALSE</span>,
@@ -197,6 +197,13 @@ calculating the differences.</p></td>
 of fixed as 1 (<code>FALSE</code>).</p></td>
     </tr>
     <tr>
+      <th>edge</th>
+      <td><p>numeric or character, numeric IDs or the name of the 2 landmarks
+to be used to calculate C (C=db/da, where da and db are the edge distances
+between the two landmarks for object a and b respectively).
+C is calculated using total least squares (TLS) when <code>edge=NULL</code>.</p></td>
+    </tr>
+    <tr>
       <th>sort</th>
       <td><p>logical, if stacked distances are to be sorted, see Examples.</p></td>
     </tr>
@@ -225,10 +232,15 @@ See <code><a href='https://rdrr.io/r/stats/confint.html'>confint</a></code>.</p>
     <p>Shape difference matrix (SDM) is defined as
 the difference between the scaled form matrices S(A) and S(B).
 S(A) = C * FM(A), S(B) = FM(B),
-where C is a scaling factor and is calculated using  TLS.
-Shape difference matrix is S(A) - S(B) when <code>log=FALSE</code>
+where C is a scaling factor and is calculated using total least
+squares (TLS). Shape difference matrix is S(A) - S(B) when <code>log=FALSE</code>
 and log(S(A)) - log(S(B)) when <code>log=TRUE</code>.</p>
 <p>Inference and visualization is similar to how it is done for FDMs.</p>
+<p>Note: the original implementation is usinga particular edge
+to calculate the size (C) parameter (<code>size=TRUE</code> and
+<code>edge</code> not <code>NULL</code>). <code>edge=NULL</code> uses total least
+squares to estimate C based on all the edges of all the landmarks.
+When <code>size=FALSE</code> we set C=1, assuming sizez are the same.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>edma_sdm</code> compares 2 EDMA fit objects and calculates SDM.</p>
