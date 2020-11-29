@@ -160,7 +160,7 @@ load the **plotly** package to make the object interactive:
 
 ```{r message=FALSE}
 library(plotly)
-ggplotly(p, tooltip=c("x", "y"))
+ggplotly(p)
 ```
 
 # Influential landmarks
