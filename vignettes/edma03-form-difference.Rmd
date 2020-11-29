@@ -81,12 +81,12 @@ Algorithm for global testing is as follows
 3. Compute the $FDM^* = FM_2^* / FM_1^*$ and $T^* = max(FDM^*) / min(FDM^*)$.
 4. Repeat the above three steps `B` times to get the p-value.
 
-`T_test` provides a summary of the test, `plot_Ttest` helps to visualize
+`Tobs_test` provides a summary of the test, `plot_Ttest` helps to visualize
 the null distribution (histogram) and the observed T statistic
 (vertical line):
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
-T_test(fdm)
+Tobs_test(fdm)
 plot_Ttest(fdm)
 ```
 
@@ -153,6 +153,14 @@ p <- ggplot(data=df, aes(x=x, y=dist, ymin=lower, ymax=upper)) +
 p
 ```
 
+Once we have a **ggplot2** version of a plot, we can
+load the **plotly** package to make the object interactive:
+
+```{r message=FALSE}
+library(plotly)
+ggplotly(p)
+```
+
 # Influential landmarks
 
 We can consider a landmark influential with respect to the form difference
@@ -205,12 +213,18 @@ df <- infl[order(infl$Tdrop),]
 df$landmark <- factor(as.character(df$landmark), as.character(df$landmark))
 p <- ggplot(data=df, aes(x=landmark, y=Tdrop, ymin=lower, ymax=upper, group=1)) +
   geom_ribbon(col="#0000ff40", fill="#0000ff40") +
-  geom_hline(yintercept=T_test(fdm)$statistic, col=2) +
+  geom_hline(yintercept=Tobs_test(fdm)$statistic, col=2) +
   geom_line() +
   labs(y="T-value", x="Landmarks") +
   theme(axis.text.x=element_text(angle = 45,
         vjust = 1, hjust=1))
 p
+```
+
+An the interactive version:
+
+```{r}
+ggplotly(p)
 ```
 
 # Ordination and clustering for specimens

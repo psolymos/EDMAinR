@@ -71,7 +71,7 @@ gm
 The global testing is explained on the form difference page:
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
-T_test(gm)
+Tobs_test(gm)
 plot_Ttest(gm)
 ```
 
@@ -179,7 +179,7 @@ and the younger sample (embryonic) in the denominator spot
 gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_b1, b2=fit_b2, B=25)
 gdm
 
-T_test(gdm)
+Tobs_test(gdm)
 plot_Ttest(gdm)
 plot_ci(gdm)
 
