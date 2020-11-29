@@ -142,8 +142,10 @@ based plot:
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 library(ggplot2)
 df <- get_fdm(fdm, sort=TRUE)
-df$x <- 1:nrow(df)
-p <- ggplot(data=df, aes(x=x, y=dist, ymin=lower, ymax=upper)) +
+df$x <- 1:nrow(df) # make x-axis continuous
+df$name <- paste(df$row, df$col) # add names
+p <- ggplot(data=df, aes(x=x, y=dist, 
+    ymin=lower, ymax=upper, label=name)) +
   geom_ribbon(col="#0000ff40", fill="#0000ff40") +
   geom_line() +
   geom_hline(yintercept=1, col=2) +
@@ -158,7 +160,7 @@ load the **plotly** package to make the object interactive:
 
 ```{r message=FALSE}
 library(plotly)
-ggplotly(p)
+ggplotly(p, tooltip=c("x", "y"))
 ```
 
 # Influential landmarks
