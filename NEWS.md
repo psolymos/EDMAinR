@@ -1,6 +1,8 @@
 # Version 0.1-7, 2020-11-27
 
 * Renaming `T_*` functions to `Tobs_*` to avoid confusion with T-test.
+* Observed statistic not included into the null distribution for global testing.
+* Added interactive plotly graphics to vignettes.
 
 # Version 0.1-6, 2020-11-20
 

@@ -137,7 +137,7 @@ edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
         if (x$B)
             paste(x$B, "bootstrap runs") else "no bootstrap",
         " (ref: ", if (x$ref_denom) "denominator" else "numerator", ")",
-        "\nT = ", format(H$statistic, digits = max(1L, getOption("digits") - 2L)),
+        "\nTobs = ", format(H$statistic, digits = max(1L, getOption("digits") - 2L)),
         fp,
         sep="")
     invisible(x)
@@ -174,7 +174,7 @@ Tobs_test <- function (object, ...) UseMethod("Tobs_test")
     names(PARAMETER) <- "B"
     out <- list(statistic = Tval[1L], parameter = PARAMETER,
         p.value = if (PARAMETER > 0) PVAL else NA,
-        method = METHOD, data.name = DNAME, Tvals=Tval)
+        method = METHOD, data.name = DNAME, Tvals=Tval[-1L])
     class(out) <- c("edma_Ttest", "edma_test", "htest")
     out
 }
