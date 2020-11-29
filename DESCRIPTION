@@ -1,8 +1,8 @@
 Package: EDMAinR
 Type: Package
 Title: Euclidean Distance Matrix Analysis in R
-Version: 0.1-6
-Date: 2020-11-20
+Version: 0.1-7
+Date: 2020-11-27
 Authors@R: 
     c(person(given = "Peter",
              family = "Solymos",
@@ -28,5 +28,5 @@ License: GPL-2
 LazyLoad: yes
 LazyData: true
 Imports: pbapply, readxl, ape
-Suggests: knitr, rmarkdown, rgl, ggplot2, ggdendro
+Suggests: knitr, rmarkdown, rgl, ggplot2, ggdendro, plotly
 VignetteBuilder: knitr

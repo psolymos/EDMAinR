@@ -39,7 +39,7 @@ export(
     "get_sdm",
     "get_gm",
     "get_gdm",
-    "T_test",
+    "Tobs_test",
     "Z_test",
 #    "sensitivity",
     "get_influence",
@@ -139,7 +139,7 @@ S3method("plot_3d", "edma_dm")
 
 ## edma_fdm methods
 S3method("print", "edma_fdm")
-S3method("T_test", "edma_fdm")
+S3method("Tobs_test", "edma_fdm")
 S3method("get_fdm", "edma_fdm")
 S3method("landmarks", "edma_fdm")
 S3method("dimensions", "edma_fdm")
@@ -165,14 +165,14 @@ S3method("plot", "edma_influence")
 
 ## edma_gm methods
 S3method("print", "edma_gm")
-S3method("T_test", "edma_gm")
+S3method("Tobs_test", "edma_gm")
 S3method("get_gm", "edma_gm")
 ## plot methods
 S3method("plot_ci", "edma_gm")
 
 ## edma_gdm methods
 S3method("print", "edma_gdm")
-S3method("T_test", "edma_gdm")
+S3method("Tobs_test", "edma_gdm")
 S3method("get_gdm", "edma_gdm")
 S3method("landmarks", "edma_gdm")
 S3method("dimensions", "edma_gdm")

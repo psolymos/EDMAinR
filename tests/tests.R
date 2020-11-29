@@ -120,8 +120,8 @@ head(get_fdm(fdm))
 head(get_fdm(fdm, sort=TRUE, decreasing=TRUE))
 head(get_fdm(fdm, sort=TRUE, decreasing=FALSE))
 
-T_test(fdm)
-T_test(fdm2)
+Tobs_test(fdm)
+Tobs_test(fdm2)
 
 head(confint(fdm))
 
@@ -151,7 +151,7 @@ fit_a2 <- edma_fit(a2, B=B)
 
 gm <- edma_gm(fit_a1, fit_a2, B=B)
 gm
-T_test(gm)
+Tobs_test(gm)
 head(confint(gm))
 head(get_gm(gm))
 head(get_gm(gm, sort=TRUE, decreasing=TRUE))
@@ -168,7 +168,7 @@ if (interactive()) plot_3d(gm)
 
 gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_a1, b2=fit_a2, B=B)
 gdm
-T_test(gdm)
+Tobs_test(gdm)
 head(confint(gdm))
 head(get_gdm(gdm))
 head(get_gdm(gdm, sort=TRUE, decreasing=TRUE))
