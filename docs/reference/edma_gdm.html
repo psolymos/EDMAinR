@@ -83,7 +83,7 @@ Lele and Richtsmeier (1992, 1995)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-7</span>
       </span>
     </div>
 
@@ -163,9 +163,9 @@ Lele and Richtsmeier (1992, 1995).</p>
 <span class='co'># S3 method for edma_gdm</span>
 <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gm</span>
-<span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'><a href='edma_fdm.html'>Tobs_test</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
-<span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'><a href='edma_fdm.html'>Tobs_test</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
 <span class='fu'><a href='edma_data.html'>landmarks</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_gdm</span>
@@ -268,12 +268,12 @@ Joan T. Richtsmeier</p>
 </div><div class='output co'>#&gt; EDMA growth matrix
 #&gt; Call: edma_gm(a1 = fit_a1, a2 = fit_a2, B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T = 1.259, p &lt; 2.22e-16</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
+#&gt; Tobs = 1.259, p &lt; 2.22e-16</div><div class='input'><span class='fu'><a href='edma_fdm.html'>Tobs_test</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  growth matrix
-#&gt; T-value = 1.259, B = 10, p-value &lt; 2.2e-16
+#&gt; Tobs-value = 1.259, B = 10, p-value &lt; 2.2e-16
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>gm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                2.5%    97.5%
 #&gt; bas-amsph  1.098430 1.125051
@@ -334,12 +334,12 @@ Joan T. Richtsmeier</p>
 #&gt; Call: edma_gdm(a1 = fit_a1, a2 = fit_a2, b1 = fit_b1, b2 = fit_b2, 
 #&gt;     B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T = 1.1113, p = 0.27273</div><div class='input'><span class='fu'><a href='edma_fdm.html'>T_test</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
+#&gt; Tobs = 1.1113, p = 0.27273</div><div class='input'><span class='fu'><a href='edma_fdm.html'>Tobs_test</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  growth difference matrix
-#&gt; T-value = 1.1113, B = 11, p-value = 0.2727
+#&gt; Tobs-value = 1.1113, B = 11, p-value = 0.2727
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>gdm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                 2.5%    97.5%
 #&gt; bas-amsph  0.9885743 1.034031

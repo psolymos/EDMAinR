@@ -83,7 +83,7 @@ Lele and Richtsmeier (1992, 1995)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-7</span>
       </span>
     </div>
 
@@ -160,9 +160,9 @@ Lele and Richtsmeier (1992, 1995).</p>
 <span class='fu'>get_fdm</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_fdm</span>
 <span class='fu'>get_fdm</span><span class='op'>(</span><span class='va'>object</span>, sort<span class='op'>=</span><span class='cn'>FALSE</span>, level<span class='op'>=</span><span class='fl'>0.95</span>, <span class='va'>...</span><span class='op'>)</span>
-<span class='fu'>T_test</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>Tobs_test</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_fdm</span>
-<span class='fu'>T_test</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>Tobs_test</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 <span class='co'># S3 method for edma_dm</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>parm</span>, level<span class='op'>=</span><span class='fl'>0.95</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -258,7 +258,7 @@ and the bootstrap FMs from the other non-reference object
 taking the max/min of the distances. Confidence intervals for local testing
 (via <code>confint</code>, <code>get_fdm</code>, and <code>plot_ci</code>)
 and T-test for global testing
-(via <code>T_test</code>, and <code>plot_Ttest</code>)
+(via <code>Tobs_test</code>, and <code>plot_Ttest</code>)
 is based on the observed T-statistic and the bootstrap distribution.</p>
 <p>The global testing algorithm is as follows:
 Suppose population 1 is the 'reference' population.
@@ -287,7 +287,7 @@ the <code>plot_ci</code> visualizes the ordered form differences with
 confidence intervals.</p>
 <p><code>get_influence</code> extracts landmark influence information,
 the plot method visualizes this.</p>
-<p><code>T_test</code> presents the global T-test,
+<p><code>Tobs_test</code> presents the global T-test,
 the bootstrap distribution and observed T-value is
 visualized by <code>plot_Ttest</code>.</p>
 <p><code>plot</code> and <code>plot_2d</code> produces a 2D plot of the mean form
@@ -340,12 +340,12 @@ Joan T. Richtsmeier</p>
 </div><div class='output co'>#&gt; EDMA form difference matrix
 #&gt; Call: edma_fdm(numerator = numerator, denominator = denominator, B = 10)
 #&gt; 10 bootstrap runs (ref: denominator)
-#&gt; T = 1.5981, p &lt; 2.22e-16</div><div class='input'><span class='va'>fdm2</span>
+#&gt; Tobs = 1.5981, p &lt; 2.22e-16</div><div class='input'><span class='va'>fdm2</span>
 </div><div class='output co'>#&gt; EDMA form difference matrix
 #&gt; Call: edma_fdm(numerator = numerator, denominator = denominator, B = 10, 
 #&gt;     ref_denom = FALSE)
 #&gt; 10 bootstrap runs (ref: numerator)
-#&gt; T = 1.5981, p &lt; 2.22e-16</div><div class='input'>
+#&gt; Tobs = 1.5981, p &lt; 2.22e-16</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'>get_fdm</span><span class='op'>(</span><span class='va'>fdm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     row   col      dist     lower     upper
 #&gt; 1   bas amsph 1.0425379 1.0334334 1.0505911
@@ -368,18 +368,18 @@ Joan T. Richtsmeier</p>
 #&gt; 212   rpsh ethmp 0.9177018 0.9085373 0.9319954
 #&gt; 190   lpsh ethmp 0.9181652 0.9082000 0.9331402
 #&gt; 4    ethmp amsph 0.9401242 0.9345197 0.9461407</div><div class='input'>
-<span class='fu'>T_test</span><span class='op'>(</span><span class='va'>fdm</span><span class='op'>)</span>
+<span class='fu'>Tobs_test</span><span class='op'>(</span><span class='va'>fdm</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  form difference matrix
-#&gt; T-value = 1.5981, B = 10, p-value &lt; 2.2e-16
-#&gt; </div><div class='input'><span class='fu'>T_test</span><span class='op'>(</span><span class='va'>fdm2</span><span class='op'>)</span>
+#&gt; Tobs-value = 1.5981, B = 10, p-value &lt; 2.2e-16
+#&gt; </div><div class='input'><span class='fu'>Tobs_test</span><span class='op'>(</span><span class='va'>fdm2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; 	Bootstrap based EDMA T-test
 #&gt; 
 #&gt; data:  form difference matrix
-#&gt; T-value = 1.5981, B = 10, p-value &lt; 2.2e-16
+#&gt; Tobs-value = 1.5981, B = 10, p-value &lt; 2.2e-16
 #&gt; </div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/confint.html'>confint</a></span><span class='op'>(</span><span class='va'>fdm</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;                  2.5%     97.5%
