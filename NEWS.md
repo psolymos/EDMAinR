@@ -1,3 +1,7 @@
+# Version 0.1-8, 2020-12-19
+
+* Added new function `gpa_fit` to estimate mean form based on GPA.
+
 # Version 0.1-7, 2020-11-27
 
 * Renaming `T_*` functions to `Tobs_*` to avoid confusion with T-test.

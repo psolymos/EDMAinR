@@ -212,9 +212,78 @@ edma_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L)) {
     out
 }
 
+## this fits GPA or weighted GPA to the 3d array object
+.gpa_fit <- function(A, ..., weighted=FALSE, gpa_results=FALSE) {
+    SigmaKstar_hat <- matrix(NA, dim(A)[1L], dim(A)[1L])
+    dimnames(SigmaKstar_hat) <- list(dimnames(A)[[1L]], dimnames(A)[[1L]])
+    m <- if (weighted)
+        shapes::procWGPA(A, ...) else shapes::procGPA(A, ...)
+    m$weighted <- weighted
+    M_hat <- as.matrix(m$mshape)
+    dimnames(M_hat) <- dimnames(A)[1:2]
+    out <- list(M=M_hat,
+        SigmaKstar=SigmaKstar_hat)
+    if (gpa_results)
+        out$gpa_results <- m
+    out
+}
+gpa_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L), weighted=FALSE, ...) {
+    if (!requireNamespace("shapes"))
+        stop("The shapes package is required for GPA, use install.packages('shapes')")
+    if (!inherits(x, "edma_data"))
+        stop("x must be of class edma_data.")
+    if (B < 0)
+        stop("B must not be negative.")
+    B <- as.integer(B)
+    DIM <- dim(x)
+    fit <- .gpa_fit(as.array(x), ..., weighted=weighted)
+    dimnames(fit$M) <- dimnames(x)[1:2]
+    dimnames(fit$SigmaKstar) <- dimnames(x)[c(1,1)]
+    if (B > 0) {
+        BB <- replicate(B, sample(DIM[3L], replace=TRUE))
+        A <- as.array(x)
+        ncores <- as.integer(ncores)
+        if (ncores > 1L) {
+            ncores <- min(ncores, parallel::detectCores(TRUE), na.rm=TRUE)
+            cl <- parallel::makeCluster(ncores)
+            on.exit(parallel::stopCluster(cl))
+        } else {
+            cl <- NULL
+        }
+        boot <- pbapply::pbapply(BB, 2L, function(j, A, ..., weighted) {
+            EDMAinR::.gpa_fit(A[,,j], ..., weighted=weighted)
+        }, A=A, cl=cl, ..., weighted=weighted)
+        attr(boot, "samples") <- BB
+    } else {
+        boot <- NULL
+    }
+    out <- c(x, fit)
+    out$call <- match.call()
+    out$boot <- boot
+    out$weighted <- weighted
+    class(out) <- c("gpa_fit", "edma_fit_np", "edma_fit", "edma_data")
+    out
+}
+
+
 ## print methods for np fit object
 print.edma_fit_np <- function(x, truncate=40, ...) {
     cat("EDMA nonparametric fit: ",
+        .shorten_name(x$name, truncate), "\n",
+        "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
+        "\n",
+        nrow(x$data[[1L]]), " landmarks, ",
+        ncol(x$data[[1L]]), " dimensions, ",
+        length(x$data), " specimens, ",
+        if (length(x$boot))
+            paste(length(x$boot), "bootstrap runs") else "no bootstrap",
+        sep="")
+    invisible(x)
+}
+
+## print methods for GPA fit object
+print.gpa_fit <- function(x, truncate=40, ...) {
+    cat("GPA fit (mean form only): ",
         .shorten_name(x$name, truncate), "\n",
         "Call: ", paste(deparse(x$call), sep = "\n", collapse = "\n"),
         "\n",

@@ -7,7 +7,8 @@ export(
     "edma_fdm",
     "edma_sdm",
     "edma_gm",
-    "edma_gdm"
+    "edma_gdm",
+    "gpa_fit"
 #    "SigmaK_fit",
 #    "read_pattern",
 #    "make_Sigma"
@@ -16,7 +17,8 @@ export(
 ## export necessary internals
 export(
     ".edma_fit_np",
-    ".Ttest_data"
+    ".Ttest_data",
+    ".gpa_fit"
 )
 
 ## export misc functions
@@ -116,6 +118,7 @@ S3method("SigmaKstar", "edma_fit")
 S3method("confint", "edma_fit")
 ## edma_fit_np methods
 S3method("print", "edma_fit_np")
+S3method("print", "gpa_fit")
 ## edma_fit_p methods
 #S3method("print", "edma_fit_p")
 #S3method("SigmaK", "edma_fit_p")
