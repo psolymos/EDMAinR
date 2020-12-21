@@ -214,15 +214,13 @@ edma_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L)) {
 
 ## this fits GPA or weighted GPA to the 3d array object
 .gpa_fit <- function(A, ..., weighted=FALSE, gpa_results=FALSE) {
-    SigmaKstar_hat <- matrix(NA, dim(A)[1L], dim(A)[1L])
-    dimnames(SigmaKstar_hat) <- list(dimnames(A)[[1L]], dimnames(A)[[1L]])
     m <- if (weighted)
         shapes::procWGPA(A, ...) else shapes::procGPA(A, ...)
     m$weighted <- weighted
-    M_hat <- as.matrix(m$mshape)
-    dimnames(M_hat) <- dimnames(A)[1:2]
-    out <- list(M=M_hat,
-        SigmaKstar=SigmaKstar_hat)
+    #SigmaKstar_hat <- matrix(NA, dim(A)[1L], dim(A)[1L])
+    #out <- list(M=M_hat,
+    #    SigmaKstar=SigmaKstar_hat)
+    out <- list(M=as.matrix(m$mshape))
     if (gpa_results)
         out$gpa_results <- m
     out
@@ -238,7 +236,7 @@ gpa_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L), weighted=FALSE, ...) 
     DIM <- dim(x)
     fit <- .gpa_fit(as.array(x), ..., weighted=weighted)
     dimnames(fit$M) <- dimnames(x)[1:2]
-    dimnames(fit$SigmaKstar) <- dimnames(x)[c(1,1)]
+    #dimnames(fit$SigmaKstar) <- dimnames(x)[c(1,1)]
     if (B > 0) {
         BB <- replicate(B, sample(DIM[3L], replace=TRUE))
         A <- as.array(x)
