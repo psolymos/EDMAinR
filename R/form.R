@@ -91,8 +91,6 @@ ncores=getOption("Ncpus", 1L), ...) {
 ## form difference matrix with bootstrap
 edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
     .compare_objects(numerator, denominator)
-    fd <- stack(.formdiff(Meanform(numerator), Meanform(denominator)))
-    b <- .Ttest_fit(numerator, denominator, B=B, ref_denom=ref_denom, mix=mix)
 
     if (B > 0 && (is.null(numerator$boot) || is.null(denominator$boot)))
     stop("B > 0 requires bootstrapped EDMA fit objects")
@@ -100,11 +98,20 @@ edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
         numerator else denominator
     f2 <- if (ref_denom)
         denominator else numerator
-    B <- min(length(f1$boot), length(f2$boot))
-    res <- cbind(.formdiff(Meanform(f1), Meanform(f2)),
-        sapply(seq_len(B), function(i) {
+    Bx <- min(length(f1$boot), length(f2$boot))
+    #if (B > min(length(f1$boot), length(f2$boot)))
+    #    stop(sprintf("B=%s is too large, inputs have %s and %x runs.",
+    #                 B, length(f1$boot), length(f2$boot)))
+
+    res <- cbind(.formdiff(Meanform(f1), Meanform(f2)))
+    if (Bx > 0) {
+        tmp <- sapply(seq_len(Bx), function(i) {
             .formdiff(f1$boot[[i]]$M, f2$boot[[i]]$M)
-        }))
+        })
+        res <- cbind(res, tmp)
+    }
+    fd <- stack(.formdiff(Meanform(numerator), Meanform(denominator)))
+    b <- .Ttest_fit(numerator, denominator, B=B, ref_denom=ref_denom, mix=mix)
 
     out <- list(
         call=match.call(),

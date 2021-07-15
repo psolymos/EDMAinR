@@ -1,3 +1,7 @@
+# Version 0.1-9, 2021-07-15
+
+* Bug fix: FDM methods had issues with B=0.
+
 # Version 0.1-8, 2020-12-19
 
 * Added new function `gpa_fit` to estimate mean form based on GPA.
