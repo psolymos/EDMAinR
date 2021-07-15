@@ -214,8 +214,11 @@ edma_fit <- function(x, B=0, ncores=getOption("Ncpus", 1L)) {
 
 ## this fits GPA or weighted GPA to the 3d array object
 .gpa_fit <- function(A, ..., weighted=FALSE, gpa_results=FALSE) {
-    m <- if (weighted)
-        shapes::procWGPA(A, ...) else shapes::procGPA(A, ...)
+    m <- if (weighted) {
+        shapes::procWGPA(A, distances=FALSE, pcaoutput=FALSE, ...)
+    } else {
+        shapes::procGPA(A, distances=FALSE, pcaoutput=FALSE, ...)
+    }
     m$weighted <- weighted
     #SigmaKstar_hat <- matrix(NA, dim(A)[1L], dim(A)[1L])
     #out <- list(M=M_hat,
