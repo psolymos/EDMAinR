@@ -19,6 +19,7 @@ status](https://ci.appveyor.com/api/projects/status/5y5fwgv90f8i84ck?svg=true)](
 ## Install
 
 ``` r
+if (!require("remotes")) install.packages("remotes")
 remotes::install_github("psolymos/EDMAinR")
 ```
 
