@@ -1,6 +1,10 @@
-# Version 0.1-9, 2021-07-15
+# Version 0.1-9, 2021-07-17
 
 * Bug fix: FDM methods had issues with B=0.
+* Added landmark names to 2D plots, use `labels=TRUE`.
+* 3D plots now preserve XYZ aspect ration of 1.
+* `signif_only=FALSE` allows plotting the top/bottom percentage 
+  of linear distances (edges) in 2D/3D plots.
 
 # Version 0.1-8, 2020-12-19
 

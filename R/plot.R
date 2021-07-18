@@ -121,7 +121,7 @@ plot_edma_colors <- function(n=9, maxq=9) {
 ## rowMeans(sapply(fm[-which], ...) gives error
 .plot_edma_data <- function(x, which=NULL,
 col_chull=NA, col_spec=2, hull=TRUE, level=0.95, segments=51,
-xlim=NULL, ylim=NULL, ...) {
+xlim=NULL, ylim=NULL, labels=FALSE, label_cex=1, label_off=c(0,0), ...) {
     c3 <- edma_colors(3, "diverging")
     if (is.na(col_chull))
         col_chull <- c3[1L]
@@ -158,7 +158,13 @@ xlim=NULL, ylim=NULL, ...) {
       xlim <- lims[,1L]
     if (is.null(ylim))
       ylim <- lims[,2L]
-    plot(pca, pch=3, axes=FALSE, ann=FALSE, xlim=xlim, ylim=ylim, ...)
+    op <- par(xpd=NA)
+    on.exit(par(op))
+    plot(pca, pch=3, axes=FALSE, ann=FALSE, xlim=xlim, ylim=ylim, asp=1, ...)
+    if (labels) {
+      text(pca[,1L]+label_off[1L], pca[,2L]+label_off[2L],
+        labels=landmarks(x), cex=label_cex)
+    }
     for (j in seq_len(K)) {
         ll <- t(sapply(pci[ii], function(z) z[j,]))
         if (hull) {
@@ -218,6 +224,8 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
         xlim <- xlim + c(-0.1, 0.1) * diff(xlim)
         ylim <- range(mds$points[,2L])
         ylim <- ylim + c(-0.1, 0.1) * diff(ylim)
+        op <- par(xpd=NA)
+        on.exit(par(op))
         plot(mds$points, type="p",
             ylim=ylim, xlim=xlim,
             xlab="Axis 1", ylab="Axis 2", main="Ordination", col=col, ...)
@@ -238,7 +246,8 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
     invisible(h)
 }
 
-.plot_specimens_ord2 <- function (x, cex.label=0.6, plot=TRUE, ...) {
+.plot_specimens_ord2 <- function (x, cex.label=0.6, plot=TRUE,
+                                  legend="topleft", ...) {
     xx <- combine_data(
         .get_data(x$numerator),
         .get_data(x$denominator))
@@ -251,18 +260,22 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
         xlim <- xlim + c(-0.1, 0.1) * diff(xlim)
         ylim <- range(mds$points[,2L])
         ylim <- ylim + c(-0.1, 0.1) * diff(ylim)
+        op <- par(xpd=NA)
+        on.exit(par(op))
         plot(mds$points, type="p",
             ylim=ylim, xlim=xlim,
             xlab="Axis 1", ylab="Axis 2", main="Ordination",
             col=g, ...)
         text(mds$points, labels=specimens(xx), cex=cex.label,
             col=g, pos=1)
+        legend(legend, legend=c("Numerator", "Denominator"),
+              pch=1, col=c2, bty="n", horiz=TRUE)
     }
     invisible(list(mds=mds, data=xx))
 }
 
 .plot_specimens_clust2 <- function (x, cex.label=0.6,
-    plot=TRUE, method="ward.D2", ...) {
+    plot=TRUE, method="ward.D2", legend="topleft", ...) {
     xx <- combine_data(
         .get_data(x$numerator),
         .get_data(x$denominator))
@@ -273,6 +286,8 @@ plot_2d.edma_data <- function(x, which=NULL, ...)
     if (plot) {
         plot(as.phylo(h), font=1,
             main="Dendrogram", tip.color=g, cex=cex.label, ...)
+        legend(legend, legend=c("Numerator", "Denominator"),
+              lty=1, col=c2, bty="n", horiz=TRUE)
     }
     invisible(list(hclust=hclust, data=xx))
 }
@@ -459,9 +474,10 @@ cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
             ann=FALSE, axes=FALSE,
             xlab="", ylab="", zlab="",
             radius=V*diff(range(xyz))/50, col=col, ...)
+        rgl::aspect3d("iso")
     } else {
         plot(xyz[,1:2], type="p", axes=FALSE, ann=FALSE,
-            cex=V, pch=pch, col=col, ...)
+            cex=V, pch=pch, col=col, asp=1, ...)
     }
     invisible(xyz)
 }
@@ -480,9 +496,12 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
   Mj <- M[match(d$col, rownames(M)),]
   0.5 * (Mi + Mj)
 }
+
+## q is the % shown, 0.1=10% --> 5% top & 5% bottom
 .plot_d_dm <- function(x, d3=TRUE, pal=NULL, pch=19,
-cex=1, alpha=0.8, all=FALSE,
-midpoints=FALSE, breaks=NULL, ...) {
+cex=1, alpha=0.8, signif_only=TRUE, q=0.1,
+midpoints=FALSE, breaks=NULL,
+labels=FALSE, label_cex=1, ...) {
     if (inherits(x, "edma_fdm")) {
         proto <- if (x$ref_denom)
             x$denominator else x$numerator
@@ -493,6 +512,8 @@ midpoints=FALSE, breaks=NULL, ...) {
     }
     xyz <- if (midpoints)
       .midpoints(proto) else Meanform(proto)
+    all <- !signif_only && q >= 1
+
     if (!d3) {
         if (ncol(xyz) > 2L) {
             xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
@@ -537,6 +558,15 @@ midpoints=FALSE, breaks=NULL, ...) {
     c5 <- edma_colors(5, "diverging", alpha=alpha)
     if (is.null(pal))
         pal <- edma_colors(max(1L, length(v)-1L), "diverging", alpha=alpha)
+    if (!signif_only && !all) {
+        f$cut <- 0
+        iii <- seq_len(nrow(f))
+        iii1 <- round(nrow(f)*q/2)
+        iii2 <- nrow(f) - iii1
+        f$cut[iii <= iii1 & f$dist < 1] <- 1
+        f$cut[iii >= iii2 & f$dist > 1] <- 2
+        pal <- edma_colors(2, "diverging", alpha=alpha)
+    }
     if (d3) {
         requireNamespace("rgl")
         if (midpoints) {
@@ -560,6 +590,7 @@ midpoints=FALSE, breaks=NULL, ...) {
                       lwd=2)
               }
           } else {
+            if (signif_only) {
               for (j in which(fSig & f$cut != 5)) {
                   xyz1 <- rbind(xyz[as.character(f$row[j]),],
                       xyz[as.character(f$col[j]),])
@@ -567,14 +598,28 @@ midpoints=FALSE, breaks=NULL, ...) {
                       col=pal[f$cut[j]],
                       lwd=2)
               }
+            } else {
+              for (j in which(f$cut > 0)) {
+                  xyz1 <- rbind(xyz[as.character(f$row[j]),],
+                      xyz[as.character(f$col[j]),])
+                  rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+                      col=pal[f$cut[j]],
+                      lwd=2)
+              }
+            }
           }
+          if (labels)
+            rgl::text3d(xyz, texts=rownames(xyz), pos=1, cex=label_cex)
         }
+        rgl::aspect3d("iso")
     } else {
+      op <- par(xpd=NA)
+      on.exit(par(op))
       if (midpoints) {
         plot(xyz[,1:2], axes=FALSE, ann=FALSE,
-          col=pal[f$cut], pch=pch, cex=cex)
+          col=pal[f$cut], pch=pch, cex=cex, asp=1)
       } else {
-        plot(xyz[,1:2], type="n", axes=FALSE, ann=FALSE)
+        plot(xyz[,1:2], type="n", axes=FALSE, ann=FALSE, asp=1)
         if (all) {
             segments(
                 x0=xyz[as.character(f$row),1],
@@ -584,6 +629,7 @@ midpoints=FALSE, breaks=NULL, ...) {
                 col=pal[f$cut],
                 lwd=1)
         } else {
+          if (signif_only) {
             for (j in which(fSig)) {
                 xy1 <- xyz[as.character(f$row[j]),1:2]
                 xy2 <- xyz[as.character(f$col[j]),1:2]
@@ -591,8 +637,19 @@ midpoints=FALSE, breaks=NULL, ...) {
                     col=pal[f$cut[j]],
                     lwd=if (f$cut[j] == 5) 0.5 else 2)
             }
+          } else {
+            for (j in which(f$cut > 0)) {
+                xy1 <- xyz[as.character(f$row[j]),1:2]
+                xy2 <- xyz[as.character(f$col[j]),1:2]
+                lines(rbind(xy1, xy2),
+                    col=pal[f$cut[j]],
+                    lwd=if (f$cut[j] == 5) 0.5 else 2)
+            }
+          }
         }
         points(xyz[,1:2], pch=pch, col=s5[icol], cex=cex)
+        if (labels)
+          text(xyz[,1:2], labels=rownames(xyz), pos=1, cex=label_cex)
       }
     }
     invisible(xyz)
