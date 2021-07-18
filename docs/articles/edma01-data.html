@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-9</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -87,8 +87,7 @@
 
       
 
-      </header><script src="edma01-data_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="edma01-data_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="edma01-data_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="edma01-data_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>EDMA data</h1>
@@ -116,7 +115,7 @@
 <p>We can now load the <strong>EDMAinR</strong> package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">EDMAinR</span><span class="op">)</span>
-<span class="co">#&gt; EDMAinR 0.1-7     2020-11-27</span></code></pre></div>
+<span class="co">#&gt; EDMAinR 0.1-9     2021-07-15</span></code></pre></div>
 </div>
 <div id="landmark-data" class="section level1">
 <h1 class="hasAnchor">
@@ -364,7 +363,7 @@
 <p><img src="edma01-data_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p><a href="https://ggplot2-book.org/"><strong>ggplot2</strong></a> is a popular alternative for R’s base graphics. Here is how to create plots with it:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">mds</span><span class="op">$</span><span class="va">points</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">`Axis 1`</span>, y<span class="op">=</span><span class="va">`Axis 2`</span>, label<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_label</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>

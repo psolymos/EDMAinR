@@ -83,7 +83,7 @@ user interface and can be changed any time without warning." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">EDMAinR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1-9</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@ user interface and can be changed any time without warning." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -149,7 +149,8 @@ user interface and can be changed any time without warning.</p>
     </div>
 
     <pre class="usage"><span class='fu'>.edma_fit_np</span><span class='op'>(</span><span class='va'>A</span>, less<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'>.Ttest_data</span><span class='op'>(</span><span class='va'>d1</span>, <span class='va'>d2</span>, ref_denom<span class='op'>=</span><span class='cn'>TRUE</span>, mix<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span></pre>
+<span class='fu'>.Ttest_data</span><span class='op'>(</span><span class='va'>d1</span>, <span class='va'>d2</span>, ref_denom<span class='op'>=</span><span class='cn'>TRUE</span>, mix<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'>.gpa_fit</span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>...</span>, weighted<span class='op'>=</span><span class='cn'>FALSE</span>, gpa_results<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,6 +158,14 @@ user interface and can be changed any time without warning.</p>
     <tr>
       <th>A</th>
       <td><p>landmark data as an array (i.e. <code><a href='https://rdrr.io/r/base/array.html'>as.array(x)</a></code>).</p></td>
+    </tr>
+    <tr>
+      <th>weighted</th>
+      <td><p>use <code><a href='https://rdrr.io/pkg/shapes/man/procWGPA.html'>shapes::procWGPA</a></code> instead of <code><a href='https://rdrr.io/pkg/shapes/man/procGPA.html'>shapes::procGPA</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>gpa_results</th>
+      <td><p>return GPA results.</p></td>
     </tr>
     <tr>
       <th>less</th>
