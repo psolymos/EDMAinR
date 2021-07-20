@@ -501,17 +501,21 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
 .plot_d_dm <- function(x, d3=TRUE, pal=NULL, pch=19,
 cex=1, alpha=0.8, signif_only=TRUE, q=0.1,
 midpoints=FALSE, breaks=NULL,
-labels=FALSE, label_cex=1, ...) {
-    if (inherits(x, "edma_fdm")) {
-        proto <- if (x$ref_denom)
-            x$denominator else x$numerator
+labels=FALSE, label_cex=1, proto=NULL, ...) {
+    if (is.null(proto)) {
+        if (inherits(x, "edma_fdm")) {
+            proto <- if (x$ref_denom)
+                x$denominator else x$numerator
+        }
+        if (inherits(x, "edma_gdm")) {
+            proto <- if (x$ref_denom)
+                x$a1 else x$a2
+        }
+        xyz <- if (midpoints)
+          .midpoints(proto) else Meanform(proto)
+    } else {
+        xyz <- proto
     }
-    if (inherits(x, "edma_gdm")) {
-        proto <- if (x$ref_denom)
-            x$a1 else x$a2
-    }
-    xyz <- if (midpoints)
-      .midpoints(proto) else Meanform(proto)
     all <- !signif_only && q >= 1
 
     if (!d3) {

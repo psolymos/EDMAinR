@@ -1,4 +1,4 @@
-# Version 0.1-9, 2021-07-17
+# Version 0.1-10, 2021-07-19
 
 * Bug fix: FDM methods had issues with B=0.
 * Added landmark names to 2D plots, use `labels=TRUE`.
