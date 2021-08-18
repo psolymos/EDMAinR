@@ -39,9 +39,10 @@ edma_report <- function(numerator, denominator, output="edma_output.txt",
         Meanform(DENOMINATOR_FIT))
     TV <- Tobs_test(FDM)
     CI1 <- get_fdm(FDM, level=level, sort=FALSE)
-    colnames(CI1) <- c("", "", "Estimate", "Low", "High")
     CI2 <- get_fdm(FDM, level=level, sort=TRUE)
+    colnames(CI1) <- c("", "", "Estimate", "Low", "High")
     colnames(CI2) <- c("", "", "Estimate", "Low", "High")
+
     h <- hist(c(TV$statistic, TV$Tvals), plot=FALSE)
     MX <- 50
     NN <- round(MX * h$counts / max(h$counts))
@@ -141,15 +142,25 @@ edma_report <- function(numerator, denominator, output="edma_output.txt",
         "Sorted form-difference matrix:",
         ""
     )
-    print(CI2[CI2$Low > 1 & CI2$High > 1,], digits=4,
-        row.names=FALSE, right=FALSE)
-    Cat("")
-    print(CI2[CI2$Low < 1 & CI2$High > 1,], digits=4,
-        row.names=FALSE, right=FALSE)
-    Cat("")
     print(CI2[CI2$Low < 1 & CI2$High < 1,], digits=4,
         row.names=FALSE, right=FALSE)
     Cat("")
+    print(CI2[CI2$Low <= 1 & CI2$High >= 1,], digits=4,
+        row.names=FALSE, right=FALSE)
+    Cat("")
+    print(CI2[CI2$Low > 1 & CI2$High > 1,], digits=4,
+        row.names=FALSE, right=FALSE)
+    Cat("")
 
-    invisible(NULL)
+    out <- list(
+        NUMERATOR_FIT=NUMERATOR_FIT,
+        DENOMINATOR_FIT=DENOMINATOR_FIT,
+        FDM=FDM,
+        TV=TV,
+        CI1=CI1,
+        CI2=CI2,
+        STEM=STEM
+    )
+    invisible(out)
 }
+

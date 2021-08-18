@@ -1,6 +1,8 @@
 # Version 0.1-11, 2021-08-17
 
 * Added `edma_report()` to reproduce WinEDMA output.
+* Fixed CI calculation: `ref_denom` argument should not flip
+  numerator and denominator.
 
 # Version 0.1-10, 2021-07-19
 

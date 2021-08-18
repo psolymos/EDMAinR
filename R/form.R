@@ -103,10 +103,10 @@ edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
     #    stop(sprintf("B=%s is too large, inputs have %s and %x runs.",
     #                 B, length(f1$boot), length(f2$boot)))
 
-    res <- cbind(.formdiff(Meanform(f1), Meanform(f2)))
+    res <- cbind(.formdiff(Meanform(numerator), Meanform(denominator)))
     if (Bx > 0) {
         tmp <- sapply(seq_len(Bx), function(i) {
-            .formdiff(f1$boot[[i]]$M, f2$boot[[i]]$M)
+            .formdiff(numerator$boot[[i]]$M, denominator$boot[[i]]$M)
         })
         res <- cbind(res, tmp)
     }
