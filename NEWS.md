@@ -1,3 +1,7 @@
+# Version 0.1-11, 2021-08-17
+
+* Added `edma_report()` to reproduce WinEDMA output.
+
 # Version 0.1-10, 2021-07-19
 
 * Bug fix: FDM methods had issues with B=0.
@@ -23,7 +27,7 @@
 * CI calculation (local FDM, GM, GDM, SDM testing) calculations use
   2-sample bootstrap.
 * Global FDM, GM, GDM testing (T-test) uses the mixed or the reference
-  bootstrap, globel Z-test for FDM is based on 2-sample bootstrap.
+  bootstrap, global Z-test for FDM is based on 2-sample bootstrap.
 
 # Version 0.1-4, 2020-08-23
 

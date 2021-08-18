@@ -8,7 +8,8 @@ export(
     "edma_sdm",
     "edma_gm",
     "edma_gdm",
-    "gpa_fit"
+    "gpa_fit",
+    "edma_report"
 #    "SigmaK_fit",
 #    "read_pattern",
 #    "make_Sigma"
