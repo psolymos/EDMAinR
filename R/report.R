@@ -21,6 +21,12 @@ edma_report <- function(numerator, denominator, output="edma_output.txt",
         print(mat, digits=digits, zero.print = "", ...)
     }
 
+    NUMERATOR_FILE <- is.character(numerator)
+    DENOMINATOR_FILE <- is.character(denominator)
+    NUMERATOR_LAB <- if (is.character(numerator))
+            numerator else deparse(substitute(numerator))
+    DENOMINATOR_LAB <- if (is.character(denominator))
+            denominator else deparse(substitute(denominator))
     NUMERATOR_XYZ <- read_fn(numerator)
     DENOMINATOR_XYZ <- read_fn(denominator)
     .compare_data(NUMERATOR_XYZ, DENOMINATOR_XYZ)
@@ -66,9 +72,13 @@ edma_report <- function(numerator, denominator, output="edma_output.txt",
         "",
         paste0("NUMERATOR: ", NUMERATOR_XYZ$name),
         paste0("Number of specimens: ", dim(NUMERATOR_FIT)[3]),
+        paste0(if (NUMERATOR_FILE) "Input file: " else "Input object: ",
+            NUMERATOR_LAB),
         "",
         paste0("DENOMINATOR: ", DENOMINATOR_FIT$name),
         paste0("Number of specimens: ", dim(DENOMINATOR_FIT)[3]),
+        paste0(if (DENOMINATOR_FILE) "Input file: " else "Input object: ",
+            DENOMINATOR_LAB),
         "",
         paste0("Number of landmarks: ", dim(NUMERATOR_FIT)[1]),
         paste0("Number of dimensions:  ", dim(NUMERATOR_FIT)[2]),
@@ -142,17 +152,33 @@ edma_report <- function(numerator, denominator, output="edma_output.txt",
         "Sorted form-difference matrix:",
         ""
     )
+    print(CI2, digits=4, row.names=FALSE, right=FALSE)
+    Cat(
+        "",
+        "Significant form differences < 1:",
+        ""
+    )
     print(CI2[CI2$Low < 1 & CI2$High < 1,], digits=4,
         row.names=FALSE, right=FALSE)
-    Cat("")
+    Cat(
+        "",
+        "Non-significant form differences:",
+        ""
+    )
     print(CI2[CI2$Low <= 1 & CI2$High >= 1,], digits=4,
         row.names=FALSE, right=FALSE)
-    Cat("")
+    Cat(
+        "",
+        "Significant form differences > 1:",
+        ""
+    )
     print(CI2[CI2$Low > 1 & CI2$High > 1,], digits=4,
         row.names=FALSE, right=FALSE)
     Cat("")
 
     out <- list(
+        NUMERATOR_LAB=NUMERATOR_LAB,
+        DENOMINATOR_LAB=DENOMINATOR_LAB,
         NUMERATOR_FIT=NUMERATOR_FIT,
         DENOMINATOR_FIT=DENOMINATOR_FIT,
         FDM=FDM,
