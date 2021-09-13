@@ -156,14 +156,24 @@ print.edma_fdm <- function(x, ...) {
 
 ## this pulls out the stacked form difference matrix
 get_fdm <- function (object, ...) UseMethod("get_fdm")
+
 get_fdm.edma_fdm <- function (object, sort=FALSE,
-level = 0.95, ...) {
+level = 0.95, what = "all", ...) {
+    what <- match.arg(what, c("all", "less", "greater", "signif", "nonsignif"))
     out <- object$dm
     ci <- confint(object, level=level)
     out$lower <- ci[,1L]
     out$upper <- ci[,2L]
     if (sort)
         out <- out[order(out$dist, ...),]
+    if (what == "less")
+        out <- out[out$lower < 1 & out$upper < 1,]
+    if (what == "greater")
+        out <- out[out$lower > 1 & out$upper > 1,]
+    if (what == "nonsignif")
+        out <- out[out$lower < 1 & out$upper > 1,]
+    if (what == "signif")
+        out <- out[!(out$lower < 1 & out$upper > 1),]
     class(out) <- c("fdm", class(out))
     attr(out, "level") <- level
     out

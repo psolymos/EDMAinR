@@ -25,11 +25,13 @@ Lele and Richtsmeier (1992, 1995).
 \usage{
 edma_gm(a1, a2, ...)
 get_gm(object, ...)
-\method{get_gm}{edma_gm}(object, sort=FALSE, level=0.95, ...)
+\method{get_gm}{edma_gm}(object, sort=FALSE, level=0.95,
+    what="all", ...)
 
 edma_gdm(a1, a2, b1, b2, ...)
 get_gdm(object, ...)
-\method{get_gdm}{edma_gdm}(object, sort=FALSE, level=0.95, ...)
+\method{get_gdm}{edma_gdm}(object, sort=FALSE, level=0.95,
+    what="all", ...)
 
 \method{print}{edma_gm}(x, ...)
 \method{print}{edma_gdm}(x, ...)
@@ -53,6 +55,10 @@ logical, if stacked distances are to be sorted, see Examples.
 }
   \item{level}{
 numeric, between 0 and 1, alpha level for confidence interval.
+}
+  \item{what}{
+what part of the ford differences to return: \code{"all"}, \code{"less"} or
+\code{"greater"} than 1, \code{"signif"} or \code{"nonsignif"}.
 }
   \item{\dots}{
 other arguments passed to \code{\link{edma_fdm}},

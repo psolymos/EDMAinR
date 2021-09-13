@@ -36,7 +36,8 @@ get_influence(object, ...)
 \method{plot}{edma_influence}(x, ...)
 
 get_fdm(object, ...)
-\method{get_fdm}{edma_fdm}(object, sort=FALSE, level=0.95, ...)
+\method{get_fdm}{edma_fdm}(object, sort=FALSE, level=0.95,
+    what="all", ...)
 Tobs_test(object, ...)
 \method{Tobs_test}{edma_fdm}(object, ...)
 \method{confint}{edma_dm}(object, parm, level=0.95, ...)
@@ -86,6 +87,10 @@ numeric, between 0 and 1, alpha level for confidence interval.
 a specification of which parameters are to be given
 confidence intervals, either a vector of numbers or a vector of names.
 See \code{\link{confint}}.
+}
+  \item{what}{
+what part of the ford differences to return: \code{"all"}, \code{"less"} or
+\code{"greater"} than 1, \code{"signif"} or \code{"nonsignif"}.
 }
   \item{\dots}{
 other arguments passed to methods.
