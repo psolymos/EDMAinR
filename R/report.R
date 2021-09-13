@@ -3,6 +3,9 @@ edma_report <- function(numerator, denominator, output="edma_output.txt",
     landmarks=NULL, B=0, level=0.95, ref_denom=TRUE, mix=FALSE,
     digits=4) {
 
+    o0 <- options(max.print=99999)
+    on.exit(options(o0), add=TRUE)
+
     read_fn <- function(x) {
         if (is.character(x)) {
             x <- read_xyz(x)
