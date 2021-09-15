@@ -497,8 +497,124 @@ plot_3d.edma_fit <- function(x, ...) .plot_d_data(x, d3=TRUE, ...)
   0.5 * (Mi + Mj)
 }
 
-## q is the % shown, 0.1=10% --> 5% top & 5% bottom
 .plot_d_dm <- function(x, d3=TRUE, pal=NULL, pch=19,
+cex=1, alpha=0.8, signif_only=FALSE, q=0.1,
+labels=FALSE, label_cex=1, proto=NULL, level = 0.95, ...) {
+    if (is.null(proto)) {
+        if (inherits(x, "edma_fdm")) {
+            proto <- if (x$ref_denom)
+                x$denominator else x$numerator
+        }
+        if (inherits(x, "edma_gdm")) {
+            proto <- if (x$ref_denom)
+                x$a1 else x$a2
+        }
+        xyz <- Meanform(proto)
+    } else {
+        xyz <- proto
+    }
+
+    if (!d3) {
+        if (ncol(xyz) > 2L) {
+            xyz[,1:2] <- cmdscale(dist(xyz), k=2, add=TRUE)$points
+            xyz <- xyz[,1:2]
+        }
+    }
+    ## landmarks
+    i <- get_influence(x)
+    td <- attr(i, "Tval") - i$Tdrop
+    td <- td/max(td)
+    icol <- cut(td, seq(0, 1, 0.25), labels=FALSE) + 1L
+    icol[is.na(icol)] <- 1L
+
+    ## pairwise distances
+    #f <- get_fdm(x, level=level, sort=TRUE)
+    f <- x$dm
+    ci <- confint(x, level=level)
+    f$lower <- ci[,1L]
+    f$upper <- ci[,2L]
+    f <- f[order(f$dist),]
+    ## pairwise distances: significance
+    f$sign <- 0
+    f$sign[f$lower < 1 & f$upper < 1] <- -1
+    f$sign[f$lower > 1 & f$upper > 1] <- 1
+    ## pairwise distances: colors
+    f$lcol <- 1 - ifelse(f$dist < 1, f$dist, 1/f$dist)
+    f$lcol[f$dist < 1] <- -f$lcol[f$dist < 1]
+    f$lcol[f$dist > 1] <- f$lcol[f$dist > 1] / max(f$lcol[f$dist > 1])
+    f$lcol[f$dist < 1] <- f$lcol[f$dist < 1] / abs(min(f$lcol[f$dist < 1]))
+    f$lcol <- round(5 * f$lcol) + 6
+    f$lcol[f$lcol <= 1] <- 1
+    f$lcol[f$lcol >= 11] <- 11
+    ## quantiles
+    f$quant <- (seq_len(nrow(f))-0.5)/nrow(f)
+
+    s5 <- edma_colors(5, "sequential", alpha=alpha)
+    c5 <- edma_colors(5, "diverging", alpha=alpha)
+    pal <- edma_colors(11, "diverging", alpha=alpha)
+
+    lo <- f[f$dist < 1,,drop=FALSE]
+    hi <- f[f$dist >= 1,,drop=FALSE]
+    lo <- lo[lo$quant <= q/2,,drop=FALSE]
+    hi <- hi[hi$quant >= 1-q/2,,drop=FALSE]
+    if (signif_only) {
+      lo <- lo[lo$sign < 0,,drop=FALSE]
+      hi <- hi[hi$sign > 0,,drop=FALSE]
+    }
+
+    if (d3) {
+        requireNamespace("rgl")
+        rgl::plot3d(xyz[,1L], xyz[,2L], xyz[,3L],
+            type="s",
+            ann=FALSE, axes=FALSE,
+            xlab="", ylab="", zlab="",
+            col=s5[icol], radius=0.1*cex)
+        for (j in seq_len(nrow(lo))) {
+            xyz1 <- rbind(xyz[as.character(lo$row[j]),],
+                xyz[as.character(lo$col[j]),])
+            rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+                col=pal[lo$lcol[j]],
+                lwd=2)
+        }
+        for (j in seq_len(nrow(hi))) {
+            xyz1 <- rbind(xyz[as.character(hi$row[j]),],
+                xyz[as.character(hi$col[j]),])
+            rgl::lines3d(xyz1[,1L], xyz1[,2L], xyz1[,3L],
+                col=pal[hi$lcol[j]],
+                lwd=2)
+        }
+        if (labels)
+            rgl::text3d(xyz, texts=rownames(xyz), pos=1, cex=label_cex)
+        rgl::aspect3d("iso")
+    } else {
+        op <- par(xpd=NA)
+        on.exit(par(op))
+        plot(xyz[,1:2], type="n", axes=FALSE, ann=FALSE, asp=1)
+        segments(
+            x0=xyz[as.character(lo$row),1],
+            y0=xyz[as.character(lo$row),2],
+            x1=xyz[as.character(lo$col),1],
+            y1=xyz[as.character(lo$col),2],
+            col=pal[lo$lcol],
+            lwd=1)
+        segments(
+            x0=xyz[as.character(hi$row),1],
+            y0=xyz[as.character(hi$row),2],
+            x1=xyz[as.character(hi$col),1],
+            y1=xyz[as.character(hi$col),2],
+            col=pal[hi$lcol],
+            lwd=1)
+        points(xyz[,1:2], pch=pch, col=s5[icol], cex=cex)
+        if (labels)
+            text(xyz[,1:2], labels=rownames(xyz), pos=1, cex=label_cex)
+    }
+    invisible(xyz)
+}
+
+
+## this version messes up the colors
+## q is the % shown, 0.1=10% --> 5% top & 5% bottom
+.plot_d_dm_old <- function(x, d3=TRUE, pal=NULL, pch=19,
 cex=1, alpha=0.8, signif_only=TRUE, q=0.1,
 midpoints=FALSE, breaks=NULL,
 labels=FALSE, label_cex=1, proto=NULL, ...) {

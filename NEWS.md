@@ -3,6 +3,7 @@
 * Added `edma_report()` to reproduce WinEDMA output.
 * Fixed CI calculation: `ref_denom` argument should not flip
   numerator and denominator.
+* 2D and 3D plot revised to color edges and label landmarks.
 
 # Version 0.1-10, 2021-07-19
 
