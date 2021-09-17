@@ -438,7 +438,8 @@ plot_ci.edma_sdm <- function(x, ...)
 ## 2D and 3D plots
 
 .plot_d_data <- function(proto, d3=TRUE,
-cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
+cex=NULL, pch=19, col=NULL, alpha=0.8,
+labels=FALSE, label_cex=1, ...) {
     xyz <- Meanform(proto)
     if (!d3) {
         if (ncol(xyz) > 2L) {
@@ -474,6 +475,8 @@ cex=NULL, pch=19, col=NULL, alpha=0.8, ...) {
             ann=FALSE, axes=FALSE,
             xlab="", ylab="", zlab="",
             radius=V*diff(range(xyz))/50, col=col, ...)
+        if (labels)
+            rgl::text3d(xyz, texts=rownames(xyz), pos=1, cex=label_cex)
         rgl::aspect3d("iso")
     } else {
         plot(xyz[,1:2], type="p", axes=FALSE, ann=FALSE,
