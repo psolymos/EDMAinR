@@ -1,5 +1,5 @@
-## report
-edma_report <- function(numerator, denominator, output="edma_output.txt",
+## FDM report
+edma_fdm_report <- function(numerator, denominator, output="edma_output.txt",
     landmarks=NULL, B=0, level=0.95, ref_denom=TRUE, mix=FALSE,
     digits=4) {
 
@@ -57,8 +57,9 @@ edma_report <- function(numerator, denominator, output="edma_output.txt",
     NN <- round(MX * h$counts / max(h$counts))
     ST <- sapply(NN, function(z) paste0(rep("*", z), collapse=""))
     ii <- which.min(abs(TV$statistic-h$mids))
-    ST[ii] <- paste0(substr(ST[ii], 1, nchar(ST[ii])-1), "T")
-    STEM <- paste0("  ", format(h$mids), "  |", ST)
+    #ST[ii] <- paste0(substr(ST[ii], 1, nchar(ST[ii])-1), "T")
+    STEM <- paste0("  ", format(h$mids), "   |", ST)
+    STEM[ii] <- gsub("   |", "  T|", STEM[ii], fixed=TRUE)
     ver <- read.dcf(file=system.file("DESCRIPTION", package="EDMAinR"),
         fields=c("Version", "Date"))
 

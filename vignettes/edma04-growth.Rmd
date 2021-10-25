@@ -19,7 +19,7 @@ set.seed(429)
 # Introduction
 
 This tutorial explains how to calculate growth matrix based
-on 2 EDMA data objects with homologous landmarks.
+on 4 EDMA data objects with homologous landmarks.
 
 We will use data sets where landmarks were measured on specimens
 of 2 different ages (E17.5 embryonic and newborn mice), 

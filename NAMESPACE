@@ -9,7 +9,7 @@ export(
     "edma_gm",
     "edma_gdm",
     "gpa_fit",
-    "edma_report"
+    "edma_fdm_report"
 #    "SigmaK_fit",
 #    "read_pattern",
 #    "make_Sigma"
