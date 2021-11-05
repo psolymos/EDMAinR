@@ -1,5 +1,6 @@
 \name{report}
-\alias{edma_report}
+\alias{edma_fdm_report}
+\alias{edma_gdm_report}
 \title{
 EDMA Report
 }
@@ -7,12 +8,17 @@ EDMA Report
 Writes output into a text file following close the WinEDMA implementation.
 }
 \usage{
-edma_report(numerator, denominator, output="edma_output.txt",
+edma_fdm_report(numerator, denominator, output="edma_output.txt",
   landmarks=NULL, B=0, level=0.95, ref_denom=TRUE, mix=FALSE,
   digits=4)
+
+edma_gdm_report(numerator_yng, numerator_old,
+    denominator_yng, denominator_old, output="edma_output.txt",
+    landmarks=NULL, B=0, level=0.95, ref_denom=TRUE, mix=FALSE,
+    digits=4)
 }
 \arguments{
-  \item{numerator, denominator}{
+  \item{numerator, denominator, numerator_yng, numerator_old, denominator_yng, denominator_old}{
 input file names or EDMA data objects.
 }
   \item{output}{
@@ -44,7 +50,7 @@ significant digits to print.
 \examples{
 \dontrun{
 
-edma_report(
+edma_fdm_report(
     numerator = system.file(
         "extdata/crouzon/Crouzon_P0_Global_NON-MUT.xyz",
         package="EDMAinR"),

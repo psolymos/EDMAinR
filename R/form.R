@@ -130,7 +130,7 @@ edma_fdm <- function(numerator, denominator, B=0, ref_denom=TRUE, mix=FALSE) {
 ## this is an internal function for printing similar objects
 ## FDM, GM
 .print_edma_fdm <- function(x, title="EDMA", truncate=20, ...) {
-    H <- Tobs_test(x)
+    H <- global_test(x)
     if (x$B) {
         fp <- format.pval(H$p.value)
         fp <- if (substr(fp, 1L, 1L) == "<")
@@ -180,8 +180,8 @@ level = 0.95, what = "all", ...) {
 }
 
 ## T-test for 2 edma_fit objects
-Tobs_test <- function (object, ...) UseMethod("Tobs_test")
-.Tobs_test <- function (object, DNAME="", ...) {
+global_test <- function (object, ...) UseMethod("global_test")
+.global_test <- function (object, DNAME="", ...) {
     METHOD <- if (attr(object$boot, "mix"))
         "Mixed bootstrap based EDMA T-test" else "Bootstrap based EDMA T-test"
     Tval <- attr(object$boot, "Tval")
@@ -195,8 +195,8 @@ Tobs_test <- function (object, ...) UseMethod("Tobs_test")
     class(out) <- c("edma_Ttest", "edma_test", "htest")
     out
 }
-Tobs_test.edma_fdm <- function (object, ...)
-    .Tobs_test(object, DNAME="form difference matrix", ...)
+global_test.edma_fdm <- function (object, ...)
+    .global_test(object, DNAME="form difference matrix", ...)
 
 ## CI based on the 2x input object boot sample
 confint.edma_dm <- function (object, parm, level=0.95, ...) {
@@ -249,7 +249,7 @@ get_influence <- function (object, ...) UseMethod("get_influence")
 get_influence.edma_dm <- function (object, level=0.95, ...) {
     quick <- TRUE
     ls <- landmarks(object)
-    Tval <- Tobs_test(object)$statistic
+    Tval <- global_test(object)$statistic
     Tvals <- if (quick) {
         t(sapply(ls, .influence,
             object=object, quick=quick, level=level))

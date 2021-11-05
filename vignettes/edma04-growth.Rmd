@@ -19,7 +19,7 @@ set.seed(429)
 # Introduction
 
 This tutorial explains how to calculate growth matrix based
-on 2 EDMA data objects with homologous landmarks.
+on 4 EDMA data objects with homologous landmarks.
 
 We will use data sets where landmarks were measured on specimens
 of 2 different ages (E17.5 embryonic and newborn mice), 
@@ -71,7 +71,7 @@ gm
 The global testing is explained on the form difference page:
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
-Tobs_test(gm)
+global_test(gm)
 plot_Ttest(gm)
 ```
 
@@ -179,7 +179,7 @@ and the younger sample (embryonic) in the denominator spot
 gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_b1, b2=fit_b2, B=25)
 gdm
 
-Tobs_test(gdm)
+global_test(gdm)
 plot_Ttest(gdm)
 plot_ci(gdm)
 
