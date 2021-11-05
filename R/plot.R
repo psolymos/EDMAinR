@@ -349,7 +349,7 @@ plot_clust.edma_gdm <- function(x, ...) .plot_specimens_clust4(x, ...)
 
 plot_Ttest.edma_dm <- function(x, ...) {
     c5 <- edma_colors(5, "diverging")
-    z <- .Tobs_test(x)
+    z <- .global_test(x)
     hist(z$Tvals, xlab="Tobs values", main="",
         col=c5[2L], border=c5[1L],
         xlim=range(c(z$statistic, z$Tvals)), ...)

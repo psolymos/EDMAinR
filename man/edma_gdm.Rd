@@ -3,8 +3,8 @@
 \alias{edma_gdm}
 \alias{print.edma_gm}
 \alias{print.edma_gdm}
-\alias{Tobs_test.edma_gm}
-\alias{Tobs_test.edma_gdm}
+\alias{global_test.edma_gm}
+\alias{global_test.edma_gdm}
 \alias{plot_ci.edma_gm}
 \alias{plot_ci.edma_gdm}
 \alias{get_gm}
@@ -35,8 +35,8 @@ get_gdm(object, ...)
 
 \method{print}{edma_gm}(x, ...)
 \method{print}{edma_gdm}(x, ...)
-\method{Tobs_test}{edma_gm}(object, ...)
-\method{Tobs_test}{edma_gdm}(object, ...)
+\method{global_test}{edma_gm}(object, ...)
+\method{global_test}{edma_gdm}(object, ...)
 \method{landmarks}{edma_gdm}(x, ...)
 \method{dimensions}{edma_gdm}(x, ...)
 
@@ -132,7 +132,7 @@ fit_a2 <- edma_fit(a2, B=10)
 
 gm <- edma_gm(a1=fit_a1, a2=fit_a2, B=10)
 gm
-Tobs_test(gm)
+global_test(gm)
 head(confint(gm))
 head(get_gm(gm))
 head(get_gm(gm, sort=TRUE, decreasing=TRUE))
@@ -163,7 +163,7 @@ fit_b2 <- edma_fit(b2, B=10)
 
 gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_b1, b2=fit_b2, B=10)
 gdm
-Tobs_test(gdm)
+global_test(gdm)
 head(confint(gdm))
 head(get_gdm(gdm))
 head(get_gdm(gdm, sort=TRUE, decreasing=TRUE))

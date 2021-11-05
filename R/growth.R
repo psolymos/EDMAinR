@@ -48,10 +48,10 @@ print.edma_gdm <- function(x, ...) {
     .print_edma_fdm(x, "EDMA growth difference matrix", ...)
 }
 
-Tobs_test.edma_gm <- function (object, ...)
-    .Tobs_test(object, DNAME="growth matrix", ...)
-Tobs_test.edma_gdm <- function (object, ...)
-    .Tobs_test(object, DNAME="growth difference matrix", ...)
+global_test.edma_gm <- function (object, ...)
+    .global_test(object, DNAME="growth matrix", ...)
+global_test.edma_gdm <- function (object, ...)
+    .global_test(object, DNAME="growth difference matrix", ...)
 
 get_gm <- function (object, ...) UseMethod("get_gm")
 get_gm.edma_gm <- get_fdm.edma_fdm

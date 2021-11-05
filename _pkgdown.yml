@@ -1,4 +1,5 @@
 template:
+  bootstrap: 5
   params:
     bootswatch: cosmo
     ganalytics: UA-55877016-2

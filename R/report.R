@@ -45,7 +45,7 @@ edma_fdm_report <- function(numerator, denominator, output="edma_output.txt",
     Dis <- .formdiff(
         Meanform(NUMERATOR_FIT),
         Meanform(DENOMINATOR_FIT))
-    TV <- Tobs_test(FDM)
+    TV <- global_test(FDM)
     CI1 <- get_fdm(FDM, level=level, sort=FALSE)
     CI2 <- get_fdm(FDM, level=level, sort=TRUE)
     colnames(CI1) <- c("", "", "Estimate", "Low", "High")
@@ -272,7 +272,7 @@ edma_gdm_report <- function(numerator_yng, numerator_old,
         Meanform(DENOMINATOR_YNG_FIT))
     ## GDM = (old_num/yng_num) / (old_den/yng_den)
     Dis <- Dis_NUM / Dis_DEN
-    TV <- Tobs_test(GDM)
+    TV <- global_test(GDM)
     CI1 <- get_gdm(GDM, level=level, sort=FALSE)
     CI2 <- get_gdm(GDM, level=level, sort=TRUE)
     colnames(CI1) <- c("", "", "Estimate", "Low", "High")

@@ -5,8 +5,8 @@
 \alias{get_fdm}
 \alias{get_influence.edma_dm}
 \alias{print.edma_fdm}
-\alias{Tobs_test}
-\alias{Tobs_test.edma_fdm}
+\alias{global_test}
+\alias{global_test.edma_fdm}
 \alias{get_fdm.edma_fdm}
 \alias{landmarks.edma_fdm}
 \alias{dimensions.edma_fdm}
@@ -38,8 +38,8 @@ get_influence(object, ...)
 get_fdm(object, ...)
 \method{get_fdm}{edma_fdm}(object, sort=FALSE, level=0.95,
     what="all", ...)
-Tobs_test(object, ...)
-\method{Tobs_test}{edma_fdm}(object, ...)
+global_test(object, ...)
+\method{global_test}{edma_fdm}(object, ...)
 \method{confint}{edma_dm}(object, parm, level=0.95, ...)
 
 \method{print}{edma_fdm}(x, ...)
@@ -118,7 +118,7 @@ The T-statistic is based on the pairwise distanced in the FM,
 taking the max/min of the distances. Confidence intervals for local testing
 (via \code{confint}, \code{get_fdm}, and \code{plot_ci})
 and T-test for global testing
-(via \code{Tobs_test}, and \code{plot_Ttest})
+(via \code{global_test}, and \code{plot_Ttest})
 is based on the observed T-statistic and the bootstrap distribution.
 
 The global testing algorithm is as follows:
@@ -153,7 +153,7 @@ confidence intervals.
 \code{get_influence} extracts landmark influence information,
 the plot method visualizes this.
 
-\code{Tobs_test} presents the global T-test,
+\code{global_test} presents the global T-test,
 the bootstrap distribution and observed T-value is
 visualized by \code{plot_Ttest}.
 
@@ -214,8 +214,8 @@ head(get_fdm(fdm))
 head(get_fdm(fdm, sort=TRUE, decreasing=TRUE))
 head(get_fdm(fdm, sort=TRUE, decreasing=FALSE))
 
-Tobs_test(fdm)
-Tobs_test(fdm2)
+global_test(fdm)
+global_test(fdm2)
 
 head(confint(fdm))
 

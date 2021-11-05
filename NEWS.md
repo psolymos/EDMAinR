@@ -1,6 +1,7 @@
 # Version 0.2-0, 2021-11-04
 
 * Separate `edma_fdm_report` and `edma_gdm_report` functions.
+* Renaming `Tobs_*` functions to `global_*` to avoid confusion with T-test.
 * Updated documentation.
 
 # Version 0.1-11, 2021-08-17
