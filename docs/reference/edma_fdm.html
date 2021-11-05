@@ -87,7 +87,7 @@ Lele and Richtsmeier (1992, 1995).</p>
 <span class="fu"><a href="edma_data.html">dimensions</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="fu">plot_ci</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-<span class="fu">plot_Ttest</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+<span class="fu">plot_test</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 <span class="co"># S3 method for edma_dm</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 <span class="co"># S3 method for edma_dm</span>
@@ -95,7 +95,7 @@ Lele and Richtsmeier (1992, 1995).</p>
 <span class="co"># S3 method for edma_dm</span>
 <span class="fu"><a href="edma_fit.html">plot_3d</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 <span class="co"># S3 method for edma_dm</span>
-<span class="fu">plot_Ttest</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+<span class="fu">plot_test</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 <span class="co"># S3 method for edma_fdm</span>
 <span class="fu">plot_ci</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
 <span class="co"># S3 method for edma_fdm</span>
@@ -156,7 +156,7 @@ and the bootstrap FMs from the other non-reference object
 taking the max/min of the distances. Confidence intervals for local testing
 (via <code>confint</code>, <code>get_fdm</code>, and <code>plot_ci</code>)
 and T-test for global testing
-(via <code>global_test</code>, and <code>plot_Ttest</code>)
+(via <code>global_test</code>, and <code>plot_test</code>)
 is based on the observed T-statistic and the bootstrap distribution.</p>
 <p>The global testing algorithm is as follows:
 Suppose population 1 is the 'reference' population.
@@ -188,7 +188,7 @@ confidence intervals.
 the plot method visualizes this.
 <code>global_test</code> presents the global T-test,
 the bootstrap distribution and observed T-value is
-visualized by <code>plot_Ttest</code>.
+visualized by <code>plot_test</code>.
 <code>plot</code> and <code>plot_2d</code> produces a 2D plot of the mean form
 from the reference object ('prototype').
 <code>plot_3d</code> use the rgl package to make a 3D plot using the same
@@ -316,7 +316,7 @@ Joan T. Richtsmeier</p>
 <span class="r-plt img"><img src="edma_fdm-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu"><a href="edma_data.html">plot_clust</a></span><span class="op">(</span><span class="va">fdm</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="edma_fdm-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_Ttest</span><span class="op">(</span><span class="va">fdm</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">plot_test</span><span class="op">(</span><span class="va">fdm</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="edma_fdm-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plot_ci</span><span class="op">(</span><span class="va">fdm</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="edma_fdm-5.png" alt="" width="700" height="433"></span>

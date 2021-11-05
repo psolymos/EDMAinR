@@ -192,7 +192,7 @@ global_test <- function (object, ...) UseMethod("global_test")
     out <- list(statistic = Tval[1L], parameter = PARAMETER,
         p.value = if (PARAMETER > 0) PVAL else NA,
         method = METHOD, data.name = DNAME, Tvals=Tval[-1L])
-    class(out) <- c("edma_Ttest", "edma_test", "htest")
+    class(out) <- c("edma_test", "edma_test", "htest")
     out
 }
 global_test.edma_fdm <- function (object, ...)

@@ -14,8 +14,8 @@
 \alias{plot_2d.edma_dm}
 \alias{plot_3d.edma_dm}
 \alias{plot_ci}
-\alias{plot_Ttest}
-\alias{plot_Ttest.edma_dm}
+\alias{plot_test}
+\alias{plot_test.edma_dm}
 \alias{plot_ord.edma_fdm}
 \alias{plot_clust.edma_fdm}
 \alias{plot_ci.edma_fdm}
@@ -47,11 +47,11 @@ global_test(object, ...)
 \method{dimensions}{edma_fdm}(x, ...)
 
 plot_ci(x, ...)
-plot_Ttest(x, ...)
+plot_test(x, ...)
 \method{plot}{edma_dm}(x, ...)
 \method{plot_2d}{edma_dm}(x, ...)
 \method{plot_3d}{edma_dm}(x, ...)
-\method{plot_Ttest}{edma_dm}(x, ...)
+\method{plot_test}{edma_dm}(x, ...)
 \method{plot_ci}{edma_fdm}(x, ...)
 \method{plot_ord}{edma_fdm}(x, ...)
 \method{plot_clust}{edma_fdm}(x, ...)
@@ -118,7 +118,7 @@ The T-statistic is based on the pairwise distanced in the FM,
 taking the max/min of the distances. Confidence intervals for local testing
 (via \code{confint}, \code{get_fdm}, and \code{plot_ci})
 and T-test for global testing
-(via \code{global_test}, and \code{plot_Ttest})
+(via \code{global_test}, and \code{plot_test})
 is based on the observed T-statistic and the bootstrap distribution.
 
 The global testing algorithm is as follows:
@@ -155,7 +155,7 @@ the plot method visualizes this.
 
 \code{global_test} presents the global T-test,
 the bootstrap distribution and observed T-value is
-visualized by \code{plot_Ttest}.
+visualized by \code{plot_test}.
 
 \code{plot} and \code{plot_2d} produces a 2D plot of the mean form
 from the reference object ('prototype').
@@ -224,7 +224,7 @@ plot(infl)
 
 plot_ord(fdm)
 plot_clust(fdm)
-plot_Ttest(fdm)
+plot_test(fdm)
 plot_ci(fdm)
 plot_2d(fdm)
 if (interactive())

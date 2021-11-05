@@ -140,7 +140,7 @@ head(get_gm(gm, sort=TRUE, decreasing=FALSE))
 
 plot_ord(gm)
 plot_clust(gm)
-plot_Ttest(gm)
+plot_test(gm)
 plot_ci(gm)
 plot_2d(gm)
 if (interactive())
@@ -171,7 +171,7 @@ head(get_gdm(gdm, sort=TRUE, decreasing=FALSE))
 
 plot_ord(gdm)
 plot_clust(gdm)
-plot_Ttest(gdm)
+plot_test(gdm)
 plot_ci(gdm)
 plot_2d(gdm) # need real data
 if (interactive())

@@ -62,7 +62,7 @@ export(
     "plot_3d",
     "plot_ord",
     "plot_clust",
-    "plot_Ttest",
+    "plot_test",
     "plot_Ztest",
     "plot_ci"
 )
@@ -136,7 +136,7 @@ S3method("plot_clust", "edma_fit")
 ## edma_dm methods: this is parent for fdm, gm, gdm
 S3method("confint", "edma_dm")
 S3method("get_influence", "edma_dm")
-S3method("plot_Ttest", "edma_dm")
+S3method("plot_test", "edma_dm")
 ## plot methods
 S3method("plot", "edma_dm")
 S3method("plot_2d", "edma_dm")

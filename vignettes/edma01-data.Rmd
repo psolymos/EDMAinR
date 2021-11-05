@@ -21,7 +21,7 @@ set.seed(429)
 **EDMAinR** is an R package for Euclidean Distance Matrix Analysis (EDMA).
 EDMA is a coordinate‐free approach for comparing biological shapes using landmark data.
 
-We can install the package from GitHub as with the help of the **remotes** R package:
+You can install the package from GitHub as with the help of the **remotes** R package:
 
 ```{r install,eval=FALSE}
 if (!require(EDMAinR)) {
@@ -31,7 +31,7 @@ if (!require(EDMAinR)) {
 }
 ```
 
-We can now load the **EDMAinR** package:
+You can now load the **EDMAinR** package:
 
 ```{r load}
 library(EDMAinR)
@@ -42,7 +42,7 @@ library(EDMAinR)
 ## Reading data from xyz files
 
 Use the `read_xyz` function to read 2D or 3D landmark data from `*.xyz` files.
-First we specify the paths to two xyz files:
+First we specify the paths to the xyz file:
 
 ```{r filexyz}
 file <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz", 
@@ -52,7 +52,7 @@ file <- system.file("extdata/crouzon/Crouzon_P0_Global_MUT.xyz",
 > *Note*: we use the `system.file()` function to access example files
 > from the package. When defining your own files,
 > you will either set the working directory using `setwd()` or use
-> a path like `c:/Users/<user>/<etc>`.
+> a path like `file <- "c:/Users/<user>/<etc>"`.
 
 The xyz landmark data has the following structure:
 
@@ -68,11 +68,17 @@ Now we can read in these text files:
 
 ```{r readxyz}
 x <- read_xyz(file)
-x
 ```
 
 > *Note*: find more information [below](#turning-3d-arrays-into-edma-data-objects) 
 > about reading in other morphometrics file formats.
+
+We stored the data from the file in the object called `x`. By typing the name `x`
+(or by typing `print(x)`) we get to see what is inside:
+
+```{r printxyz}
+x
+```
 
 ## The EDMA data format
 
@@ -92,7 +98,7 @@ The following methods are used to retrieve useful information
 from EDMA data objects.
 
 Use `dim` to access dimensions (landmarks, $K$; dimensions, $D$; replicates, $n$). 
-`landmarks`, `dimansions`, and `specimens` return 
+`landmarks`, `dimensions`, and `specimens` return 
 the landmark, dimension, and specimen names, respectively,
 `dimnames` returns all three in a list:
 
@@ -106,12 +112,13 @@ specimens(x) # specimen IDs
 
 When the dimension names are missing from the input data file,
 we use `L` to denote landmarks and `S` to denote specimens. These are
-prepended to numeric landmark and specimen IDs. The coordinate dimensions
+prepended to numeric landmark and specimen IDs that follows the original ordering of the data.
+The coordinate dimensions
 are `"X"`, `"Y"`, and optionally `"Z"` for 3D landmark data. 
 
 It is also possible to manipulate dimension names.
 This is useful when different files have the same landmarks
-with slight changes (lower/upper case differences, etc.):
+with slight differences (lower/upper case differences, etc.):
 
 
 ```{r datamethods2}
@@ -139,7 +146,9 @@ the data sets is *via* the `[` function (i.e. `x[i, j, k]`),
 the 3 indices inside the brackets
 refer to the landmarks (`i`), dimensions (`j`), and specimens (`k`).
 Imagine the data as a 3D data cube and the square brackets allow us to
-slice the cube from 3 different directions.
+slice the cube from 3 different directions. The colon notation in the
+next part mean what parts should be taken using the `from:to` way of
+defining a sequence of integers:
 
 ```{r datasubset}
 x[1:10, , ]  # select the 1st 10 landmarks
@@ -150,7 +159,7 @@ x[1:10, , 1:20] # combine multiple indices
 
 Read more about how to use square brackets to extract
 parts of the data object: `?Extract` (see section 'Matrices and arrays').
-The most important thing to keep in mind is that the empty
+The most important thing to keep in mind is that the empty/missing
 index (e.g. `x[,,]`) means 'select everything'.
 
 We can take subsets using:
@@ -169,7 +178,11 @@ landmarks for multiple objects, or we want to make sure
 that the landmarks' order is identical among multiple objects.
 The same `[` function can be used not only to take a subset
 but also to reorder landmarks or specimens. Character indices
-are most suitable for this purpose.
+are most suitable for this purpose, e.g.:
+
+```{lms}
+x[c("amsph", "bas", "cpsh"), , ]
+```
 
 ## Coercing EDMA data into other object types
 
@@ -367,3 +380,7 @@ stopifnot(identical(dimnames(x), dimnames(tmp)))
 unlink(f)                       # delete temp file
 ```
 
+> *Note*: tuse a real file name and path, the temp file is used here
+> for demonstration purposes only.
+
+Read on to see how the xyz data are used to fit EDMA models to it.

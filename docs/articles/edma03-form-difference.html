@@ -127,7 +127,7 @@
 <li>Compute the <span class="math inline">\(FDM^* = FM_2^* / FM_1^*\)</span> and <span class="math inline">\(T^* = max(FDM^*) / min(FDM^*)\)</span>.</li>
 <li>Repeat the above three steps <code>B</code> times to get the p-value.</li>
 </ol>
-<p><code>global_test</code> provides a summary of the test, <code>plot_Ttest</code> helps to visualize the null distribution (histogram) and the observed T statistic (vertical line):</p>
+<p><code>global_test</code> provides a summary of the test, <code>plot_test</code> helps to visualize the null distribution (histogram) and the observed T statistic (vertical line):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_fdm.html">global_test</a></span><span class="op">(</span><span class="va">fdm</span><span class="op">)</span>
 <span class="co">#&gt; </span>
@@ -135,7 +135,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; data:  form difference matrix</span>
 <span class="co">#&gt; Tobs-value = 1.5981, B = 25, p-value &lt; 2.2e-16</span>
-<span class="fu"><a href="../reference/edma_fdm.html">plot_Ttest</a></span><span class="op">(</span><span class="va">fdm</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/edma_fdm.html">plot_test</a></span><span class="op">(</span><span class="va">fdm</span><span class="op">)</span></code></pre></div>
 <p><img src="edma03-form-difference_files/figure-html/unnamed-chunk-4-1.png" width="100%"></p>
 </div>
 <div class="section level2">

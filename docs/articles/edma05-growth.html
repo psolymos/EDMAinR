@@ -153,7 +153,7 @@
 <h2 class="hasAnchor">
 <a href="#global-t-test" class="anchor"></a>Global T-test</h2>
 <p>The global T-test is based on the pairwise distances in the <span class="math inline">\(FM\)</span>s, taking the max/min ratio of the distances. This is then done for all the <code>B</code> replicates, which provides the null distribution. The <span class="math inline">\(p\)</span> value for the T-test is calculated as the number of replicates where the bootstrap T value was higher than or equal to the observed T value, divided by <code>B</code>.</p>
-<p><code>T_test</code> provides a summary of the test, <code>plot_Ttest</code> helps to visualize the null distribution (histogram) and the observed T statistic (vertical line):</p>
+<p><code>T_test</code> provides a summary of the test, <code>plot_test</code> helps to visualize the null distribution (histogram) and the observed T statistic (vertical line):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_fdm.html">T_test</a></span><span class="op">(</span><span class="va">gm</span><span class="op">)</span>
 <span class="co">#&gt; </span>
@@ -161,7 +161,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; data:  growth matrix</span>
 <span class="co">#&gt; T-value = 1.259, B = 25, p-value &lt; 2.2e-16</span>
-<span class="fu"><a href="../reference/edma_fdm.html">plot_Ttest</a></span><span class="op">(</span><span class="va">gm</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/edma_fdm.html">plot_test</a></span><span class="op">(</span><span class="va">gm</span><span class="op">)</span></code></pre></div>
 <p><img src="edma05-growth_files/figure-html/unnamed-chunk-4-1.png" width="100%"></p>
 </div>
 <div id="local-testing" class="section level2">
@@ -293,7 +293,7 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; data:  growth difference matrix</span>
 <span class="co">#&gt; T-value = 1.1113, B = 26, p-value = 0.1538</span>
-<span class="fu"><a href="../reference/edma_fdm.html">plot_Ttest</a></span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/edma_fdm.html">plot_test</a></span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span></code></pre></div>
 <p><img src="edma05-growth_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_fdm.html">plot_ci</a></span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span></code></pre></div>

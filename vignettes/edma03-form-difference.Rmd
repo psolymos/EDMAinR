@@ -81,13 +81,13 @@ Algorithm for global testing is as follows
 3. Compute the $FDM^* = FM_2^* / FM_1^*$ and $T^* = max(FDM^*) / min(FDM^*)$.
 4. Repeat the above three steps `B` times to get the p-value.
 
-`global_test` provides a summary of the test, `plot_Ttest` helps to visualize
+`global_test` provides a summary of the test, `plot_test` helps to visualize
 the null distribution (histogram) and the observed T statistic
 (vertical line):
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 global_test(fdm)
-plot_Ttest(fdm)
+plot_test(fdm)
 ```
 
 ## Local testing

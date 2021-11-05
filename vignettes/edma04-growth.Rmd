@@ -72,7 +72,7 @@ The global testing is explained on the form difference page:
 
 ```{r fig.width=7,fig.height=5,out.width='100%'}
 global_test(gm)
-plot_Ttest(gm)
+plot_test(gm)
 ```
 
 ## Local testing
@@ -180,7 +180,7 @@ gdm <- edma_gdm(a1=fit_a1, a2=fit_a2, b1=fit_b1, b2=fit_b2, B=25)
 gdm
 
 global_test(gdm)
-plot_Ttest(gdm)
+plot_test(gdm)
 plot_ci(gdm)
 
 plot_ord(gdm)

@@ -4,7 +4,7 @@ plot_2d <- function (x,...) UseMethod("plot_2d")
 plot_3d <- function (x,...) UseMethod("plot_3d")
 plot_ord <- function (x,...) UseMethod("plot_ord")
 plot_clust <- function (x,...) UseMethod("plot_clust")
-plot_Ttest <- function (x,...) UseMethod("plot_Ttest")
+plot_test <- function (x,...) UseMethod("plot_test")
 plot_ci <- function (x,...) UseMethod("plot_ci")
 
 ## color options
@@ -347,7 +347,7 @@ plot_clust.edma_gdm <- function(x, ...) .plot_specimens_clust4(x, ...)
 
 ## global Tobs-test plots
 
-plot_Ttest.edma_dm <- function(x, ...) {
+plot_test.edma_dm <- function(x, ...) {
     c5 <- edma_colors(5, "diverging")
     z <- .global_test(x)
     hist(z$Tvals, xlab="Tobs values", main="",

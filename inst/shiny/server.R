@@ -98,7 +98,7 @@ server <- function(input, output, session) {
     })
     output$fdm_tobs <- renderPlot({
         req(fdm())
-        plot_Ttest(fdm())
+        plot_test(fdm())
     })
     output$fdm_ci <- renderReactable({
         req(fdm())
