@@ -187,61 +187,61 @@ Theodore M. Cole</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: edma_sdm(a = fit_a, b = fit_b)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 bootstrap runs (difference of logarithms)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              2.5%    97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z (shape) -0.1407 0.079723</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C (scale)  1.0139 1.028305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               2.5%     97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z (shape) -0.15434 -0.051019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C (scale)  1.01619  1.042366</span>
 <span class="r-in"><span class="fu">Z_test</span><span class="op">(</span><span class="va">sdm</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bootstrap based EDMA Z-test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 bootstrap runs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              2.5%   97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Z (shape) -0.1407 0.07972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C (scale)  1.0139 1.02831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              2.5%    97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Z (shape) -0.1543 -0.05102</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C (scale)  1.0162  1.04237</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">sdm</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    2.5%        97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bas-amsph  -0.032805912 -0.014175783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> loci-amsph -0.021170921 -0.005725662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lpto-amsph -0.031971504 -0.018851892</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lsqu-amsph  0.006566397  0.032271359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lsyn-amsph -0.016819950  0.005831675</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> roci-amsph -0.015020229 -0.004973181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    2.5%         97.5%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bas-amsph  -0.035349111 -0.0146773760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> loci-amsph -0.022898814 -0.0076860496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lpto-amsph -0.031749161 -0.0196200761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lsqu-amsph  0.004710886  0.0265843114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lsyn-amsph -0.016133623  0.0006788376</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> roci-amsph -0.019139384 -0.0050821642</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_sdm</span><span class="op">(</span><span class="va">sdm</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    row   col         sdm        lower        upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  bas amsph -0.02392208 -0.032805912 -0.014175783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 loci amsph -0.01400145 -0.021170921 -0.005725662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 lpto amsph -0.02582129 -0.031971504 -0.018851892</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 lsqu amsph  0.01659426  0.006566397  0.032271359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 lsyn amsph -0.00905969 -0.016819950  0.005831675</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 roci amsph -0.01156002 -0.015020229 -0.004973181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    row   col         sdm        lower         upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  bas amsph -0.02392208 -0.035349111 -0.0146773760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 loci amsph -0.01400145 -0.022898814 -0.0076860496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 lpto amsph -0.02582129 -0.031749161 -0.0196200761</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 lsqu amsph  0.01659426  0.004710886  0.0265843114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 lsyn amsph -0.00905969 -0.016133623  0.0006788376</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 roci amsph -0.01156002 -0.019139384 -0.0050821642</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_sdm</span><span class="op">(</span><span class="va">sdm</span>, sort<span class="op">=</span><span class="cn">TRUE</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     row  col        sdm      lower      upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 rsqu rpto 0.05906804 0.04011036 0.09172094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 lsqu lpto 0.04367016 0.03326545 0.06721805</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 lsyn lsqu 0.03351607 0.02421851 0.04530190</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 rsqu roci 0.02675907 0.02100888 0.03342262</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45 rsyn rsqu 0.02636038 0.01301053 0.04393386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 lsqu loci 0.02269395 0.01587423 0.02979660</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 rsqu rpto 0.05906804 0.03988583 0.07504419</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 lsqu lpto 0.04367016 0.03045153 0.05766889</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 lsyn lsqu 0.03351607 0.03076403 0.04498888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 rsqu roci 0.02675907 0.01316275 0.03736590</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 rsyn rsqu 0.02636038 0.01832023 0.05142800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 lsqu loci 0.02269395 0.01566636 0.03176672</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_sdm</span><span class="op">(</span><span class="va">sdm</span>, sort<span class="op">=</span><span class="cn">TRUE</span>, decreasing<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     row  col         sdm       lower       upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 rpto lpto -0.07900089 -0.14069916 -0.05764013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 lsyn  bas -0.04078567 -0.05721523 -0.02195928</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 rsyn lsyn -0.03605782 -0.04420536 -0.01023776</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 rsyn  bas -0.03495021 -0.05355936 -0.02042244</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37 rpto lsyn -0.03361166 -0.04259615 -0.02564101</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 rpto loci -0.03326119 -0.05405598 -0.02572566</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     row  col         sdm       lower        upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 rpto lpto -0.07900089 -0.15433545  0.002288572</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 lsyn  bas -0.04078567 -0.05915832 -0.025889016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 rsyn lsyn -0.03605782 -0.04999266 -0.020222594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 rsyn  bas -0.03495021 -0.05621353 -0.024799513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37 rpto lsyn -0.03361166 -0.04570556 -0.025349910</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 rpto loci -0.03326119 -0.04969068 -0.023684416</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="edma_fdm.html">get_influence</a></span><span class="op">(</span><span class="va">sdm</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    landmark       Zdrop       lower      upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     amsph -0.08151834 -0.14277025 0.03546882</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       bas -0.07936769 -0.14098190 0.03706434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      loci -0.07874282 -0.14058585 0.07853081</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4      lpto  0.05483618 -0.05336265 0.08637066</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5      lsqu -0.07154565 -0.13203211 0.08734663</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      lsyn -0.08022249 -0.14170159 0.07867393</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7      roci -0.07798099 -0.14009842 0.08030015</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8      rpto -0.04583163 -0.06215859 0.06084754</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9      rsqu -0.07155860 -0.13127610 0.03132124</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10     rsyn -0.08005630 -0.14123191 0.07867537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    landmark       Zdrop       lower       upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     amsph -0.08151834 -0.15636552 -0.05324381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       bas -0.07936769 -0.15293529 -0.04975205</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      loci -0.07874282 -0.15324384 -0.05103301</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4      lpto  0.05483618 -0.07063565  0.07137115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5      lsqu -0.07154565 -0.14615812  0.08081267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      lsyn -0.08022249 -0.15531606 -0.05205079</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7      roci -0.07798099 -0.15308053 -0.05052326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8      rpto -0.04583163 -0.06325213  0.05207837</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      rsqu -0.07155860 -0.14517354  0.02619688</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10     rsyn -0.08005630 -0.15496273 -0.04959082</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">plot_Ztest</span><span class="op">(</span><span class="va">sdm</span>, <span class="st">"Z"</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="edma_sdm-1.png" alt="" width="700" height="433"></span>

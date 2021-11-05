@@ -81,14 +81,14 @@
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
 <p><strong>EDMAinR</strong> is an R package for Euclidean Distance Matrix Analysis (EDMA). EDMA is a coordinate‐free approach for comparing biological shapes using landmark data.</p>
-<p>We can install the package from GitHub as with the help of the <strong>remotes</strong> R package:</p>
+<p>You can install the package from GitHub as with the help of the <strong>remotes</strong> R package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">EDMAinR</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org" class="external-link">remotes</a></span><span class="op">)</span><span class="op">)</span>
       <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
   <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"psolymos/EDMAinR"</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p>We can now load the <strong>EDMAinR</strong> package:</p>
+<p>You can now load the <strong>EDMAinR</strong> package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">EDMAinR</span><span class="op">)</span>
 <span class="co">#&gt; EDMAinR 0.2-0     2021-11-04</span></code></pre></div>
@@ -99,12 +99,12 @@
 <div class="section level2">
 <h2 id="reading-data-from-xyz-files">Reading data from xyz files<a class="anchor" aria-label="anchor" href="#reading-data-from-xyz-files"></a>
 </h2>
-<p>Use the <code>read_xyz</code> function to read 2D or 3D landmark data from <code>*.xyz</code> files. First we specify the paths to two xyz files:</p>
+<p>Use the <code>read_xyz</code> function to read 2D or 3D landmark data from <code>*.xyz</code> files. First we specify the paths to the xyz file:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/crouzon/Crouzon_P0_Global_MUT.xyz"</span>, 
     package<span class="op">=</span><span class="st">"EDMAinR"</span><span class="op">)</span></code></pre></div>
 <blockquote>
-<p><em>Note</em>: we use the <code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code> function to access example files from the package. When defining your own files, you will either set the working directory using <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd()</a></code> or use a path like <code>c:/Users/&lt;user&gt;/&lt;etc&gt;</code>.</p>
+<p><em>Note</em>: we use the <code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code> function to access example files from the package. When defining your own files, you will either set the working directory using <code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd()</a></code> or use a path like <code>file &lt;- "c:/Users/&lt;user&gt;/&lt;etc&gt;"</code>.</p>
 </blockquote>
 <p>The xyz landmark data has the following structure:</p>
 <ul>
@@ -120,13 +120,15 @@
 </ul>
 <p>Now we can read in these text files:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/edma_data.html">read_xyz</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span>
-<span class="va">x</span>
-<span class="co">#&gt; EDMA data: Crouzon P0 MUT</span>
-<span class="co">#&gt; 47 landmarks, 3 dimensions, 28 specimens</span></code></pre></div>
+<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/edma_data.html">read_xyz</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></code></pre></div>
 <blockquote>
 <p><em>Note</em>: find more information <a href="#turning-3d-arrays-into-edma-data-objects">below</a> about reading in other morphometrics file formats.</p>
 </blockquote>
+<p>We stored the data from the file in the object called <code>x</code>. By typing the name <code>x</code> (or by typing <code>print(x)</code>) we get to see what is inside:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">x</span>
+<span class="co">#&gt; EDMA data: Crouzon P0 MUT</span>
+<span class="co">#&gt; 47 landmarks, 3 dimensions, 28 specimens</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-edma-data-format">The EDMA data format<a class="anchor" aria-label="anchor" href="#the-edma-data-format"></a>
@@ -144,8 +146,8 @@
 <h2 id="edma-data-dimensions-and-names">EDMA data dimensions and names<a class="anchor" aria-label="anchor" href="#edma-data-dimensions-and-names"></a>
 </h2>
 <p>The following methods are used to retrieve useful information from EDMA data objects.</p>
-<p>Use <code>dim</code> to access dimensions (landmarks, <span class="math inline">\(K\)</span>; dimensions, <span class="math inline">\(D\)</span>; replicates, <span class="math inline">\(n\)</span>). <code>landmarks</code>, <code>dimansions</code>, and <code>specimens</code> return the landmark, dimension, and specimen names, respectively, <code>dimnames</code> returns all three in a list:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Use <code>dim</code> to access dimensions (landmarks, <span class="math inline">\(K\)</span>; dimensions, <span class="math inline">\(D\)</span>; replicates, <span class="math inline">\(n\)</span>). <code>landmarks</code>, <code>dimensions</code>, and <code>specimens</code> return the landmark, dimension, and specimen names, respectively, <code>dimnames</code> returns all three in a list:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># dimensions</span>
 <span class="co">#&gt; [1] 47  3 28</span>
 <span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># dimension names</span>
@@ -181,9 +183,9 @@
 <span class="co">#&gt; [13] "CZCD1_25" "CZCD1_28" "CZCD1_30" "CZCD1_32" "CZCD1_36" "CZCD1_37"</span>
 <span class="co">#&gt; [19] "CZCD1_39" "CZCD1_40" "CZCD1_42" "CZCD1_53" "CZCD1_56" "CZCD1_59"</span>
 <span class="co">#&gt; [25] "CZCD1_65" "CZCD1_66" "CZCD1_72" "CZCD1_73"</span></code></pre></div>
-<p>When the dimension names are missing from the input data file, we use <code>L</code> to denote landmarks and <code>S</code> to denote specimens. These are prepended to numeric landmark and specimen IDs. The coordinate dimensions are <code>"X"</code>, <code>"Y"</code>, and optionally <code>"Z"</code> for 3D landmark data.</p>
-<p>It is also possible to manipulate dimension names. This is useful when different files have the same landmarks with slight changes (lower/upper case differences, etc.):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>When the dimension names are missing from the input data file, we use <code>L</code> to denote landmarks and <code>S</code> to denote specimens. These are prepended to numeric landmark and specimen IDs that follows the original ordering of the data. The coordinate dimensions are <code>"X"</code>, <code>"Y"</code>, and optionally <code>"Z"</code> for 3D landmark data.</p>
+<p>It is also possible to manipulate dimension names. This is useful when different files have the same landmarks with slight differences (lower/upper case differences, etc.):</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/edma_data.html">landmarks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># copy original names</span>
 <span class="fu"><a href="../reference/edma_data.html">landmarks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="va">lm</span><span class="op">)</span>
 <span class="fu"><a href="../reference/edma_data.html">landmarks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># new landmark names</span>
@@ -199,8 +201,8 @@
 <h2 id="selecting-subsets-of-edma-data-objects">Selecting subsets of EDMA data objects<a class="anchor" aria-label="anchor" href="#selecting-subsets-of-edma-data-objects"></a>
 </h2>
 <p>Subsetting the data comes handy sometimes, i.e. we might want to select only a few of the landmarks to get a simplified picture of the relationships, or because different input files list different landmarks and we want to select the ones that are present in both data set. Or we need to filter some specimens, because we want to select only specimens of certain ages, gender, etc. Often we need to draw a random sample of the specimens (for randomization and bootstrap).</p>
-<p>The most general way to subset the data sets is <em>via</em> the <code>[</code> function (i.e. <code>x[i, j, k]</code>), the 3 indices inside the brackets refer to the landmarks (<code>i</code>), dimensions (<code>j</code>), and specimens (<code>k</code>). Imagine the data as a 3D data cube and the square brackets allow us to slice the cube from 3 different directions.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>The most general way to subset the data sets is <em>via</em> the <code>[</code> function (i.e. <code>x[i, j, k]</code>), the 3 indices inside the brackets refer to the landmarks (<code>i</code>), dimensions (<code>j</code>), and specimens (<code>k</code>). Imagine the data as a 3D data cube and the square brackets allow us to slice the cube from 3 different directions. The colon notation in the next part mean what parts should be taken using the <code>from:to</code> way of defining a sequence of integers:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, , <span class="op">]</span>  <span class="co"># select the 1st 10 landmarks</span>
 <span class="co">#&gt; EDMA data: Crouzon P0 MUT</span>
 <span class="co">#&gt; 10 landmarks, 3 dimensions, 28 specimens</span>
@@ -213,7 +215,7 @@
 <span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, , <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span> <span class="co"># combine multiple indices</span>
 <span class="co">#&gt; EDMA data: Crouzon P0 MUT</span>
 <span class="co">#&gt; 10 landmarks, 3 dimensions, 20 specimens</span></code></pre></div>
-<p>Read more about how to use square brackets to extract parts of the data object: <code><a href="https://rdrr.io/r/base/Extract.html" class="external-link">?Extract</a></code> (see section ‘Matrices and arrays’). The most important thing to keep in mind is that the empty index (e.g. <code>x[,,]</code>) means ‘select everything’.</p>
+<p>Read more about how to use square brackets to extract parts of the data object: <code><a href="https://rdrr.io/r/base/Extract.html" class="external-link">?Extract</a></code> (see section ‘Matrices and arrays’). The most important thing to keep in mind is that the empty/missing index (e.g. <code>x[,,]</code>) means ‘select everything’.</p>
 <p>We can take subsets using:</p>
 <ul>
 <li>numeric indices (like as we saw above),</li>
@@ -221,13 +223,14 @@
 <li>and by character names.</li>
 </ul>
 <p>Logical indices might be handy if, e.g., we have ancillary data about the specimens. If we have <code>age</code> of each specimens (values in ages matching the order of specimens in the EDMA data object), we can use it as <code>x[,,age &lt; 1]</code>.</p>
-<p>Character based subsets are useful if we want to select homologous landmarks for multiple objects, or we want to make sure that the landmarks’ order is identical among multiple objects. The same <code>[</code> function can be used not only to take a subset but also to reorder landmarks or specimens. Character indices are most suitable for this purpose.</p>
+<p>Character based subsets are useful if we want to select homologous landmarks for multiple objects, or we want to make sure that the landmarks’ order is identical among multiple objects. The same <code>[</code> function can be used not only to take a subset but also to reorder landmarks or specimens. Character indices are most suitable for this purpose, e.g.:</p>
+<pre class="lms"><code><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"amsph"</span>, <span class="st">"bas"</span>, <span class="st">"cpsh"</span><span class="op">)</span>, , <span class="op">]</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="coercing-edma-data-into-other-object-types">Coercing EDMA data into other object types<a class="anchor" aria-label="anchor" href="#coercing-edma-data-into-other-object-types"></a>
 </h2>
 <p>The data (<code>$data</code>) format inside the object <code>x</code> is list of the <span class="math inline">\(K \times D\)</span> matrices, one for each individual. Sometimes it is handy to stack these matrices and create a rectangular data (either as a matrix, or data frame, with <span class="math inline">\(n \times K\)</span> rows and <span class="math inline">\(D\)</span> columns):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  num [1:1316, 1:3] 5.85 2.79 6.86 9.11 8.25 ...</span>
 <span class="co">#&gt;  - attr(*, "dimnames")=List of 2</span>
@@ -237,7 +240,7 @@
 <p><em>Note</em>: we are using <code>str</code> to show the structure of these objects, this is not necessary when exploring the data. <code>str</code> here tells us the dimensions (1316 rows and 3 columns, the first few values, and the dimension names).</p>
 </blockquote>
 <p>Alternatively, we can store the data as an array (<span class="math inline">\(K \times D \times n\)</span>):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  num [1:47, 1:3, 1:28] 5.85 2.79 6.86 9.11 8.25 ...</span>
 <span class="co">#&gt;  - attr(*, "dimnames")=List of 3</span>
@@ -250,7 +253,7 @@
 </h2>
 <p>The <code>as.edma_data</code> function turns a 3D array to an EDMA data object. This is useful when handling 3D array objects returned by many functions of the <a href="https://cran.r-project.org/package=geomorph" class="external-link"><strong>geomorph</strong></a> package (i.e. after reading Morphologika, NTS, TPS files).</p>
 <p>The header information gets lost in this way, but we can set it quite easily:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xnew</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/edma_data.html">as.edma_data</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 <span class="va">xnew</span>
 <span class="co">#&gt; EDMA data: Landmark data</span>
@@ -268,11 +271,11 @@
 <h1 id="visual-inspection-of-the-data">Visual inspection of the data<a class="anchor" aria-label="anchor" href="#visual-inspection-of-the-data"></a>
 </h1>
 <p>The <code>plot_2d</code> function shows the convex hulls or confidence ellipses for the landmarks based on all the specimens. The plot is showing the first two axes of multidimensional scaling based on the form matrices (<span class="math inline">\(FM\)</span>; pairwise Euclidean distances):</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_data.html">plot_2d</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
 <p><img src="edma01-data_files/figure-html/allspec-1.png" width="700"></p>
 <p>The images by default show the convex hull for each landmark enclosing all specimens. It is also possible to use 95% confidence ellipses:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_data.html">plot_2d</a></span><span class="op">(</span><span class="va">x</span>, hull<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="edma01-data_files/figure-html/allspec2-1.png" width="700"></p>
 <div class="section level2">
@@ -280,18 +283,18 @@
 </h2>
 <p>Data sets can be checked using the <code>plot</code> function. By default, this function steps through all the specimens to check for any surprises. The blue areas show the convex hull for the landmark leaving a single specimen out, while red dots show the actual specimen. It is a sign of problem when a dot for a specimen is located far outside of the convex hull.</p>
 <p>Using the <code>which</code> argument we can specify which specimen we want to display (it is not possible to select multiple specimen, use the <code>[</code> method to take a subset of the data that and plot it with <code>plot_2d</code>):</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, which<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
 <p><img src="edma01-data_files/figure-html/onespec-1.png" width="700"></p>
 <p>We will insert an error to show how the <code>plot</code> function can help identify problems. We change the coordinates for the 1st landmark of the 1st specimen. The error is showing up as an outlier (long red line):</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## original values for specimen 1</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, which<span class="op">=</span><span class="fl">1</span><span class="op">)</span>
 <span class="co">## we change the 1st landmark</span>
 <span class="va">xwrong</span> <span class="op">&lt;-</span> <span class="va">x</span>
 <span class="va">xwrong</span><span class="op">$</span><span class="va">data</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xwrong</span>, which<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-1-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-1-2.png" width="45%"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-2-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-2-2.png" width="45%"></p>
 </div>
 <div class="section level2">
 <h2 id="ordination-and-clustering">Ordination and clustering<a class="anchor" aria-label="anchor" href="#ordination-and-clustering"></a>
@@ -305,22 +308,22 @@
 </ul>
 <p>The multidimensional scaling uses the square root transformed log-T distances.</p>
 <p>The error shows up nicely in the ordination plot (colored red):</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_data.html">plot_ord</a></span><span class="op">(</span><span class="va">x</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/edma_data.html">plot_ord</a></span><span class="op">(</span><span class="va">xwrong</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">xwrong</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-2-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-2-2.png" width="45%"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-3-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-3-2.png" width="45%"></p>
 <p>The cluster dendrogram is based on the same log-T distance matrix described above. The default agglomeration algorithm is set to the Ward’s minimum variance method (<code>"ward.D2"</code>) which is using the square root of the log-T distances too.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_data.html">plot_clust</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="fu"><a href="../reference/edma_data.html">plot_clust</a></span><span class="op">(</span><span class="va">xwrong</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-3-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-3-2.png" width="45%"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-4-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-4-2.png" width="45%"></p>
 <p>Other agglomeration methods can be set by passing a different <code>method</code> argument, e.g. single linkage (see <code><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">?hclust</a></code> for a list of options):</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/edma_data.html">plot_clust</a></span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/edma_data.html">plot_clust</a></span><span class="op">(</span><span class="va">xwrong</span>, method <span class="op">=</span> <span class="st">"single"</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-4-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-4-2.png" width="45%"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-5-1.png" width="45%"><img src="edma01-data_files/figure-html/unnamed-chunk-5-2.png" width="45%"></p>
 <p>Both the ordination and clustering functions return the ordination/cluster results, so that plots can be further customized. Here is an example to create a plot</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/edma_data.html">plot_ord</a></span><span class="op">(</span><span class="va">x</span>, plot<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">mds</span><span class="op">)</span>
 <span class="co">#&gt; List of 5</span>
@@ -336,9 +339,9 @@
   main<span class="op">=</span><span class="st">"Ordination diagram"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fl">0</span>, v<span class="op">=</span><span class="fl">0</span>, lty<span class="op">=</span><span class="fl">2</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span><span class="va">mds</span><span class="op">$</span><span class="va">points</span>, labels<span class="op">=</span><span class="fu"><a href="../reference/edma_data.html">specimens</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, pos<span class="op">=</span><span class="fl">1</span>, cex<span class="op">=</span><span class="fl">0.6</span>, col<span class="op">=</span><span class="st">"tan"</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p><a href="https://ggplot2-book.org/" class="external-link"><strong>ggplot2</strong></a> is a popular alternative for R’s base graphics. Here is how to create plots with it:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">mds</span><span class="op">$</span><span class="va">points</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">`Axis 1`</span>, y<span class="op">=</span><span class="va">`Axis 2`</span>, label<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -346,9 +349,9 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept<span class="op">=</span><span class="fl">0</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept<span class="op">=</span><span class="fl">0</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
 <span class="va">p</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p>See <code><a href="https://rdrr.io/pkg/ape/man/plot.phylo.html" class="external-link">?ape::plot.phylo</a></code> for how to customize dendrograms:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/edma_data.html">plot_clust</a></span><span class="op">(</span><span class="va">x</span>, plot<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="va">h</span>
 <span class="co">#&gt; </span>
@@ -358,22 +361,22 @@
 <span class="co">#&gt; Cluster method   : ward.D2 </span>
 <span class="co">#&gt; Number of objects: 28</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"cladogram"</span>, font<span class="op">=</span><span class="fl">1</span>, cex<span class="op">=</span><span class="fl">0.6</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-7-2.png" width="700"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-8-2.png" width="700"></p>
 <p><a href="https://CRAN.R-project.org/package=ggdendro" class="external-link"><strong>ggdendro</strong></a> is a package that can plot tree-like data structures with <strong>ggplot2</strong>. Here is an example:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/andrie/ggdendro" class="external-link">ggdendro</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/ggdendro/man/ggdendrogram.html" class="external-link">ggdendrogram</a></span><span class="op">(</span><span class="va">h</span>, rotate <span class="op">=</span> <span class="cn">TRUE</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="edma01-data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="edma01-data_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="writing-data-to-xyz-format">Writing data to xyz format<a class="anchor" aria-label="anchor" href="#writing-data-to-xyz-format"></a>
 </h2>
 <p>Different kinds of morphometrics data formats can be turned into EDMA data format as long as it can be organized into a <span class="math inline">\(K \times D \times n\)</span> array and then using the <code>as.edma_data</code> method.</p>
 <p>Once the data is an EDMA data object, the <code>write_xyz</code> function will write that into a text file with extension xyz:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".xyz"</span><span class="op">)</span> <span class="co"># create a temporary file</span>
 <span class="fu"><a href="../reference/edma_data.html">write_xyz</a></span><span class="op">(</span><span class="va">x</span>, file<span class="op">=</span><span class="va">f</span><span class="op">)</span>            <span class="co"># write data to temp file</span>
 <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/edma_data.html">read_xyz</a></span><span class="op">(</span>file<span class="op">=</span><span class="va">f</span><span class="op">)</span>         <span class="co"># read back the data</span>
@@ -386,6 +389,10 @@
 <span class="co">## test if the all the dimnames are the same</span>
 <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span>                       <span class="co"># delete temp file</span></code></pre></div>
+<blockquote>
+<p><em>Note</em>: tuse a real file name and path, the temp file is used here for demonstration purposes only.</p>
+</blockquote>
+<p>Read on to see how the xyz data are used to fit EDMA models to it.</p>
 </div>
 </div>
   </div>
