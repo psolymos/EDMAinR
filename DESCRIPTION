@@ -1,8 +1,8 @@
 Package: EDMAinR
 Type: Package
 Title: Euclidean Distance Matrix Analysis in R
-Version: 0.1-11
-Date: 2021-08-17
+Version: 0.2-0
+Date: 2021-11-04
 Authors@R: 
     c(person(given = "Peter",
              family = "Solymos",

@@ -1,3 +1,8 @@
+# Version 0.2-0, 2021-11-04
+
+* Separate `edma_fdm_report` and `edma_gdm_report` functions.
+* Updated documentation.
+
 # Version 0.1-11, 2021-08-17
 
 * Added `edma_report()` to reproduce WinEDMA output.
