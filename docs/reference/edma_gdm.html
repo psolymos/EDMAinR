@@ -186,43 +186,43 @@ Joan T. Richtsmeier</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Tobs = 1.259, p &lt; 2.22e-16</span>
 <span class="r-in"><span class="fu"><a href="edma_fdm.html">global_test</a></span><span class="op">(</span><span class="va">gm</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Bootstrap based EDMA T-test</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Bootstrap based EDMA G test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> data:  growth matrix</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tobs-value = 1.259, B = 10, p-value &lt; 2.2e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G -value = 1.259, B = 10, p-value &lt; 2.2e-16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">gm</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                2.5%    97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bas-amsph  1.102011 1.139333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> loci-amsph 1.096201 1.132289</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lpto-amsph 1.125632 1.159609</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lsqu-amsph 1.135004 1.179561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lsyn-amsph 1.110520 1.164700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> roci-amsph 1.094219 1.131059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bas-amsph  1.098644 1.141419</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> loci-amsph 1.093283 1.139365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lpto-amsph 1.119315 1.158426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lsqu-amsph 1.128025 1.176207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lsyn-amsph 1.103205 1.168445</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> roci-amsph 1.087673 1.138171</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_gm</span><span class="op">(</span><span class="va">gm</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    row   col     dist    lower    upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  bas amsph 1.116726 1.102011 1.139333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 loci amsph 1.112833 1.096201 1.132289</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 lpto amsph 1.144189 1.125632 1.159609</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 lsqu amsph 1.149705 1.135004 1.179561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 lsyn amsph 1.139680 1.110520 1.164700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 roci amsph 1.110515 1.094219 1.131059</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  bas amsph 1.116726 1.098644 1.141419</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 loci amsph 1.112833 1.093283 1.139365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 lpto amsph 1.144189 1.119315 1.158426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 lsqu amsph 1.149705 1.128025 1.176207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 lsyn amsph 1.139680 1.103205 1.168445</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 roci amsph 1.110515 1.087673 1.138171</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_gm</span><span class="op">(</span><span class="va">gm</span>, sort<span class="op">=</span><span class="cn">TRUE</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     row  col     dist    lower    upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45 rsyn rsqu 1.196344 1.185169 1.220352</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 lsyn lsqu 1.194661 1.178294 1.219937</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 rsqu roci 1.159037 1.146856 1.180991</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 rsyn lsqu 1.155865 1.143971 1.184554</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 lsqu loci 1.155629 1.143768 1.176765</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 rsqu  bas 1.155440 1.145804 1.176917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 rsyn rsqu 1.196344 1.185377 1.223331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 lsyn lsqu 1.194661 1.173958 1.220995</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 rsqu roci 1.159037 1.145538 1.189303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 rsyn lsqu 1.155865 1.135645 1.180478</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 lsqu loci 1.155629 1.135749 1.182256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 rsqu  bas 1.155440 1.147620 1.176627</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_gm</span><span class="op">(</span><span class="va">gm</span>, sort<span class="op">=</span><span class="cn">TRUE</span>, decreasing<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     row  col      dist     lower     upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 rpto lpto 0.9502249 0.9056701 0.9958193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 rsqu lsqu 1.0364970 1.0266994 1.0645351</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 roci loci 1.0365211 1.0236172 1.0548565</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 roci lpto 1.0423805 1.0344389 1.0570502</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 rpto loci 1.0515532 1.0440240 1.0729703</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 rsqu lpto 1.0610708 1.0405908 1.0789131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     row  col      dist     lower    upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 rpto lpto 0.9502249 0.8915535 1.016564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 rsqu lsqu 1.0364970 1.0052353 1.060185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 roci loci 1.0365211 1.0288177 1.057644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 roci lpto 1.0423805 1.0187448 1.072097</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 rpto loci 1.0515532 1.0248673 1.082759</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 rsqu lpto 1.0610708 1.0386767 1.084252</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="edma_data.html">plot_ord</a></span><span class="op">(</span><span class="va">gm</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="edma_gdm-1.png" alt="" width="700" height="433"></span>
@@ -262,46 +262,46 @@ Joan T. Richtsmeier</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call: edma_gdm(a1 = fit_a1, a2 = fit_a2, b1 = fit_b1, b2 = fit_b2, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     B = 10)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 bootstrap runs (ref: denominator)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tobs = 1.1113, p = 0.090909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tobs = 1.1113, p = 0.18182</span>
 <span class="r-in"><span class="fu"><a href="edma_fdm.html">global_test</a></span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Bootstrap based EDMA T-test</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Bootstrap based EDMA G test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> data:  growth difference matrix</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tobs-value = 1.1113, B = 11, p-value = 0.09091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G -value = 1.1113, B = 11, p-value = 0.1818</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 2.5%    97.5%</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> bas-amsph  1.0067206 1.031445</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> loci-amsph 0.9969249 1.026887</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lpto-amsph 0.9990330 1.036592</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lsqu-amsph 0.9808747 1.031683</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lsyn-amsph 0.9942225 1.056610</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> roci-amsph 0.9958608 1.023009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> bas-amsph  0.9911251 1.031443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> loci-amsph 0.9790524 1.026019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lpto-amsph 0.9900137 1.020947</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lsqu-amsph 0.9691114 1.030874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lsyn-amsph 0.9797580 1.047181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> roci-amsph 0.9784894 1.021592</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_gdm</span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    row   col      dist     lower    upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  bas amsph 0.9871097 1.0067206 1.031445</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 loci amsph 0.9962675 0.9969249 1.026887</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 lpto amsph 0.9935320 0.9990330 1.036592</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 lsqu amsph 1.0057657 0.9808747 1.031683</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 lsyn amsph 0.9844980 0.9942225 1.056610</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 roci amsph 0.9981683 0.9958608 1.023009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  bas amsph 0.9871097 0.9911251 1.031443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 loci amsph 0.9962675 0.9790524 1.026019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 lpto amsph 0.9935320 0.9900137 1.020947</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 lsqu amsph 1.0057657 0.9691114 1.030874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 lsyn amsph 0.9844980 0.9797580 1.047181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 roci amsph 0.9981683 0.9784894 1.021592</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_gdm</span><span class="op">(</span><span class="va">gdm</span>, sort<span class="op">=</span><span class="cn">TRUE</span>, decreasing<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     row   col     dist     lower    upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 rsyn  lsyn 1.040292 0.9203990 1.017565</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 lpto  loci 1.013272 0.9724547 1.010893</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40 rpto  roci 1.010858 0.9768519 1.026852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 roci  lsyn 1.010448 0.9836562 1.014981</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 roci  loci 1.008071 0.9702338 1.021726</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  rsyn amsph 1.007449 0.9747330 1.050819</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     row   col     dist     lower     upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 rsyn  lsyn 1.040292 0.9229798 1.0193787</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 lpto  loci 1.013272 0.9588606 0.9957311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40 rpto  roci 1.010858 0.9593915 1.0008006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 roci  lsyn 1.010448 0.9712872 1.0100928</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 roci  loci 1.008071 0.9627390 1.0074367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  rsyn amsph 1.007449 0.9491394 1.0356831</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_gdm</span><span class="op">(</span><span class="va">gdm</span>, sort<span class="op">=</span><span class="cn">TRUE</span>, decreasing<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     row  col      dist     lower    upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 rsqu rpto 0.9361207 1.0277120 1.113209</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 lsqu lpto 0.9485414 1.0256580 1.078356</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 rsqu lpto 0.9569724 1.0332981 1.078403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 rpto lsqu 0.9666629 1.0163087 1.062260</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 rsqu roci 0.9766552 1.0055986 1.049706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 lsqu loci 0.9791661 0.9992127 1.053076</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 rsqu rpto 0.9361207 1.0475283 1.090134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 lsqu lpto 0.9485414 1.0303444 1.085886</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 rsqu lpto 0.9569724 1.0203573 1.071110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 rpto lsqu 0.9666629 1.0019449 1.087982</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 rsqu roci 0.9766552 0.9958376 1.063174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 lsqu loci 0.9791661 0.9844085 1.061178</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="edma_data.html">plot_ord</a></span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="edma_gdm-6.png" alt="" width="700" height="433"></span>
