@@ -16,3 +16,4 @@
 ^docs$
 ^_pkgdown\.yml$
 _tmp/*
+^edma_output\.txt$
