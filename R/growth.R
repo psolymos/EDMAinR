@@ -49,9 +49,13 @@ print.edma_gdm <- function(x, ...) {
 }
 
 global_test.edma_gm <- function (object, ...)
-    .global_test(object, DNAME="growth matrix", ...)
+    .global_test(object,
+                 DNAME="growth matrix",
+                 SNAME="G", ...)
 global_test.edma_gdm <- function (object, ...)
-    .global_test(object, DNAME="growth difference matrix", ...)
+    .global_test(object,
+                 DNAME="growth difference matrix",
+                 SNAME="G",...)
 
 get_gm <- function (object, ...) UseMethod("get_gm")
 get_gm.edma_gm <- get_fdm.edma_fdm

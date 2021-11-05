@@ -181,13 +181,14 @@ level = 0.95, what = "all", ...) {
 
 ## T-test for 2 edma_fit objects
 global_test <- function (object, ...) UseMethod("global_test")
-.global_test <- function (object, DNAME="", ...) {
+.global_test <- function (object, DNAME="", SNAME="", ...) {
     METHOD <- if (attr(object$boot, "mix"))
-        "Mixed bootstrap based EDMA T-test" else "Bootstrap based EDMA T-test"
+        "Mixed bootstrap based EDMA %s-test" else "Bootstrap based EDMA %s-test"
+    METHOD <- sprintf(METHOD, SNAME)
     Tval <- attr(object$boot, "Tval")
     PVAL <- sum(Tval[1L] <= Tval[-1L]) / (length(Tval)-1L)
     PARAMETER <- length(Tval) - 1L
-    names(Tval) <- "Tobs-value"
+    names(Tval) <- paste(SNAME, "-value")
     names(PARAMETER) <- "B"
     out <- list(statistic = Tval[1L], parameter = PARAMETER,
         p.value = if (PARAMETER > 0) PVAL else NA,
@@ -196,7 +197,9 @@ global_test <- function (object, ...) UseMethod("global_test")
     out
 }
 global_test.edma_fdm <- function (object, ...)
-    .global_test(object, DNAME="form difference matrix", ...)
+    .global_test(object,
+                 DNAME="form difference matrix",
+                 SNAME="Tobs", ...)
 
 ## CI based on the 2x input object boot sample
 confint.edma_dm <- function (object, parm, level=0.95, ...) {
