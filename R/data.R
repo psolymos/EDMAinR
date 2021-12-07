@@ -32,7 +32,9 @@ read_xyz <- function(file, ...) {
         warning("D should be 2 or 3: EDMA will not work.")
     DIMS <- DIMS[seq_len(D)]
     n <- as.integer(tmp[3L])
-    LABELS <- make.names(strsplit(h[4L], " ")[[1L]])
+    ## don't standardize names: no known risk at the moment
+    #LABELS <- make.names(strsplit(h[4L], " ")[[1L]])
+    LABELS <- strsplit(h[4L], " ")[[1L]]
     if (length(LABELS) < 1L) { # missing
         LABELS <- paste0("L", seq_len(K))
     } else {

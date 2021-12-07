@@ -1,3 +1,7 @@
+# Version 0.2-1, 2021-12-07
+
+* `read_xyz` don't change landmark names to be syntactically valid.
+
 # Version 0.2-0, 2021-11-04
 
 * Separate `edma_fdm_report` and `edma_gdm_report` functions.
