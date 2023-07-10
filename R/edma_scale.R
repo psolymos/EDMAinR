@@ -5,34 +5,45 @@
 #' specimens in which the variance-covariance matrices to two populations
 #' are unequal.
 #'
-#' @param x an EDMA data object of class 'edma_data'.
+#' @param x an EDMA data object of class \code{edma_data}.
+#'
 #' @param scale_by string specifying the type of scaling. Valid options are
 #' "constant", "endpoints", "geometric mean", "maximum", "median", "sneath".
 #' See below for details.
-#' @param L1 string specifying first landmark to use if scale_by = "endpoints"
-#' @param L2 string specifying second landmark to use if scale_by = "endpoints"
+#'
+#' @param L1 string specifying first landmark to use if
+#' \code{scale_by = "endpoints"}
+#'
+#' @param L2 string specifying second landmark to use if
+#' \code{scale_by = "endpoints"}
+#'
 #' @param scale_constant numeric specifying the scaling constant to use for
-#' scale_by = "constant"
+#' \code{scale_by = "constant"}
 #'
 #' @details
-#' \code{constant} Interlandmark distances are scaled by a numeric constant
-#' that is applied to all specimens.
+#' \code{scale_by} determines the interlandmark scaling value. Options are:
 #'
-#' \code{endpoints} Interlandmark distances are scaled by the distance between
-#' a pair of landmarks (\code{L1} and \code{L2}) for each specimen.
+#' \itemize{
 #'
-#' \code{geometric mean} Interlandmark distances are scaled by the geometric
-#' mean of all pairwise distances for each specimen.
+#' \item \code{constant} Interlandmark distances are scaled by a numeric
+#' constant that is applied to all specimens.
 #'
-#' \code{maximum} Interlandmark distances are scaled by the maximum of all
+#' \item \code{endpoints} Interlandmark distances are scaled by the distance
+#' between a pair of landmarks (\code{L1} and \code{L2}) for each specimen.
+#'
+#' \item \code{geometric mean} Interlandmark distances are scaled by th
+#' geometric mean of all pairwise distances for each specimen.
+#'
+#' \item \code{maximum} Interlandmark distances are scaled by the maximum of
+#' all pairwise distances for each specimen.
+#'
+#' \item \code{median} Interlandmark distances are scaled by the median of all
 #' pairwise distances for each specimen.
 #'
-#' \code{median} Interlandmark distances are scaled by the median of all
-#' pairwise distances for each specimen.
-#'
-#' \code{sneath}  Interlandmark distances are scaled using the method described
-#' by Sneath (1967), which uses the square-root of the mean squared
+#' \item \code{sneath}  Interlandmark distances are scaled using the method
+#' described by Sneath (1967), which uses the square-root of the mean squared
 #' distances of each landmark to the centroid. Also see Creel (1986).
+#' }
 #'
 #' @return object of class 'edma_data', with landmarks scaled according to
 #' scale_by parameter. See details for details of scaling procedures. The
@@ -43,15 +54,15 @@
 #' @export
 #'
 #' @references
-#' Creel, N. 1986. Size and Phylogeny in Hominoid Primates. Syst. Zool.
+#' Creel, N. 1986. Size and Phylogeny in Hominoid Primates. \emph{Syst. Zool.}
 #' 35:81-99.
 #'
 #' Lele, S., and T. M. Cole III. 1996. A new test for shape
 #' differences when variance-covariance matrices are unequal.
-#' J. Hum. Evol. 31:193-212.
+#' \emph{J. Hum. Evol.} 31:193-212.
 #'
 #' Sneath, P. H. A. 1967. Trend-surface analysis of transformation grids.
-#' J. Zool. 151:65-122. Wiley.
+#' \emph{J. Zool.} 151:65-122. Wiley.
 #'
 #' @examples
 #' # Following example in Lele and Cole (1996)
