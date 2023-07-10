@@ -50,7 +50,7 @@ pairwise distances for each specimen.
 pairwise distances for each specimen.
 
 \code{sneath}  Interlandmark distances are scaled using the method described
-by Sneath (1967), which uses the square-root of the sum of the squared
+by Sneath (1967), which uses the square-root of the mean squared
 distances of each landmark to the centroid.
 }
 \examples{
@@ -60,6 +60,7 @@ Y <- matrix(c(0, 0, 3, 3, 3, 0), byrow = TRUE, ncol = 2)
 
 XY <- as.edma_data(array(dim = c(3, 2, 2),
                          data = cbind(X, Y)))
+
 XY_const <- edma_scale(XY, scale_by = "constant", scale_constant = 2)
 XY_const$data
 XY_const$scaling_method

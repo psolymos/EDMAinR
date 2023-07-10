@@ -31,7 +31,7 @@
 #' pairwise distances for each specimen.
 #'
 #' \code{sneath}  Interlandmark distances are scaled using the method described
-#' by Sneath (1967), which uses the square-root of the sum of the squared
+#' by Sneath (1967), which uses the square-root of the mean squared
 #' distances of each landmark to the centroid.
 #'
 #' @return object of class 'edma_data', with landmarks scaled according to
@@ -57,6 +57,7 @@
 #'
 #' XY <- as.edma_data(array(dim = c(3, 2, 2),
 #'                          data = cbind(X, Y)))
+#'
 #' XY_const <- edma_scale(XY, scale_by = "constant", scale_constant = 2)
 #' XY_const$data
 #' XY_const$scaling_method
@@ -186,8 +187,8 @@ edma_scale <- function(x,
                                            method = "euclidean")
                                   })
 
-                       # Return square root of the summed squared distances
-                       sqrt(sum(d ^ 2))
+                       # Return square root of the mean squared distances
+                       sqrt(sum(d ^ 2) / length(d))
                    })
     }
 
