@@ -30,3 +30,4 @@ LazyData: true
 Imports: pbapply, readxl, ape, shapes
 Suggests: knitr, rmarkdown, rgl, ggplot2, ggdendro, plotly
 VignetteBuilder: knitr
+RoxygenNote: 7.2.3
