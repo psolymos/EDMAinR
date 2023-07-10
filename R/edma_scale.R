@@ -32,7 +32,7 @@
 #'
 #' \code{sneath}  Interlandmark distances are scaled using the method described
 #' by Sneath (1967), which uses the square-root of the mean squared
-#' distances of each landmark to the centroid.
+#' distances of each landmark to the centroid. Also see Creel (1986).
 #'
 #' @return object of class 'edma_data', with landmarks scaled according to
 #' scale_by parameter. See details for details of scaling procedures. The
@@ -43,6 +43,9 @@
 #' @export
 #'
 #' @references
+#' Creel, N. 1986. Size and Phylogeny in Hominoid Primates. Syst. Zool.
+#' 35:81-99.
+#'
 #' Lele, S., and T. M. Cole III. 1996. A new test for shape
 #' differences when variance-covariance matrices are unequal.
 #' J. Hum. Evol. 31:193-212.
