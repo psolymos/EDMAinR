@@ -109,6 +109,9 @@ print.edma_data <- function(x, truncate=40, ...) {
         nrow(x$data[[1L]]), " landmarks, ",
         ncol(x$data[[1L]]), " dimensions, ",
         length(x$data), " specimens", sep="")
+    if (!is.null(x$scale)) { # If the landmarks have been scaled.
+        cat("\nLandmarks scaled using:", x$scale$method, "\n")
+    }
     invisible(x)
 }
 
