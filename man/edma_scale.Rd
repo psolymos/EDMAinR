@@ -10,7 +10,7 @@ edma_scale(x, scale_by, L1 = NULL, L2 = NULL, scale_constant = NULL)
 \item{x}{an EDMA data object of class \code{edma_data}.}
 
 \item{scale_by}{string specifying the type of scaling. Valid options are
-"constant", "endpoints", "geometric mean", "maximum", "median", "sneath".
+"constant", "endpoints", "geometric_mean", "maximum", "median", "sneath".
 See below for details.}
 
 \item{L1}{string specifying first landmark to use if
@@ -25,9 +25,9 @@ See below for details.}
 \value{
 object of class 'edma_data', with landmarks scaled according to
 scale_by parameter. See details for details of scaling procedures. The
-object x are appended the scaling method string and the values used for
-scaling. The latter can be useful for comparisons, e.g., of geometric
-means.
+object x are appended with a list including the the scaling method string
+and the values used for scaling. The latter can be useful for comparisons,
+e.g., of geometric means.
 }
 \description{
 This function implements the landmark scaling procedures described in
@@ -61,42 +61,50 @@ distances of each landmark to the centroid. Also see Creel (1986).
 }
 }
 \examples{
-# Following example in Lele and Cole (1996)
+# Following the example in Lele and Cole (1996)
 X <- matrix(c(0, 0, 2, 3, 4, 1), byrow = TRUE, ncol = 2)
 Y <- matrix(c(0, 0, 3, 3, 3, 0), byrow = TRUE, ncol = 2)
 
+# Bind matrices into 3d array and convert to edma_data
 XY <- as.edma_data(array(dim = c(3, 2, 2),
                          data = cbind(X, Y)))
 
+# Scale by a constant
 XY_const <- edma_scale(XY, scale_by = "constant", scale_constant = 2)
+print(XY_const)
 XY_const$data
-XY_const$scaling_method
-XY_const$scaling_values
+XY_const$scale
 
+# Scale by distance between two landmarks
 XY_endpt <- edma_scale(XY, scale_by = "endpoints", L1 = "L1", L2 = "L3")
+print(XY_endpt)
 XY_endpt$data
-XY_endpt$scaling_method
-XY_endpt$scaling_values
+XY_endpt$scale
 
-XY_geomean <- edma_scale(XY, scale_by = "geometric mean")
+# Scale by geometric mean of all interlandmark distances
+XY_geomean <- edma_scale(XY, scale_by = "geometric_mean")
+print(XY_geomean)
 XY_geomean$data
-XY_geomean$scaling_method
-XY_geomean$scaling_values
+XY_geomean$scale
 
+# Scale by maximum of all interlandmark distances
 XY_max <- edma_scale(XY, scale_by = "maximum")
+print(XY_max)
 XY_max$data
-XY_max$scaling_method
-XY_max$scaling_values
+XY_max$scale
 
+# Scale by median of all interlandmark distances
 XY_median <- edma_scale(XY, scale_by = "median")
+print(XY_median)
 XY_median$data
-XY_median$scaling_method
-XY_median$scaling_values
+XY_median$scale
 
+# Scale using root mean squared distance from each landmark to
+# the centroid (Sneath, 1967).
 XY_sneath <- edma_scale(XY, scale_by = "sneath")
+print(XY_sneath)
 XY_sneath$data
-XY_sneath$scaling_method
-XY_sneath$scaling_values
+XY_sneath$scale
 
 }
 \references{
