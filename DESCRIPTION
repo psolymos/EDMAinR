@@ -20,7 +20,11 @@ Authors@R:
              role = c("aut")),
       person(given = "Joan T.",
              family = "Richtsmeier",
-             role = "aut"))
+             role = "aut"),
+      person(given = "Kevin M.",
+             family = "Middleton",
+             comment = c(ORCID = "0000-0003-4704-1064"),
+             role = "ctb"))
 Description: A coordinate-free approach for comparing 
     biological shapes using landmark data based on
     Lele and Richtsmeier (1991) <doi:10.1002/ajpa.1330860307>.
@@ -30,4 +34,3 @@ LazyData: true
 Imports: pbapply, readxl, ape, shapes
 Suggests: knitr, rmarkdown, rgl, ggplot2, ggdendro, plotly
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
