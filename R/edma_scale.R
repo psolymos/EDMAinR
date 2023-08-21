@@ -119,7 +119,7 @@ edma_scale <- function(x,
                        scale_constant = NULL) {
 
     # Check that x is edma_data class object
-    if (!inherits(x, "edma_data")) stop("Input must be edma_fit object.")
+    if (!inherits(x, "edma_data")) stop("Input must be edma_data object.")
 
     # Calculate pairwise distances for all landmarks
     # Several scaling methods use these distances
