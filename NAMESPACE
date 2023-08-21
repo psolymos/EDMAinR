@@ -10,7 +10,8 @@ export(
     "edma_gdm",
     "gpa_fit",
     "edma_fdm_report",
-    "edma_gdm_report"
+    "edma_gdm_report",
+    "edma_scale"
 #    "SigmaK_fit",
 #    "read_pattern",
 #    "make_Sigma"
@@ -85,6 +86,7 @@ importFrom("ape",
     "as.phylo")
 importFrom("grDevices",
     "hcl.colors", "colorRampPalette", "col2rgb", "hcl.pals", "rgb")
+importFrom("stats", "median")
 
 ## edma_data methods
 S3method("stack", "edma_data")

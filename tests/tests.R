@@ -181,3 +181,28 @@ plot_ci(gdm)
 #plot_2d(gdm) # need real data
 #if (interactive()) plot_3d(gdm)
 
+# Test EDMA scaling
+# library(testthat)
+# test_that("scale by constant without constant", {
+#     expect_error(edma_scale(x = XY,
+#                             scale_by = "constant"))
+# })
+#
+# test_that("scale by constant non-numeric", {
+#     expect_error(edma_scale(x = XY,
+#                             scale_by = "constant",
+#                             scale_constant = "two"))
+# })
+#
+# test_that("scale by endpoint without L1", {
+#     expect_error(edma_scale(x = XY,
+#                             scale_by = "endpoints",
+#                             L2 = "L2"))
+# })
+#
+# test_that("scale by endpoint without L2", {
+#     expect_error(edma_scale(x = XY,
+#                             scale_by = "endpoints",
+#                             L1 = "L1"))
+# })
+#
