@@ -1,10 +1,10 @@
-pandoc: 2.14.0.3
-pkgdown: 1.9000.9000.9000
-pkgdown_sha: ae9e62a2ee41edb45d732ee42bc19077da374169
+pandoc: 3.0.1
+pkgdown: 2.0.7
+pkgdown_sha: ~
 articles:
   edma01-data: edma01-data.html
   edma02-form: edma02-form.html
   edma03-form-difference: edma03-form-difference.html
   edma04-growth: edma04-growth.html
-last_built: 2021-11-05T06:34Z
+last_built: 2023-08-21T17:40Z
 

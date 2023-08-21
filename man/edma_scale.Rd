@@ -10,7 +10,8 @@ edma_scale(x, scale_by, L1 = NULL, L2 = NULL, scale_constant = NULL)
 \item{x}{an EDMA data object of class \code{edma_data}.}
 
 \item{scale_by}{string specifying the type of scaling. Valid options are
-"constant", "endpoints", "geometric_mean", "maximum", "median", "sneath".
+\code{"constant"}, \code{"endpoints"}, \code{"geometric_mean"}, 
+\code{"maximum"}, \code{"median"}, \code{"sneath"}.
 See below for details.}
 
 \item{L1}{string specifying first landmark to use if

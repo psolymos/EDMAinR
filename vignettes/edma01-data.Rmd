@@ -128,6 +128,8 @@ landmarks(x) # new landmark names
 landmarks(x) <- lm # reset names to original
 ```
 
+You can use the `edma_scale()` function on the EDMA data objects
+that implements various landmark scaling procedures.
 
 ## Selecting subsets of EDMA data objects
 
