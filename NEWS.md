@@ -1,3 +1,7 @@
+# Version 0.3-0, 2023-08-21
+
+* `edma_scale` function contributed by Kevin M. Middleton (PR #11).
+
 # Version 0.2-1, 2021-12-07
 
 * `read_xyz` don't change landmark names to be syntactically valid.
